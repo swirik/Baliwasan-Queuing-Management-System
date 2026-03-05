@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Queue Monitor - Barangay Baliwasan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 h-screen w-screen overflow-hidden flex flex-col font-sans text-gray-900">
+
+    <main class="flex-1 flex flex-row w-full h-full">
+        
+        <section class="w-[70%] relative flex flex-col bg-white shadow-xl z-10">
+            
+            <div class="relative flex justify-between items-center p-8 w-full border-b border-gray-100">
+                <div class="flex items-center gap-4">
+                    <img src="resources/logo.png" alt="Logo" class="w-16 h-16 object-contain rounded-full shadow-md">
+                    <h1 class="text-3xl font-black text-gray-900 tracking-widest uppercase">BARANGAY BALIWASAN</h1>
+                </div>
+                
+                <a href="index.html" class="border-2 border-gray-200 text-gray-500 px-6 py-2 rounded-full text-sm font-bold hover:border-[#FFD500] hover:text-black transition-colors uppercase tracking-wide bg-white z-20">
+                    &larr; Exit 
+                </a>
+            </div>
+
+            <div class="flex-1 flex flex-col items-center justify-center p-12">
+                <div class="bg-[#FFF9E2] rounded-[3rem] shadow-lg p-16 flex flex-col items-center justify-center w-full max-w-4xl border-2 border-[#FFF394] relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-4 bg-[#FFD500]"></div>
+                    
+                    <h2 class="text-2xl font-black text-gray-400 tracking-[0.4em] mb-8 uppercase">Now Serving</h2>
+                    
+                    <div id="current-ticket" class="text-gray-900 text-[12rem] font-black tracking-tighter leading-none mb-8 drop-shadow-sm">
+                        ----
+                    </div>
+                    
+                    <div id="current-category" class="text-3xl font-black text-black uppercase tracking-widest bg-[#FFE761] px-12 py-5 rounded-full shadow-sm border border-[#FFDC2E]">
+                        STANDBY
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <aside class="w-[30%] bg-[#FFF9E2] flex flex-col shadow-[-10px_0_30px_rgba(0,0,0,0.03)] z-0 border-l border-[#FFE761]">
+            <div class="p-8 border-b border-[#FFEA76] flex justify-between items-center bg-[#FFF394]">
+                <h2 class="text-2xl font-black text-gray-900 uppercase tracking-wide">Waiting</h2>
+                <span id="waiting-count" class="text-2xl font-black text-black bg-[#FFD500] px-5 py-1 rounded-xl shadow-sm">0</span>
+            </div>
+            
+            <div id="waiting-list-container" class="flex-1 overflow-y-auto p-6 space-y-4 inset-shadow-sm">
+                <div class="w-full text-center text-gray-400 font-bold py-10 uppercase tracking-wider">Queue is empty</div>
+            </div>
+        </aside>
+
+    </main>
+
+    <footer class="h-16 bg-[#FFD500] text-black flex justify-between items-center px-8 shrink-0 z-30 shadow-[0_-5px_15px_rgba(0,0,0,0.05)] border-t border-[#FFDC2E]">
+        <div id="date-display" class="text-sm font-bold w-1/3 text-left tracking-wider uppercase opacity-80">
+            Loading Date...
+        </div>
+        <div id="time-display" class="text-2xl font-black w-1/3 text-center tracking-widest">
+            00:00:00
+        </div>
+        <div class="text-sm font-bold w-1/3 text-right uppercase tracking-widest opacity-80">
+            Barangay Baliwasan Queuing System
+        </div>
+    </footer>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

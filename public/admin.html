@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Queue Admin - Barangay Baliwasan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#FFF9E2] h-screen flex items-center justify-center font-sans text-gray-900">
+    <div class="bg-white p-10 rounded-3xl shadow-2xl w-full max-w-2xl text-center border-t-8 border-[#FFD500]">
+        <h1 class="text-3xl font-black mb-8 uppercase tracking-wider">Admin / Staff</h1>
+        
+        <div class="grid grid-cols-2 gap-8 text-left">
+            <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100">
+                <h2 class="text-lg font-bold text-gray-400 mb-4 uppercase">1. Issue Tickets</h2>
+                <div class="flex flex-col gap-4">
+                    <button id="btn-gen-regular" class="bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-4 px-4 rounded-xl shadow-md transition-all uppercase">
+                        + Add Regular
+                    </button>
+                    <button id="btn-gen-pwd" class="bg-[#FFE761] hover:bg-[#FFEA76] text-black font-black py-4 px-4 rounded-xl shadow-md transition-all uppercase">
+                        + Add PWD / Senior
+                    </button>
+                </div>
+            </div>
+            
+            <div class="bg-[#FFF9E2] p-6 rounded-2xl border border-[#FFF394] flex flex-col">
+                <h2 class="text-lg font-bold text-gray-600 mb-4 uppercase">2. Manage Queue</h2>
+                <div class="flex-1 flex items-stretch">
+                    <button id="btn-call-next" class="w-full bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-4 px-4 rounded-xl shadow-lg text-2xl transition-all border-b-4 border-[#FFEA76] active:border-b-0 active:mt-1">
+                        CALL NEXT
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <button id="btn-reset" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold py-4 px-4 rounded-xl mt-10 transition-all border border-red-200 w-full uppercase text-sm tracking-widest">
+            Reset System to Zero
+        </button>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        document.getElementById('btn-gen-regular').addEventListener('click', () => {
+            socket.emit('generateTicket', { category: 'REGULAR' });
+        });
+
+        document.getElementById('btn-gen-pwd').addEventListener('click', () => {
+            socket.emit('generateTicket', { category: 'PWD / SENIOR' });
+        });
+
+        document.getElementById('btn-call-next').addEventListener('click', () => {
+            socket.emit('callNext');
+        });
+
+        document.getElementById('btn-reset').addEventListener('click', () => {
+            if(confirm("Are you sure you want to wipe the queue?")) {
+                socket.emit('resetQueue');
+            }
+        });
+    </script>
+</body>
+</html>
