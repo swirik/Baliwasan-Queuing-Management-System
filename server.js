@@ -11,7 +11,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 let queueState = { 
     currentTicket: null, 
-    currentCategory: 'SYSTEM STANDBY',
+    currentPriority: '',
+    currentDocument: 'SYSTEM STANDBY',
+    currentName: '',
     waitingList: [],
     ticketCounter: 0
 };
@@ -19,11 +21,29 @@ let queueState = {
 io.on('connection', (socket) => {
     socket.emit('queueUpdated', queueState);
 
+    socket.on('joinQueue', (data) => {
+        queueState.ticketCounter++;
+        const newTicket = {
+            ticketNumber: queueState.ticketCounter,
+            name: data.name,
+            contact: data.contact,
+            priority: data.priority,
+            document: data.document
+        };
+        queueState.waitingList.push(newTicket);
+        
+        io.emit('queueUpdated', queueState);
+        socket.emit('ticketIssued', newTicket);
+    });
+
     socket.on('generateTicket', (data) => {
         queueState.ticketCounter++;
         queueState.waitingList.push({
             ticketNumber: queueState.ticketCounter,
-            category: data.category
+            name: 'Walk-in',
+            contact: 'N/A',
+            priority: data.priority,
+            document: data.document
         });
         io.emit('queueUpdated', queueState);
     });
@@ -32,10 +52,14 @@ io.on('connection', (socket) => {
         if (queueState.waitingList.length > 0) {
             const next = queueState.waitingList.shift();
             queueState.currentTicket = next.ticketNumber;
-            queueState.currentCategory = next.category;
+            queueState.currentPriority = next.priority;
+            queueState.currentDocument = next.document;
+            queueState.currentName = next.name;
         } else {
             queueState.currentTicket = null;
-            queueState.currentCategory = 'SYSTEM STANDBY';
+            queueState.currentPriority = '';
+            queueState.currentDocument = 'SYSTEM STANDBY';
+            queueState.currentName = '';
         }
         io.emit('queueUpdated', queueState);
     });
@@ -43,7 +67,9 @@ io.on('connection', (socket) => {
     socket.on('resetQueue', () => {
         queueState = { 
             currentTicket: null, 
-            currentCategory: 'SYSTEM STANDBY',
+            currentPriority: '',
+            currentDocument: 'SYSTEM STANDBY',
+            currentName: '',
             waitingList: [],
             ticketCounter: 0
         };

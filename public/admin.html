@@ -5,48 +5,73 @@
     <title>Queue Admin - Barangay Baliwasan</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-[#FFF9E2] h-screen flex items-center justify-center font-sans text-gray-900">
-    <div class="bg-white p-10 rounded-3xl shadow-2xl w-full max-w-2xl text-center border-t-8 border-[#FFD500]">
-        <h1 class="text-3xl font-black mb-8 uppercase tracking-wider">Admin / Staff</h1>
+<body class="bg-[#FFF9E2] h-screen flex items-center justify-center font-sans text-gray-900 p-6">
+    <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-5xl flex gap-8 border-t-8 border-[#FFD500]">
         
-        <div class="grid grid-cols-2 gap-8 text-left">
-            <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100">
-                <h2 class="text-lg font-bold text-gray-400 mb-4 uppercase">1. Issue Tickets</h2>
-                <div class="flex flex-col gap-4">
-                    <button id="btn-gen-regular" class="bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-4 px-4 rounded-xl shadow-md transition-all uppercase">
-                        + Add Regular
-                    </button>
-                    <button id="btn-gen-pwd" class="bg-[#FFE761] hover:bg-[#FFEA76] text-black font-black py-4 px-4 rounded-xl shadow-md transition-all uppercase">
-                        + Add PWD / Senior
+        <div class="w-1/2 flex flex-col">
+            <h1 class="text-3xl font-black mb-8 uppercase tracking-wider">Admin Side</h1>
+            
+            <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100 mb-6">
+                <h2 class="text-lg font-bold text-gray-400 mb-4 uppercase">1. Issue Walk-in Ticket</h2>
+                <div class="flex flex-col gap-3">
+                    <select id="admin-priority" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] focus:ring-0 outline-none transition-colors bg-white font-bold text-sm">
+                        <option value="REGULAR">Regular</option>
+                        <option value="PWD / SENIOR">PWD / Senior Citizen</option>
+                    </select>
+
+                    <select id="admin-document" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] focus:ring-0 outline-none transition-colors bg-white font-bold text-sm">
+                        <option value="Barangay Clearance">Barangay Clearance</option>
+                        <option value="Barangay ID">Barangay ID</option>
+                        <option value="Building and Fencing Permit">Building and Fencing Permit</option>
+                        <option value="Business Clearance/Permit">Business Clearance/Permit</option>
+                        <option value="Certificate of Indigency">Certificate of Indigency</option>
+                        <option value="Certificate of Residency">Certificate of Residency</option>
+                        <option value="First Time Jobseeker">First Time Jobseeker</option>
+                        <option value="Fit to Work Certificate">Fit to Work Certificate</option>
+                        <option value="Solo Parent Certification">Solo Parent Certification</option>
+                    </select>
+
+                    <button id="btn-gen-walkin" class="bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-3 px-4 rounded-xl shadow-md transition-all uppercase tracking-wide mt-2">
+                        + Add Walk-in
                     </button>
                 </div>
             </div>
             
-            <div class="bg-[#FFF9E2] p-6 rounded-2xl border border-[#FFF394] flex flex-col">
-                <h2 class="text-lg font-bold text-gray-600 mb-4 uppercase">2. Manage Queue</h2>
-                <div class="flex-1 flex items-stretch">
-                    <button id="btn-call-next" class="w-full bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-4 px-4 rounded-xl shadow-lg text-2xl transition-all border-b-4 border-[#FFEA76] active:border-b-0 active:mt-1">
-                        CALL NEXT
-                    </button>
-                </div>
+            <div class="bg-[#FFF9E2] p-6 rounded-2xl border border-[#FFF394] flex flex-col flex-1 mb-6">
+                <h2 class="text-sm font-bold text-gray-600 mb-2 uppercase tracking-widest">Now Serving</h2>
+                <div id="admin-current-ticket" class="text-6xl font-black text-gray-900 mb-2">----</div>
+                <div id="admin-current-name" class="text-xl font-bold text-gray-700 mb-1">Name: ---</div>
+                <div id="admin-current-doc" class="text-sm font-bold text-[#FFD500] bg-black px-3 py-1 rounded-md inline-block mb-8 self-start">Document: ---</div>
+
+                <button id="btn-call-next" class="w-full bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-5 px-4 rounded-xl shadow-lg text-2xl transition-all border-b-4 border-[#FFEA76] active:border-b-0 active:mt-1 mt-auto">
+                    CALL NEXT
+                </button>
+            </div>
+
+            <button id="btn-reset" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold py-3 px-4 rounded-xl transition-all border border-red-200 w-full uppercase text-xs tracking-widest">
+                Reset System
+            </button>
+        </div>
+
+        <div class="w-1/2 flex flex-col bg-gray-50 rounded-2xl border border-gray-100 overflow-hidden">
+            <div class="p-4 bg-gray-100 border-b border-gray-200 flex justify-between items-center">
+                <h2 class="text-sm font-bold text-gray-600 uppercase tracking-widest">Waiting List</h2>
+                <span id="admin-waiting-count" class="bg-black text-[#FFD500] px-3 py-1 rounded-lg font-black text-sm">0</span>
+            </div>
+            <div id="admin-waiting-list" class="flex-1 overflow-y-auto p-4 space-y-3">
             </div>
         </div>
 
-        <button id="btn-reset" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold py-4 px-4 rounded-xl mt-10 transition-all border border-red-200 w-full uppercase text-sm tracking-widest">
-            Reset System to Zero
-        </button>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
 
-        document.getElementById('btn-gen-regular').addEventListener('click', () => {
-            socket.emit('generateTicket', { category: 'REGULAR' });
-        });
-
-        document.getElementById('btn-gen-pwd').addEventListener('click', () => {
-            socket.emit('generateTicket', { category: 'PWD / SENIOR' });
+        document.getElementById('btn-gen-walkin').addEventListener('click', () => {
+            const priority = document.getElementById('admin-priority').value;
+            const documentType = document.getElementById('admin-document').value;
+            socket.emit('generateTicket', { priority, document: documentType });
         });
 
         document.getElementById('btn-call-next').addEventListener('click', () => {
@@ -57,6 +82,40 @@
             if(confirm("Are you sure you want to wipe the queue?")) {
                 socket.emit('resetQueue');
             }
+        });
+
+        socket.on('queueUpdated', (state) => {
+            document.getElementById('admin-current-ticket').innerText = state.currentTicket ? state.currentTicket.toString().padStart(4, '0') : "----";
+            document.getElementById('admin-current-name').innerText = state.currentName ? `Name: ${state.currentName}` : "Name: ---";
+            document.getElementById('admin-current-doc').innerText = state.currentDocument ? state.currentDocument : "Document: ---";
+            
+            document.getElementById('admin-waiting-count').innerText = state.waitingList.length;
+            
+            const listContainer = document.getElementById('admin-waiting-list');
+            listContainer.innerHTML = '';
+            
+            state.waitingList.forEach(item => {
+                const badgeColor = item.priority === 'PWD / SENIOR' ? 'bg-red-100 text-red-700 border-red-200' : 'bg-[#FFF9E2] text-gray-700 border-[#FFE761]';
+                
+                const el = document.createElement('div');
+                el.className = 'bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col gap-2';
+                el.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div class="font-black text-lg text-gray-900">${item.ticketNumber.toString().padStart(4, '0')}</div>
+                            <div class="text-sm font-bold text-gray-600">${item.name}</div>
+                            <div class="text-xs text-gray-400">${item.contact}</div>
+                        </div>
+                        <div class="text-[10px] font-black uppercase ${badgeColor} px-2 py-1 rounded border">
+                            ${item.priority}
+                        </div>
+                    </div>
+                    <div class="text-xs font-bold bg-gray-50 text-gray-500 px-3 py-2 rounded-md border border-gray-100 mt-1">
+                        ${item.document}
+                    </div>
+                `;
+                listContainer.appendChild(el);
+            });
         });
     </script>
 </body>

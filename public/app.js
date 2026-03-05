@@ -9,10 +9,10 @@ const timeDisplay = document.getElementById('time-display');
 socket.on('queueUpdated', (state) => {
     if (state.currentTicket === null) {
         displayTicket.innerText = "----";
-        displayCategory.innerText = state.currentCategory;
+        displayCategory.innerText = state.currentDocument;
     } else {
         displayTicket.innerText = state.currentTicket.toString().padStart(4, '0');
-        displayCategory.innerText = state.currentCategory;
+        displayCategory.innerText = state.currentDocument;
     }
 
     waitingCount.innerText = state.waitingList.length;
@@ -22,6 +22,8 @@ socket.on('queueUpdated', (state) => {
     } else {
         waitingListContainer.innerHTML = '';
         state.waitingList.forEach((item) => {
+            const badgeColor = item.priority === 'PWD / SENIOR' ? 'bg-red-100 text-red-700 border-red-200' : 'bg-[#FFF394] text-black border-[#FFE761]';
+            
             const el = document.createElement('div');
             el.className = 'bg-white border-l-8 border-[#FFD500] rounded-xl p-5 shadow-sm flex justify-between items-center';
             el.innerHTML = `
@@ -29,9 +31,9 @@ socket.on('queueUpdated', (state) => {
                     <span class="block text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Ticket</span>
                     <span class="block text-4xl font-black text-gray-900">${item.ticketNumber.toString().padStart(4, '0')}</span>
                 </div>
-                <div class="text-right">
-                    <span class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Category</span>
-                    <span class="block text-xs font-bold text-black bg-[#FFF394] px-4 py-2 rounded-lg border border-[#FFE761]">${item.category}</span>
+                <div class="text-right flex flex-col items-end gap-1">
+                    <span class="block text-[10px] font-black uppercase ${badgeColor} px-2 py-1 rounded border">${item.priority}</span>
+                    <span class="block text-xs font-bold text-gray-600 bg-gray-50 px-3 py-1 rounded-lg border border-gray-200">${item.document}</span>
                 </div>
             `;
             waitingListContainer.appendChild(el);
