@@ -22,7 +22,7 @@
     <div id="step-1" class="bg-white p-10 rounded-3xl shadow-xl w-full max-w-md border-t-8 border-[#FFD500] transition-all">
         <div class="text-center mb-8">
              <img src="resources/logo.png" alt="Logo" class="w-15 h-16 rounded-full flex items-center justify-center text-black font-black text-xs mx-auto mb-4 shadow-md">
-            <h1 class="text-2xl font-black uppercase tracking-widest text-gray-900">Customer Side: Details</h1>
+            <h1 class="text-2xl font-black uppercase tracking-widest text-gray-900">Step 1: Details</h1>
             <p class="text-gray-500 text-sm mt-2">Enter your info and queue type</p>
         </div>
 
@@ -55,7 +55,7 @@
     <div id="step-2" class="hidden bg-white p-10 rounded-3xl shadow-xl w-full max-w-4xl border-t-8 border-[#FFD500]">
         <div class="text-center mb-8 relative">
             <button id="btn-back" class="absolute left-0 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black font-bold uppercase text-sm tracking-wide">&larr; Back</button>
-            <h1 class="text-2xl font-black uppercase tracking-widest text-gray-900">Customer Side: Transaction</h1>
+            <h1 class="text-2xl font-black uppercase tracking-widest text-gray-900">Step 2: Transaction</h1>
             <p class="text-gray-500 text-sm mt-2">Tap the document you need</p>
         </div>
 
@@ -77,7 +77,7 @@
         <div id="my-ticket-number" class="text-7xl font-black text-gray-900 mb-6 drop-shadow-sm">---</div>
         <p class="text-gray-600 mb-8 font-medium leading-relaxed">Please wait. We will simulate an SMS notification when it is your turn.</p>
         <button onclick="window.location.reload()" class="border-2 border-gray-200 text-gray-500 px-6 py-2 rounded-full font-bold hover:border-[#FFD500] hover:text-black transition-colors uppercase tracking-wide">
-            Done
+            Get Another Ticket
         </button>
     </div>
 
@@ -129,26 +129,30 @@
         });
 
         socket.on('queueUpdated', (state) => {
-            if (myAssignedTicket !== null && state.currentTicket === myAssignedTicket) {
-                const formattedTicket = myAssignedTicket.toString().padStart(4, '0');
-                smsMessage.innerText = `Hello! Ticket #${formattedTicket} is now being served. Please proceed to the counter.`;
+            if (myAssignedTicket !== null) {
+                const servingCounter = state.counters.find(c => c.currentTicket === myAssignedTicket);
                 
-                smsToast.classList.remove('hidden');
-                
-                setTimeout(() => {
-                    smsToast.classList.remove('-translate-y-[150%]');
-                    smsToast.classList.add('translate-y-0');
-                }, 50);
-
-                setTimeout(() => {
-                    smsToast.classList.remove('translate-y-0');
-                    smsToast.classList.add('-translate-y-[150%]');
+                if (servingCounter) {
+                    const formattedTicket = myAssignedTicket.toString().padStart(4, '0');
+                    smsMessage.innerText = `Hello! Ticket #${formattedTicket} is now being served at Counter ${servingCounter.id}. Please proceed to the counter.`;
+                    
+                    smsToast.classList.remove('hidden');
+                    
                     setTimeout(() => {
-                        smsToast.classList.add('hidden');
-                    }, 500);
-                }, 6000);
+                        smsToast.classList.remove('-translate-y-[150%]');
+                        smsToast.classList.add('translate-y-0');
+                    }, 50);
 
-                myAssignedTicket = null;
+                    setTimeout(() => {
+                        smsToast.classList.remove('translate-y-0');
+                        smsToast.classList.add('-translate-y-[150%]');
+                        setTimeout(() => {
+                            smsToast.classList.add('hidden');
+                        }, 500);
+                    }, 6000);
+
+                    myAssignedTicket = null;
+                }
             }
         });
     </script>

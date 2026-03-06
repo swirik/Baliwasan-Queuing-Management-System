@@ -5,21 +5,21 @@
     <title>Queue Admin - Barangay Baliwasan</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-[#FFF9E2] h-screen flex items-center justify-center font-sans text-gray-900 p-6">
-    <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-5xl flex gap-8 border-t-8 border-[#FFD500]">
+<body class="bg-[#FFF9E2] h-screen flex flex-col items-center justify-center font-sans text-gray-900 p-6 overflow-hidden">
+    <div class="bg-white p-6 rounded-3xl shadow-2xl w-full max-w-7xl flex gap-6 border-t-8 border-[#FFD500] h-full max-h-[90vh]">
         
-        <div class="w-1/2 flex flex-col">
-            <h1 class="text-3xl font-black mb-8 uppercase tracking-wider">Admin Side</h1>
+        <div class="w-1/3 flex flex-col gap-6 overflow-y-auto pr-2">
+            <h1 class="text-2xl font-black uppercase tracking-wider">ADMIN SIDE</h1>
             
-            <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100 mb-6">
-                <h2 class="text-lg font-bold text-gray-400 mb-4 uppercase">1. Issue Walk-in Ticket</h2>
-                <div class="flex flex-col gap-3">
-                    <select id="admin-priority" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] focus:ring-0 outline-none transition-colors bg-white font-bold text-sm">
+            <div class="bg-gray-50 p-5 rounded-2xl border border-gray-100">
+                <h2 class="text-sm font-bold text-gray-400 mb-3 uppercase tracking-widest">1. ISSUE WALK-IN TICKET</h2>
+                <div class="flex flex-col gap-2">
+                    <select id="admin-priority" class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] outline-none bg-white font-bold text-xs">
                         <option value="REGULAR">Regular</option>
                         <option value="PWD / SENIOR">PWD / Senior Citizen</option>
                     </select>
 
-                    <select id="admin-document" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] focus:ring-0 outline-none transition-colors bg-white font-bold text-sm">
+                    <select id="admin-document" class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] outline-none bg-white font-bold text-xs">
                         <option value="Barangay Clearance">Barangay Clearance</option>
                         <option value="Barangay ID">Barangay ID</option>
                         <option value="Building and Fencing Permit">Building and Fencing Permit</option>
@@ -31,34 +31,66 @@
                         <option value="Solo Parent Certification">Solo Parent Certification</option>
                     </select>
 
-                    <button id="btn-gen-walkin" class="bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-3 px-4 rounded-xl shadow-md transition-all uppercase tracking-wide mt-2">
-                        + Add Walk-in
+                    <button id="btn-gen-walkin" class="bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-3 px-4 rounded-xl shadow-md transition-all uppercase tracking-widest mt-1 text-sm">
+                        + ADD WALK-IN
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 p-5 rounded-2xl border border-gray-100">
+                <h2 class="text-sm font-bold text-gray-400 mb-3 uppercase tracking-widest">2. DISPLAY MEDIA</h2>
+                <div class="flex flex-col gap-2">
+                    <select id="media-type" class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] outline-none bg-white font-bold text-xs">
+                        <option value="none">None (Blank)</option>
+                        <option value="image">Image URL</option>
+                        <option value="video">Direct Video URL (.mp4)</option>
+                        <option value="youtube">YouTube Embed URL</option>
+                    </select>
+
+                    <input type="text" id="media-url" placeholder="Paste URL here..." class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] outline-none bg-white text-xs">
+
+                    <button id="btn-push-media" class="bg-[#071c4d] hover:bg-blue-800 text-white font-black py-3 px-4 rounded-xl shadow-md transition-all uppercase tracking-widest mt-1 text-sm">
+                        PUSH TO SCREEN
                     </button>
                 </div>
             </div>
             
-            <div class="bg-[#FFF9E2] p-6 rounded-2xl border border-[#FFF394] flex flex-col flex-1 mb-6">
-                <h2 class="text-sm font-bold text-gray-600 mb-2 uppercase tracking-widest">Now Serving</h2>
-                <div id="admin-current-ticket" class="text-6xl font-black text-gray-900 mb-2">----</div>
-                <div id="admin-current-name" class="text-xl font-bold text-gray-700 mb-1">Name: ---</div>
-                <div id="admin-current-doc" class="text-sm font-bold text-[#FFD500] bg-black px-3 py-1 rounded-md inline-block mb-8 self-start">Document: ---</div>
-
-                <button id="btn-call-next" class="w-full bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-5 px-4 rounded-xl shadow-lg text-2xl transition-all border-b-4 border-[#FFEA76] active:border-b-0 active:mt-1 mt-auto">
-                    CALL NEXT
-                </button>
-            </div>
-
-            <button id="btn-reset" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold py-3 px-4 rounded-xl transition-all border border-red-200 w-full uppercase text-xs tracking-widest">
-                Reset System
+            <button id="btn-reset" class="text-red-600 hover:bg-red-50 font-bold py-2 px-4 rounded-xl transition-all w-full uppercase text-xs tracking-widest mt-auto border border-transparent hover:border-red-100">
+                RESET SYSTEM
             </button>
         </div>
 
-        <div class="w-1/2 flex flex-col bg-gray-50 rounded-2xl border border-gray-100 overflow-hidden">
-            <div class="p-4 bg-gray-100 border-b border-gray-200 flex justify-between items-center">
-                <h2 class="text-sm font-bold text-gray-600 uppercase tracking-widest">Waiting List</h2>
-                <span id="admin-waiting-count" class="bg-black text-[#FFD500] px-3 py-1 rounded-lg font-black text-sm">0</span>
+        <div class="w-1/3 flex flex-col gap-4">
+            <div class="bg-[#FFF9E2] p-6 rounded-3xl border-2 border-[#FFF394] flex flex-col h-1/2 relative shadow-sm">
+                <h2 class="text-xs font-bold text-gray-500 mb-1 uppercase tracking-widest">COUNTER 1</h2>
+                <div id="c1-ticket" class="text-7xl font-black text-gray-900 mb-1">----</div>
+                <div id="c1-name" class="text-lg font-bold text-gray-700 mb-1 truncate">Name: ---</div>
+                <div id="c1-doc" class="text-xs font-bold text-[#FFD500] bg-black px-3 py-1 rounded-md inline-block mb-4 self-start">SYSTEM STANDBY</div>
+
+                <button id="btn-call-1" class="w-full bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-5 px-4 rounded-2xl shadow-lg text-xl transition-all mt-auto uppercase tracking-tighter">
+                    CALL NEXT (C1)
+                </button>
+            </div>
+
+            <div class="bg-[#FFF9E2] p-6 rounded-3xl border-2 border-[#FFF394] flex flex-col h-1/2 relative shadow-sm">
+                <h2 class="text-xs font-bold text-gray-500 mb-1 uppercase tracking-widest">COUNTER 2</h2>
+                <div id="c2-ticket" class="text-7xl font-black text-gray-900 mb-1">----</div>
+                <div id="c2-name" class="text-lg font-bold text-gray-700 mb-1 truncate">Name: ---</div>
+                <div id="c2-doc" class="text-xs font-bold text-[#FFD500] bg-black px-3 py-1 rounded-md inline-block mb-4 self-start">SYSTEM STANDBY</div>
+
+                <button id="btn-call-2" class="w-full bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-5 px-4 rounded-2xl shadow-lg text-xl transition-all mt-auto uppercase tracking-tighter">
+                    CALL NEXT (C2)
+                </button>
+            </div>
+        </div>
+
+        <div class="w-1/3 flex flex-col bg-gray-50 rounded-3xl border border-gray-100 overflow-hidden h-full">
+            <div class="p-5 bg-gray-100 border-b border-gray-200 flex justify-between items-center shrink-0">
+                <h2 class="text-sm font-bold text-gray-600 uppercase tracking-widest">WAITING LIST</h2>
+                <span id="admin-waiting-count" class="bg-black text-[#FFD500] px-3 py-1 rounded-lg font-black text-sm shadow-sm">0</span>
             </div>
             <div id="admin-waiting-list" class="flex-1 overflow-y-auto p-4 space-y-3">
+                <div class="text-center py-10 text-gray-400 font-medium uppercase text-xs tracking-widest">No residents in queue</div>
             </div>
         </div>
 
@@ -74,43 +106,65 @@
             socket.emit('generateTicket', { priority, document: documentType });
         });
 
-        document.getElementById('btn-call-next').addEventListener('click', () => {
-            socket.emit('callNext');
+        document.getElementById('btn-call-1').addEventListener('click', () => {
+            socket.emit('callNext', { counterId: 1 });
+        });
+
+        document.getElementById('btn-call-2').addEventListener('click', () => {
+            socket.emit('callNext', { counterId: 2 });
+        });
+
+        document.getElementById('btn-push-media').addEventListener('click', () => {
+            const type = document.getElementById('media-type').value;
+            const url = document.getElementById('media-url').value;
+            socket.emit('updateMedia', { type, url });
         });
 
         document.getElementById('btn-reset').addEventListener('click', () => {
-            if(confirm("Are you sure you want to wipe the queue?")) {
+            if(confirm("DANGER: This will wipe all current queue data. Proceed?")) {
                 socket.emit('resetQueue');
             }
         });
 
         socket.on('queueUpdated', (state) => {
-            document.getElementById('admin-current-ticket').innerText = state.currentTicket ? state.currentTicket.toString().padStart(4, '0') : "----";
-            document.getElementById('admin-current-name').innerText = state.currentName ? `Name: ${state.currentName}` : "Name: ---";
-            document.getElementById('admin-current-doc').innerText = state.currentDocument ? state.currentDocument : "Document: ---";
+            const c1 = state.counters.find(c => c.id === 1);
+            const c2 = state.counters.find(c => c.id === 2);
+
+            document.getElementById('c1-ticket').innerText = c1.currentTicket ? c1.currentTicket.toString().padStart(4, '0') : "----";
+            document.getElementById('c1-name').innerText = c1.currentName ? `Name: ${c1.currentName}` : "Name: ---";
+            document.getElementById('c1-doc').innerText = c1.currentDocument;
+
+            document.getElementById('c2-ticket').innerText = c2.currentTicket ? c2.currentTicket.toString().padStart(4, '0') : "----";
+            document.getElementById('c2-name').innerText = c2.currentName ? `Name: ${c2.currentName}` : "Name: ---";
+            document.getElementById('c2-doc').innerText = c2.currentDocument;
             
             document.getElementById('admin-waiting-count').innerText = state.waitingList.length;
             
             const listContainer = document.getElementById('admin-waiting-list');
             listContainer.innerHTML = '';
             
+            if (state.waitingList.length === 0) {
+                listContainer.innerHTML = '<div class="text-center py-10 text-gray-400 font-medium uppercase text-xs tracking-widest">No residents in queue</div>';
+                return;
+            }
+
             state.waitingList.forEach(item => {
                 const badgeColor = item.priority === 'PWD / SENIOR' ? 'bg-red-100 text-red-700 border-red-200' : 'bg-[#FFF9E2] text-gray-700 border-[#FFE761]';
                 
                 const el = document.createElement('div');
-                el.className = 'bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col gap-2';
+                el.className = 'bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex flex-col gap-2';
                 el.innerHTML = `
                     <div class="flex justify-between items-start">
                         <div>
-                            <div class="font-black text-lg text-gray-900">${item.ticketNumber.toString().padStart(4, '0')}</div>
-                            <div class="text-sm font-bold text-gray-600">${item.name}</div>
-                            <div class="text-xs text-gray-400">${item.contact}</div>
+                            <div class="font-black text-xl text-gray-900">${item.ticketNumber.toString().padStart(4, '0')}</div>
+                            <div class="text-sm font-bold text-gray-800">${item.name}</div>
+                            <div class="text-[10px] text-gray-400 font-medium">${item.contact}</div>
                         </div>
-                        <div class="text-[10px] font-black uppercase ${badgeColor} px-2 py-1 rounded border">
+                        <div class="text-[9px] font-black uppercase ${badgeColor} px-2 py-1 rounded-md border tracking-tighter">
                             ${item.priority}
                         </div>
                     </div>
-                    <div class="text-xs font-bold bg-gray-50 text-gray-500 px-3 py-2 rounded-md border border-gray-100 mt-1">
+                    <div class="text-[11px] font-bold bg-gray-50 text-gray-500 px-3 py-2 rounded-xl border border-gray-100 mt-1 uppercase truncate">
                         ${item.document}
                     </div>
                 `;

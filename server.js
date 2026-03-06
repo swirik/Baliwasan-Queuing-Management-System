@@ -10,12 +10,13 @@ const io = new Server(server);
 app.use(express.static(path.join(__dirname, 'public')));
 
 let queueState = { 
-    currentTicket: null, 
-    currentPriority: '',
-    currentDocument: 'SYSTEM STANDBY',
-    currentName: '',
+    counters: [
+        { id: 1, currentTicket: null, currentPriority: '', currentDocument: 'SYSTEM STANDBY', currentName: '' },
+        { id: 2, currentTicket: null, currentPriority: '', currentDocument: 'SYSTEM STANDBY', currentName: '' }
+    ],
     waitingList: [],
-    ticketCounter: 0
+    ticketCounter: 0,
+    media: { type: 'none', url: '' }
 };
 
 io.on('connection', (socket) => {
@@ -48,30 +49,39 @@ io.on('connection', (socket) => {
         io.emit('queueUpdated', queueState);
     });
 
-    socket.on('callNext', () => {
-        if (queueState.waitingList.length > 0) {
-            const next = queueState.waitingList.shift();
-            queueState.currentTicket = next.ticketNumber;
-            queueState.currentPriority = next.priority;
-            queueState.currentDocument = next.document;
-            queueState.currentName = next.name;
-        } else {
-            queueState.currentTicket = null;
-            queueState.currentPriority = '';
-            queueState.currentDocument = 'SYSTEM STANDBY';
-            queueState.currentName = '';
+    socket.on('callNext', (data) => {
+        const counterIndex = queueState.counters.findIndex(c => c.id === data.counterId);
+        if (counterIndex !== -1) {
+            if (queueState.waitingList.length > 0) {
+                const next = queueState.waitingList.shift();
+                queueState.counters[counterIndex].currentTicket = next.ticketNumber;
+                queueState.counters[counterIndex].currentPriority = next.priority;
+                queueState.counters[counterIndex].currentDocument = next.document;
+                queueState.counters[counterIndex].currentName = next.name;
+            } else {
+                queueState.counters[counterIndex].currentTicket = null;
+                queueState.counters[counterIndex].currentPriority = '';
+                queueState.counters[counterIndex].currentDocument = 'SYSTEM STANDBY';
+                queueState.counters[counterIndex].currentName = '';
+            }
+            io.emit('queueUpdated', queueState);
         }
+    });
+
+    socket.on('updateMedia', (data) => {
+        queueState.media = data;
         io.emit('queueUpdated', queueState);
     });
 
     socket.on('resetQueue', () => {
         queueState = { 
-            currentTicket: null, 
-            currentPriority: '',
-            currentDocument: 'SYSTEM STANDBY',
-            currentName: '',
+            counters: [
+                { id: 1, currentTicket: null, currentPriority: '', currentDocument: 'SYSTEM STANDBY', currentName: '' },
+                { id: 2, currentTicket: null, currentPriority: '', currentDocument: 'SYSTEM STANDBY', currentName: '' }
+            ],
             waitingList: [],
-            ticketCounter: 0
+            ticketCounter: 0,
+            media: { type: 'none', url: '' }
         };
         io.emit('queueUpdated', queueState);
     });
