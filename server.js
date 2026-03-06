@@ -14,6 +14,11 @@ let queueState = {
         { id: 1, currentTicket: null, currentPriority: '', currentDocument: 'SYSTEM STANDBY', currentName: '' },
         { id: 2, currentTicket: null, currentPriority: '', currentDocument: 'SYSTEM STANDBY', currentName: '' }
     ],
+    lastCalled: {
+        ticket: null,
+        counter: null,
+        document: 'SYSTEM STANDBY'
+    },
     waitingList: [],
     ticketCounter: 0,
     media: { type: 'none', url: '' }
@@ -58,6 +63,13 @@ io.on('connection', (socket) => {
                 queueState.counters[counterIndex].currentPriority = next.priority;
                 queueState.counters[counterIndex].currentDocument = next.document;
                 queueState.counters[counterIndex].currentName = next.name;
+
+                // Push this to the main public display as the active ticket
+                queueState.lastCalled = {
+                    ticket: next.ticketNumber,
+                    counter: data.counterId,
+                    document: next.document
+                };
             } else {
                 queueState.counters[counterIndex].currentTicket = null;
                 queueState.counters[counterIndex].currentPriority = '';
@@ -79,6 +91,11 @@ io.on('connection', (socket) => {
                 { id: 1, currentTicket: null, currentPriority: '', currentDocument: 'SYSTEM STANDBY', currentName: '' },
                 { id: 2, currentTicket: null, currentPriority: '', currentDocument: 'SYSTEM STANDBY', currentName: '' }
             ],
+            lastCalled: {
+                ticket: null,
+                counter: null,
+                document: 'SYSTEM STANDBY'
+            },
             waitingList: [],
             ticketCounter: 0,
             media: { type: 'none', url: '' }
