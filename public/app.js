@@ -1,8 +1,4 @@
 const socket = io();
-const displayTicket = document.getElementById('current-ticket');
-const displayCategory = document.getElementById('current-category');
-const counterBadge = document.getElementById('counter-badge');
-const counterNumber = document.getElementById('counter-number');
 const waitingListContainer = document.getElementById('waiting-list-container');
 const waitingCount = document.getElementById('waiting-count');
 const dateDisplay = document.getElementById('date-display');
@@ -12,18 +8,14 @@ const mediaContainer = document.getElementById('media-container');
 let currentMediaUrl = '';
 
 socket.on('queueUpdated', (state) => {
-    
-    // Update main public display based on the absolute last ticket called
-    if (!state.lastCalled || state.lastCalled.ticket === null) {
-        displayTicket.innerText = "----";
-        displayCategory.innerText = "SYSTEM STANDBY";
-        counterBadge.classList.add('hidden');
-    } else {
-        displayTicket.innerText = state.lastCalled.ticket.toString().padStart(4, '0');
-        displayCategory.innerText = state.lastCalled.document;
-        counterNumber.innerText = state.lastCalled.counter;
-        counterBadge.classList.remove('hidden');
-    }
+    const c1 = state.counters.find(c => c.id === 1);
+    const c2 = state.counters.find(c => c.id === 2);
+
+    document.getElementById('c1-ticket').innerText = c1.currentTicket ? c1.currentTicket.toString().padStart(4, '0') : "----";
+    document.getElementById('c1-doc').innerText = c1.currentDocument;
+
+    document.getElementById('c2-ticket').innerText = c2.currentTicket ? c2.currentTicket.toString().padStart(4, '0') : "----";
+    document.getElementById('c2-doc').innerText = c2.currentDocument;
 
     waitingCount.innerText = state.waitingList.length;
 

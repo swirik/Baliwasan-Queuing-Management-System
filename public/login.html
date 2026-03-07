@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resident Login - Barangay Baliwasan</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="output.css" rel="stylesheet">
 </head>
 <body class="bg-[#FFF9E2] min-h-screen flex flex-col items-center justify-center font-sans text-gray-900 p-4 md:p-6 overflow-y-auto">
 
@@ -54,7 +55,7 @@
 
     <div id="step-2" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-4xl border-t-8 border-[#FFD500] my-8">
         <div class="flex items-center justify-between mb-8">
-            <button id="btn-back" class="text-gray-400 hover:text-black font-bold uppercase text-xs md:text-sm tracking-wide shrink-0">&larr; Back</button>
+            <button id="btn-back-to-1" class="text-gray-400 hover:text-black font-bold uppercase text-xs md:text-sm tracking-wide shrink-0">&larr; Back</button>
             <div class="flex-1 text-center px-2">
                 <h1 class="text-xl md:text-2xl font-black uppercase tracking-widest text-gray-900">Step 2: Transaction</h1>
                 <p class="text-gray-500 text-xs md:text-sm mt-1">Tap the service you need</p>
@@ -87,6 +88,24 @@
         </div>
     </div>
 
+    <div id="step-confirm" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-md border-t-8 border-[#FFD500] text-center my-8">
+        <h2 class="text-xl md:text-2xl font-black uppercase tracking-widest text-gray-900 mb-2">Confirm Request</h2>
+        <p class="text-gray-500 text-sm md:text-base mb-8">Please review your transaction details.</p>
+
+        <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 mb-8 text-left">
+            <p class="text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Selected Service</p>
+            <p id="confirm-doc-name" class="text-lg font-black text-[#071c4d] mb-4">---</p>
+            
+            <p class="text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Queue Priority</p>
+            <p id="confirm-priority" class="text-sm font-bold text-gray-700 bg-white inline-block px-3 py-1 rounded border border-gray-200">---</p>
+        </div>
+
+        <div class="flex gap-4">
+            <button id="btn-cancel-confirm" class="flex-1 border-2 border-gray-200 text-gray-500 hover:text-gray-800 hover:border-gray-400 font-bold py-4 rounded-xl transition-all uppercase tracking-wide text-sm">Cancel</button>
+            <button id="btn-confirm-queue" class="flex-1 bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-4 rounded-xl shadow-md transition-all uppercase tracking-wide text-sm">Confirm</button>
+        </div>
+    </div>
+
     <div id="ticket-result" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-md border-2 border-[#FFD500] text-center my-8">
         <h2 class="text-lg md:text-xl font-bold text-gray-500 uppercase tracking-wider mb-2">Your Ticket Number</h2>
         <div id="my-ticket-number" class="text-6xl md:text-7xl font-black text-gray-900 mb-6 drop-shadow-sm">---</div>
@@ -95,17 +114,22 @@
             Get Another Ticket
         </button>
     </div>
+
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
         
         const step1 = document.getElementById('step-1');
         const step2 = document.getElementById('step-2');
+        const stepConfirm = document.getElementById('step-confirm');
         const ticketResult = document.getElementById('ticket-result');
         const smsToast = document.getElementById('sms-toast');
         const smsMessage = document.getElementById('sms-message');
         
-        let pendingUser = { name: '', contact: '', priority: '' };
+        const confirmDocName = document.getElementById('confirm-doc-name');
+        const confirmPriority = document.getElementById('confirm-priority');
+
+        let pendingUser = { name: '', contact: '', priority: '', document: '' };
         let myAssignedTicket = null;
 
         document.getElementById('step-1-form').addEventListener('submit', (e) => {
@@ -119,25 +143,40 @@
             window.scrollTo(0, 0);
         });
 
-        document.getElementById('btn-back').addEventListener('click', () => {
+        document.getElementById('btn-back-to-1').addEventListener('click', () => {
             step2.classList.add('hidden');
             step1.classList.remove('hidden');
         });
 
         document.querySelectorAll('.doc-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const documentType = e.target.getAttribute('data-doc');
-                socket.emit('joinQueue', { 
-                    name: pendingUser.name, 
-                    contact: pendingUser.contact, 
-                    priority: pendingUser.priority,
-                    document: documentType 
-                });
+                pendingUser.document = e.target.getAttribute('data-doc');
+                
+                confirmDocName.innerText = pendingUser.document;
+                confirmPriority.innerText = pendingUser.priority;
+
+                step2.classList.add('hidden');
+                stepConfirm.classList.remove('hidden');
+                window.scrollTo(0, 0);
+            });
+        });
+
+        document.getElementById('btn-cancel-confirm').addEventListener('click', () => {
+            stepConfirm.classList.add('hidden');
+            step2.classList.remove('hidden');
+        });
+
+        document.getElementById('btn-confirm-queue').addEventListener('click', () => {
+            socket.emit('joinQueue', { 
+                name: pendingUser.name, 
+                contact: pendingUser.contact, 
+                priority: pendingUser.priority,
+                document: pendingUser.document 
             });
         });
 
         socket.on('ticketIssued', (ticket) => {
-            step2.classList.add('hidden');
+            stepConfirm.classList.add('hidden');
             ticketResult.classList.remove('hidden');
             window.scrollTo(0, 0);
             myAssignedTicket = ticket.ticketNumber;
