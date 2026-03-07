@@ -24,6 +24,18 @@ let queueState = {
     media: { type: 'none', url: '' }
 };
 
+function sortQueue() {
+    queueState.waitingList.sort((a, b) => {
+        const priorityA = a.priority === 'PWD / SENIOR' ? 1 : 0;
+        const priorityB = b.priority === 'PWD / SENIOR' ? 1 : 0;
+        
+        if (priorityA !== priorityB) {
+            return priorityB - priorityA;
+        }
+        return a.ticketNumber - b.ticketNumber;
+    });
+}
+
 io.on('connection', (socket) => {
     socket.emit('queueUpdated', queueState);
 
@@ -37,6 +49,7 @@ io.on('connection', (socket) => {
             document: data.document
         };
         queueState.waitingList.push(newTicket);
+        sortQueue();
         
         io.emit('queueUpdated', queueState);
         socket.emit('ticketIssued', newTicket);
@@ -51,6 +64,7 @@ io.on('connection', (socket) => {
             priority: data.priority,
             document: data.document
         });
+        sortQueue();
         io.emit('queueUpdated', queueState);
     });
 
@@ -64,7 +78,6 @@ io.on('connection', (socket) => {
                 queueState.counters[counterIndex].currentDocument = next.document;
                 queueState.counters[counterIndex].currentName = next.name;
 
-                // Push this to the main public display as the active ticket
                 queueState.lastCalled = {
                     ticket: next.ticketNumber,
                     counter: data.counterId,

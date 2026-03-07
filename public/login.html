@@ -6,7 +6,7 @@
     <title>Resident Login - Barangay Baliwasan</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-[#FFF9E2] h-screen flex flex-col items-center justify-center font-sans text-gray-900 p-6 overflow-hidden">
+<body class="bg-[#FFF9E2] min-h-screen flex flex-col items-center justify-center font-sans text-gray-900 p-4 md:p-6 overflow-y-auto">
 
     <div id="sms-toast" class="hidden fixed top-4 left-1/2 -translate-x-1/2 bg-white border-l-8 border-[#FFD500] p-5 rounded-2xl shadow-2xl w-[90%] max-w-sm z-50 transform transition-all duration-500 -translate-y-[150%]">
         <div class="flex items-center justify-between mb-2">
@@ -19,68 +19,82 @@
         <div class="text-sm text-gray-600 mt-1 font-medium" id="sms-message"></div>
     </div>
 
-    <div id="step-1" class="bg-white p-10 rounded-3xl shadow-xl w-full max-w-md border-t-8 border-[#FFD500] transition-all">
+    <div id="step-1" class="bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-md border-t-8 border-[#FFD500] transition-all my-8">
         <div class="text-center mb-8">
-             <img src="resources/logo.png" alt="Logo" class="w-15 h-16 rounded-full flex items-center justify-center text-black font-black text-xs mx-auto mb-4 shadow-md">
-            <h1 class="text-2xl font-black uppercase tracking-widest text-gray-900">Customer Side: Details</h1>
-            <p class="text-gray-500 text-sm mt-2">Enter your info and queue type</p>
+             <img src="resources/logo.png" alt="Logo" class="w-16 h-16 rounded-full mx-auto mb-4 shadow-md object-contain">
+            <h1 class="text-xl md:text-2xl font-black uppercase tracking-widest text-gray-900">Step 1: Details</h1>
+            <p class="text-gray-500 text-xs md:text-sm mt-2">Enter your info and queue type</p>
         </div>
 
-        <form id="step-1-form" class="space-y-6">
+        <form id="step-1-form" class="space-y-5 md:space-y-6">
             <div>
-                <label class="block text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">Full Name</label>
-                <input type="text" id="user-name" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] focus:ring-0 outline-none transition-colors bg-gray-50">
+                <label class="block text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">Full Name</label>
+                <input type="text" id="user-name" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] focus:ring-0 outline-none transition-colors bg-gray-50 text-sm md:text-base">
             </div>
 
             <div>
-                <label class="block text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">Contact Number</label>
-                <input type="tel" id="user-contact" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] focus:ring-0 outline-none transition-colors bg-gray-50">
+                <label class="block text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">Contact Number</label>
+                <input type="tel" id="user-contact" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] focus:ring-0 outline-none transition-colors bg-gray-50 text-sm md:text-base">
             </div>
 
             <div>
-                <label class="block text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">Queue Priority</label>
-                <select id="user-priority" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] focus:ring-0 outline-none transition-colors bg-gray-50">
+                <label class="block text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">Queue Priority</label>
+                <select id="user-priority" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] focus:ring-0 outline-none transition-colors bg-gray-50 text-sm md:text-base">
                     <option value="REGULAR" selected>Regular</option>
                     <option value="PWD / SENIOR">PWD / Senior Citizen</option>
                 </select>
             </div>
 
-            <button type="submit" class="w-full bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-4 px-4 rounded-xl shadow-lg text-lg transition-all uppercase tracking-wide mt-4 flex justify-between items-center">
+            <button type="submit" class="w-full bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-4 px-4 rounded-xl shadow-lg text-base md:text-lg transition-all uppercase tracking-wide mt-4 flex justify-between items-center">
                 <span>Continue</span>
                 <span>&rarr;</span>
             </button>
         </form>
     </div>
 
-    <div id="step-2" class="hidden bg-white p-10 rounded-3xl shadow-xl w-full max-w-4xl border-t-8 border-[#FFD500]">
-        <div class="text-center mb-8 relative">
-            <button id="btn-back" class="absolute left-0 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black font-bold uppercase text-sm tracking-wide">&larr; Back</button>
-            <h1 class="text-2xl font-black uppercase tracking-widest text-gray-900">Customer Side: Transaction</h1>
-            <p class="text-gray-500 text-sm mt-2">Tap the document you need</p>
+    <div id="step-2" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-4xl border-t-8 border-[#FFD500] my-8">
+        <div class="flex items-center justify-between mb-8">
+            <button id="btn-back" class="text-gray-400 hover:text-black font-bold uppercase text-xs md:text-sm tracking-wide shrink-0">&larr; Back</button>
+            <div class="flex-1 text-center px-2">
+                <h1 class="text-xl md:text-2xl font-black uppercase tracking-widest text-gray-900">Step 2: Transaction</h1>
+                <p class="text-gray-500 text-xs md:text-sm mt-1">Tap the service you need</p>
+            </div>
+            <div class="w-12 shrink-0"></div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="document-grid">
-            <button class="doc-btn bg-gray-50 hover:bg-[#FFD500] hover:border-[#FFD500] border-2 border-gray-200 text-gray-800 font-bold py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-sm" data-doc="Barangay Clearance">Barangay Clearance</button>
-            <button class="doc-btn bg-gray-50 hover:bg-[#FFD500] hover:border-[#FFD500] border-2 border-gray-200 text-gray-800 font-bold py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-sm" data-doc="Barangay ID">Barangay ID</button>
-            <button class="doc-btn bg-gray-50 hover:bg-[#FFD500] hover:border-[#FFD500] border-2 border-gray-200 text-gray-800 font-bold py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-sm" data-doc="Building and Fencing Permit">Building & Fencing Permit</button>
-            <button class="doc-btn bg-gray-50 hover:bg-[#FFD500] hover:border-[#FFD500] border-2 border-gray-200 text-gray-800 font-bold py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-sm" data-doc="Business Clearance/Permit">Business Clearance</button>
-            <button class="doc-btn bg-gray-50 hover:bg-[#FFD500] hover:border-[#FFD500] border-2 border-gray-200 text-gray-800 font-bold py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-sm" data-doc="Certificate of Indigency">Certificate of Indigency</button>
-            <button class="doc-btn bg-gray-50 hover:bg-[#FFD500] hover:border-[#FFD500] border-2 border-gray-200 text-gray-800 font-bold py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-sm" data-doc="Certificate of Residency">Certificate of Residency</button>
-            <button class="doc-btn bg-gray-50 hover:bg-[#FFD500] hover:border-[#FFD500] border-2 border-gray-200 text-gray-800 font-bold py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-sm" data-doc="First Time Jobseeker">First Time Jobseeker</button>
-            <button class="doc-btn bg-gray-50 hover:bg-[#FFD500] hover:border-[#FFD500] border-2 border-gray-200 text-gray-800 font-bold py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-sm" data-doc="Fit To Work Certificate">Fit To Work Certificate</button>
-            <button class="doc-btn bg-gray-50 hover:bg-[#FFD500] hover:border-[#FFD500] border-2 border-gray-200 text-gray-800 font-bold py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-sm" data-doc="Solo Parent Certification">Solo Parent Certification</button>
+        <div class="mb-8">
+            <h3 class="text-xs md:text-sm font-bold text-gray-400 uppercase tracking-widest mb-3 text-center md:text-left">Special Events</h3>
+            <div class="grid grid-cols-1 gap-4">
+                <button class="doc-btn bg-green-50 hover:bg-green-100 border-2 border-green-200 text-green-800 font-black py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-sm tracking-wide" data-doc="Ayuda / Cash Assistance">
+                    ⭐ Ayuda / Cash Assistance
+                </button>
+            </div>
+        </div>
+
+        <div>
+            <h3 class="text-xs md:text-sm font-bold text-gray-400 uppercase tracking-widest mb-3 text-center md:text-left">Standard Documents</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4" id="document-grid">
+                <button class="doc-btn bg-gray-50 hover:bg-[#FFD500] hover:border-[#FFD500] border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm" data-doc="Barangay Clearance">Barangay Clearance</button>
+                <button class="doc-btn bg-gray-50 hover:bg-[#FFD500] hover:border-[#FFD500] border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm" data-doc="Barangay ID">Barangay ID</button>
+                <button class="doc-btn bg-gray-50 hover:bg-[#FFD500] hover:border-[#FFD500] border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm" data-doc="Building and Fencing Permit">Building & Fencing Permit</button>
+                <button class="doc-btn bg-gray-50 hover:bg-[#FFD500] hover:border-[#FFD500] border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm" data-doc="Business Clearance/Permit">Business Clearance</button>
+                <button class="doc-btn bg-gray-50 hover:bg-[#FFD500] hover:border-[#FFD500] border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm" data-doc="Certificate of Indigency">Certificate of Indigency</button>
+                <button class="doc-btn bg-gray-50 hover:bg-[#FFD500] hover:border-[#FFD500] border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm" data-doc="Certificate of Residency">Certificate of Residency</button>
+                <button class="doc-btn bg-gray-50 hover:bg-[#FFD500] hover:border-[#FFD500] border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm" data-doc="First Time Jobseeker">First Time Jobseeker</button>
+                <button class="doc-btn bg-gray-50 hover:bg-[#FFD500] hover:border-[#FFD500] border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm" data-doc="Fit To Work Certificate">Fit To Work Certificate</button>
+                <button class="doc-btn bg-gray-50 hover:bg-[#FFD500] hover:border-[#FFD500] border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm" data-doc="Solo Parent Certification">Solo Parent Certification</button>
+            </div>
         </div>
     </div>
 
-    <div id="ticket-result" class="hidden bg-white p-10 rounded-3xl shadow-xl w-full max-w-md border-2 border-[#FFD500] text-center">
-        <h2 class="text-xl font-bold text-gray-500 uppercase tracking-wider mb-2">Your Ticket Number</h2>
-        <div id="my-ticket-number" class="text-7xl font-black text-gray-900 mb-6 drop-shadow-sm">---</div>
-        <p class="text-gray-600 mb-8 font-medium leading-relaxed">Please wait. We will simulate an SMS notification when it is your turn.</p>
-        <button onclick="window.location.reload()" class="border-2 border-gray-200 text-gray-500 px-6 py-2 rounded-full font-bold hover:border-[#FFD500] hover:text-black transition-colors uppercase tracking-wide">
-            Done
+    <div id="ticket-result" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-md border-2 border-[#FFD500] text-center my-8">
+        <h2 class="text-lg md:text-xl font-bold text-gray-500 uppercase tracking-wider mb-2">Your Ticket Number</h2>
+        <div id="my-ticket-number" class="text-6xl md:text-7xl font-black text-gray-900 mb-6 drop-shadow-sm">---</div>
+        <p class="text-sm md:text-base text-gray-600 mb-8 font-medium leading-relaxed">Please wait. We will simulate an SMS notification when it is your turn.</p>
+        <button onclick="window.location.reload()" class="border-2 border-gray-200 text-gray-500 px-6 py-2 rounded-full font-bold hover:border-[#FFD500] hover:text-black transition-colors uppercase tracking-wide text-xs md:text-sm">
+            Get Another Ticket
         </button>
     </div>
-
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
@@ -102,6 +116,7 @@
             
             step1.classList.add('hidden');
             step2.classList.remove('hidden');
+            window.scrollTo(0, 0);
         });
 
         document.getElementById('btn-back').addEventListener('click', () => {
@@ -124,6 +139,7 @@
         socket.on('ticketIssued', (ticket) => {
             step2.classList.add('hidden');
             ticketResult.classList.remove('hidden');
+            window.scrollTo(0, 0);
             myAssignedTicket = ticket.ticketNumber;
             document.getElementById('my-ticket-number').innerText = myAssignedTicket.toString().padStart(4, '0');
         });
