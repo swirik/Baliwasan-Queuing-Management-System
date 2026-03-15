@@ -3,193 +3,274 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barangay Baliwasan Portal</title>
-    <link href="output.css" rel="stylesheet">
-    <style>
+    <title>Barangay Baliwasan | Official Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>\
+<style>
         html {
             scroll-behavior: smooth;
         }
         .blend-screen {
-            mix-blend-screen: screen;
+            mix-blend-mode: screen;
+        }
+        /* Custom animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 1s ease-out;
+        }
+        .hover-scale {
+            transition: transform 0.3s ease;
+        }
+        .hover-scale:hover {
+            transform: scale(1.05);
         }
     </style>
 </head>
 <body class="bg-gray-50 font-sans text-gray-900">
 
-    <header class="bg-white border-b-2 border-yellow-400 flex flex-col w-full fixed top-0 z-50">
-        <div class="flex justify-between items-center px-6 py-4">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center text-white font-bold text-xs text-center border border-gray-300">LOGO</div>
-                <h1 class="text-2xl font-bold text-black tracking-wide uppercase">BARANGAY BALIWASAN</h1>
+    <header class="bg-white border-b-2 border-yellow-400 flex flex-col w-full fixed top-0 z-50 shadow-md">
+        <div class="flex justify-between items-center px-6 py-3">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full bg-cover bg-center border-2 border-yellow-400 shadow-sm" style="background-image: url('resources/logo.png');">
+                </div>
+                <h1 class="text-xl md:text-2xl font-bold text-black tracking-wide uppercase">ONE BALIWASAN</h1>
             </div>
-            <nav class="flex gap-2">
-                <a href="#home" class="bg-yellow-400 text-black px-4 py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase">HOME</a>
-                <a href="#contact" class="bg-yellow-400 text-black px-4 py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase">OUR BARANGAY</a>
-                <a href="#vision" class="bg-yellow-400 text-black px-4 py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase">VISION</a>
-                <a href="#news" class="bg-yellow-400 text-black px-4 py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase">NEWS & UPDATES</a>
-                <a href="login.html" class="bg-yellow-400 text-black px-4 py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase ring-2 ring-offset-2 ring-yellow-400">QUEUE</a>
+            <nav class="flex gap-2 flex-wrap justify-end">
+                <a href="#home" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">HOME</a>
+                <a href="our-barangay.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">OUR BARANGAY</a>
+                <a href="our-vision.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">VISION</a>
+                <a href="news-updates.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">NEWS & UPDATES</a>
+                <a href="login.html" class="bg-yellow-500 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-600 uppercase ring-2 ring-offset-2 ring-yellow-400 transition-all">QUEUING SYSTEM</a>
             </nav>
         </div>
         
-        <div class="bg-yellow-200 py-1 flex justify-between items-center px-8 border-t border-yellow-300">
-            <div id="portal-clock" class="text-xs font-medium text-yellow-900">Loading Date & Time...</div>
-            <div class="flex gap-2">
-                <input type="text" placeholder="Search" class="p-1 px-3 rounded text-xs border border-yellow-400 focus:outline-none focus:ring-1 focus:ring-yellow-600">
-                <button class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-1 px-4 rounded text-xs transition-colors">Search</button>
+        <div class="bg-yellow-100 py-1.5 flex flex-col sm:flex-row justify-between items-center px-4 md:px-8 border-t border-yellow-300">
+            <div id="portal-clock" class="text-xs font-medium text-yellow-800 mb-1 sm:mb-0">Loading Date & Time...</div>
+            <div class="flex gap-2 w-full sm:w-auto">
+                <input type="text" placeholder="Search..." class="flex-1 sm:flex-none p-1 px-3 rounded text-xs border border-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:border-transparent">
+                <button class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-1 px-4 rounded text-xs transition-all hover:shadow-md">Search</button>
             </div>
         </div>
     </header>
 
-    <main class="mt-[116px]">
+    <main class="mt-[132px] md:mt-[116px]">
         
-        <section id="home" class="relative h-[calc(100vh-116px)] overflow-hidden flex items-center justify-center">
-            <div class="absolute inset-0 bg-cover bg-center z-0" style="background-image: url('resources/hero-background.jpg');"></div>
+     
+        <section id="home" class="relative h-[calc(100vh-132px)] md:h-[calc(100vh-116px)] overflow-hidden flex items-center justify-center">
+            <div class="absolute inset-0 bg-cover bg-center z-0" style="background-image: url('resources/home-picture.png');"></div>
             
-            <div class="absolute inset-0 bg-white blend-screen opacity-80 z-10"></div>
-
-            <div class="relative z-20 text-center">
-                <h1 class="text-6xl font-black text-black tracking-widest uppercase leading-tight drop-shadow-md">
-                    WELCOME TO<br>BARANGAY BALIWASAN
-                </h1>
-            </div>
-
-            <div class="absolute bottom-10 left-10 z-30 flex gap-6">
-                
-                <div class="w-36 h-36 bg-blue-900 rounded-full flex items-center justify-center text-center text-xs font-bold text-white border-4 border-yellow-400 shadow-xl">Seal 1</div>
-                <div class="w-36 h-36 bg-red-700 rounded-full flex items-center justify-center text-center text-xs font-bold text-white border-4 border-yellow-400 shadow-xl">Seal 2</div>
-            </div>
-            <div class="absolute bottom-4 right-4 z-30 opacity-90">
-            <img src="resources/map.png" alt="Philippine Map" class="w-64 h-64 object-contain opacity-100">
+            <div class="relative z-20 text-center text-black px-4 animate-fadeIn">
+                <h2 class="text-4xl md:text-6xl font-bold mb-4">Welcome to Baliwasan</h2>
+                <p class="text-xl md:text-2xl">Serbisyong may Puso, Para sa Bayan</p>
             </div>
         </section>
 
-        <section id="news" class="min-h-screen flex items-center justify-center bg-[#071c4d] text-white px-8 py-16">
-            <div class="max-w-4xl w-full mx-auto bg-blue-800 p-10 rounded-2xl shadow-2xl border border-blue-700">
-                <h2 class="text-4xl font-black mb-8 text-center text-yellow-400 border-b border-blue-600 pb-6 uppercase tracking-wider">SCHEDULED POWER INTERRUPTION</h2>
-                <div class="flex justify-center mb-10">
-                    <p class="text-xl font-bold bg-white text-blue-900 px-6 py-2 rounded-full shadow-md">DATE: February 23, 26 - March 1, 4, 7 & 10, 2026</p>
+       
+        <section id="news" class="min-h-screen bg-[#071c4d] text-white py-16 px-4">
+            <div class="max-w-6xl mx-auto text-center">
+                <h4 class="text-4xl md:text-6xl font-black text-white mb-8 leading-tight tracking-wide relative inline-block">
+                    ANNOUNCEMENT !!
+                    <span class="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-yellow-400 rounded"></span>
+                </h4>
+                <div class="mt-12 flex justify-center">
+                    <img src="resources/update-picture.jpg" alt="Announcement Image" class="w-full max-w-4xl rounded-xl shadow-2xl mb-8 hover:shadow-3xl transition-shadow duration-300">
                 </div>
-                
-                <div class="space-y-8 bg-blue-900/50 p-8 rounded-xl">
-                    <div>
-                        <h3 class="text-3xl font-bold text-yellow-400 mb-2">6:00am - 7:00am (1 Hour)</h3>
-                        <p class="text-xl font-semibold mb-1">Baliwasan Recloser</p>
-                        <p class="text-md text-blue-200 leading-relaxed">Baliwasan Tabuk, Baliwasan Grande, Baliwasan Chico, Baliwasan Seaside...</p>
-                    </div>
-                    <div>
-                        <h3 class="text-3xl font-bold text-yellow-400 mb-2">6:00am - 12:00pm (6 Hours)</h3>
-                        <p class="text-xl font-semibold mb-1">C8 Structure Near ZPPSU</p>
-                        <p class="text-md text-blue-200 leading-relaxed">- Serving ZPPSU (Seaside) to Brent Hospital</p>
-                    </div>
-                </div>
+                <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
+                    Further announcements will be posted here. Stay tuned for updates from your barangay.
+                </p>
             </div>
         </section>
 
-                <section id="vision" class="relative min-h-screen bg-[#ffce54] flex items-center overflow-hidden px-8 py-16">
-            <div class="max-w-7xl mx-auto w-full flex flex-col md:flex-row items-center relative z-10">
+   
+        <section id="vision" class="relative min-h-screen bg-gradient-to-br from-[#ffce54] to-[#ffb347] flex items-center overflow-hidden px-4 py-16">
+            <div class="max-w-7xl mx-auto w-full flex flex-col md:flex-row items-center relative z-10 gap-8">
                 
-                <div class="w-full md:w-2/5 flex justify-center md:justify-start mb-8 md:mb-0">
-                    <div class="w-[300px] h-[400px] md:w-[400px] md:h-[600px] bg-white border-4 border-dashed border-gray-400 flex items-center justify-center text-gray-500 font-bold text-xl rounded-lg shadow-xl">
-                        [Person Image Placeholder]
+                <div class="w-full md:w-2/5 flex justify-center">
+                    <div class="w-[300px] h-[400px] md:w-[400px] md:h-[600px] rounded-2xl shadow-2xl overflow-hidden transform hover:scale-105 transition-transform duration-500">
+                        <img src="resources/capt-picture.png" alt="Capt Image" class="w-full h-full object-cover">
                     </div>
                 </div>
                 
-                <div class="w-full md:w-3/5 text-center md:text-left px-4 md:px-12">
-                    <h2 class="text-4xl md:text-6xl font-black text-black mb-8 leading-tight tracking-wide">
+                <div class="w-full md:w-3/5 text-center md:text-left px-4 md:px-8">
+                    <h2 class="text-3xl md:text-5xl font-black text-black mb-6 leading-tight">
                         WELCOME TO THE DIGITAL HOME OF BARANGAY BALIWASAN!
                     </h2>
                     
-                    <p class="text-xl md:text-2xl text-black font-medium mb-8 leading-relaxed">
+                    <p class="text-lg md:text-xl text-black/80 font-medium mb-6 leading-relaxed">
                         "Innovation meets service here in our community. This website is a testament to our commitment to bringing the government closer to you. Like the name 'Lady Bato' suggests, my dedication to your welfare is solid and unwavering. We invite you to use this platform to stay informed, engaged, and empowered."
                     </p>
                     
-                    <div class="text-xl md:text-2xl text-black">
-                        <p class="font-bold mb-6">Padayon, Baliwasan!</p>
-                        <p>Hon. Aimee Cabato</p>
-                        <p>Punong Barangay</p>
+                    <div class="text-lg md:text-xl text-black border-l-4 border-black pl-6">
+                        <p class="font-bold mb-3">Padayon, Baliwasan!</p>
+                        <p class="font-semibold">Hon. Aimee Cabato</p>
+                        <p class="text-sm md:text-base text-black/70">Punong Barangay</p>
                     </div>
                 </div>
             </div>
 
-            <div class="absolute bottom-8 right-8 z-20">
-                <div class="w-32 h-32 md:w-48 md:h-48 bg-white border-4 border-dashed border-gray-400 rounded-full flex items-center justify-center text-center text-gray-500 font-bold text-sm shadow-xl">
-                    [Bottom Right Logo Placeholder]
-                </div>
-            </div>
-        </section>
-
-        <section id="contact" class="bg-white py-16 px-8 border-t border-gray-200">
-            <div class="max-w-6xl mx-auto">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10">
-                    <div class="flex items-center gap-4">
-                        <div class="w-16 h-16 rounded-full border-2 border-yellow-400 bg-blue-900 flex items-center justify-center text-white text-[10px] font-bold">SEAL 1</div>
-                        <div class="w-16 h-16 rounded-full border-2 border-yellow-400 bg-red-700 flex items-center justify-center text-white text-[10px] font-bold">SEAL 2</div>
-                        <h2 class="text-3xl font-bold text-green-900 tracking-wide ml-2">BARANGAY BALIWASAN</h2>
-                    </div>
-                    <button class="mt-4 md:mt-0 bg-[#0f442b] hover:bg-green-900 text-white px-6 py-3 rounded-lg font-medium tracking-wide">
-                        Connect with Us
-                    </button>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-                    <div>
-                        <h3 class="text-xl font-bold text-[#0f442b] mb-2">Contact Information</h3>
-                        <p class="text-gray-500 mb-1">Telephone : 0915 324 2171</p>
-                        <p class="text-gray-500">Email: <a href="mailto:iannaellis.mg@gmail.com" class="text-[#4b7a61] underline decoration-1 underline-offset-2">iannaellis.mg@gmail.com</a></p>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold text-[#0f442b] mb-2">Our Location</h3>
-                        <p class="text-gray-500">550 San Jose Road, Zamboanga City</p>
-                    </div>
-                </div>
-
-                <div class="bg-[#f5f6f5] rounded-3xl p-10 border border-gray-100">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-20">
-                        <div>
-                            <h3 class="text-2xl font-bold text-[#0f442b] mb-8">CITY EMERGENCY HOTLINE</h3>
-                            <div class="space-y-6">
-                                <div>
-                                    <p class="font-bold text-lg text-[#0f442b]">ZCDRRMO</p>
-                                    <p class="text-[#4b7a61] text-lg">926-1848</p>
-                                </div>
-                                <div>
-                                    <p class="font-bold text-lg text-[#0f442b]">EMS</p>
-                                    <p class="text-[#4b7a61] text-lg">926-1849</p>
-                                </div>
-                                <div>
-                                    <p class="font-bold text-lg text-[#0f442b]">ZCPO / ZCPO HQ</p>
-                                    <p class="text-[#4b7a61] text-lg">0977-855-8138</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <h3 class="text-2xl font-bold text-[#0f442b] mb-8">Social</h3>
-                            <p class="text-[#4b7a61] text-lg">Facebook: ONE BALIWASAN</p>
-                        </div>
-                    </div>
-
-                    <div class="border-t border-gray-300 pt-6 flex flex-col md:flex-row justify-between items-center text-[#a3aba6] text-sm">
-                        <p>© BarangayBaliwasan. All Rights Reserved 2026</p>
-                        <p>Terms & Conditions</p>
-                    </div>
+            <div class="absolute bottom-4 right-4 md:bottom-8 md:right-8 z-20 opacity-20 md:opacity-100">
+                <div class="w-20 h-20 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-white shadow-xl">
+                     <img src="resources/logo.png" alt="Barangay Logo" class="w-full h-full object-cover">
                 </div>
             </div>
         </section>
     </main>
-        <script>
+
+    <footer id="contact" class="bg-white w-full border-t border-gray-200">
+        <div class="w-full px-4 md:px-8 lg:px-12 py-12">
+            <div class="max-w-7xl mx-auto">
+          
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
+                    <div class="flex items-center gap-4 flex-wrap">
+                        <div class="w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-[#0f442b] hover-scale">
+                            <img src="resources/logo.png" alt="Barangay Logo" class="w-full h-full object-cover">
+                        </div>
+                        <div class="w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-[#0f442b] hover-scale">
+                            <img src="resources/logo2.png" alt="Barangay Logo 2" class="w-full h-full object-cover">
+                        </div>
+                        <h2 class="text-2xl md:text-3xl font-bold text-[#0f442b] tracking-wide">BARANGAY BALIWASAN</h2>
+                    </div>
+                    <button class="bg-[#0f442b] hover:bg-green-800 text-white px-8 py-3 rounded-lg font-medium tracking-wide transition-all duration-300 shadow-md hover:shadow-xl hover-scale">
+                        Connect with Us
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                    <div class="bg-gray-50 p-6 rounded-xl hover:shadow-lg transition-shadow">
+                        <h3 class="text-xl font-bold text-[#0f442b] mb-4 flex items-center">
+                            <span class="mr-2 text-2xl">📞</span> Contact Information
+                        </h3>
+                        <p class="text-gray-600 mb-2">Telephone: <span class="font-medium">0915 324 2171</span></p>
+                        <p class="text-gray-600">Email: 
+                            <a href="mailto:iannaellis.mg@gmail.com" class="text-[#0f442b] font-medium hover:underline">
+                                iannaellis.mg@gmail.com
+                            </a>
+                        </p>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-xl hover:shadow-lg transition-shadow">
+                        <h3 class="text-xl font-bold text-[#0f442b] mb-4 flex items-center">
+                            <span class="mr-2 text-2xl">📍</span> Our Location
+                        </h3>
+                        <p class="text-gray-600 mb-3">550 San Jose Road, Zamboanga City</p>
+                        <button onclick="openDirections()" 
+                            class="inline-flex items-center gap-2 text-sm bg-[#0f442b] hover:bg-green-800 text-white px-4 py-2 rounded-lg font-medium transition-all hover:shadow-md hover:scale-105">
+                            <span>🚗</span> Get Directions
+                            <span class="text-lg">→</span>
+                        </button>
+                    </div>
+                </div>
+
+              
+                <div class="bg-gradient-to-br from-[#f5f6f5] to-gray-100 rounded-2xl p-6 md:p-10 mb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    
+                        <div>
+                            <h3 class="text-xl md:text-2xl font-bold text-[#0f442b] mb-6 flex items-center">
+                                <span class="mr-2">🚨</span> CITY EMERGENCY HOTLINE
+                            </h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between border-b border-gray-300 pb-2">
+                                    <span class="font-bold text-[#0f442b]">ZCDRRMO</span>
+                                    <span class="text-[#0f442b] font-medium bg-white px-3 py-1 rounded-full">926-1848</span>
+                                </div>
+                                <div class="flex items-center justify-between border-b border-gray-300 pb-2">
+                                    <span class="font-bold text-[#0f442b]">EMS</span>
+                                    <span class="text-[#0f442b] font-medium bg-white px-3 py-1 rounded-full">926-1849</span>
+                                </div>
+                                <div class="flex items-center justify-between border-b border-gray-300 pb-2">
+                                    <span class="font-bold text-[#0f442b]">ZCPO / ZCPO HQ</span>
+                                    <span class="text-[#0f442b] font-medium bg-white px-3 py-1 rounded-full">0977-855-8138</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-xl md:text-2xl font-bold text-[#0f442b] mb-6 flex items-center">
+                                <span class="mr-2">🌐</span> Connect With Us
+                            </h3>
+                            <div class="space-y-4">
+                                <a href="#" class="flex items-center gap-3 p-3 bg-white rounded-lg hover:shadow-md transition-all">
+                                    <div class="w-10 h-10 bg-[#0f442b] rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                        f
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-[#0f442b]">Facebook</p>
+                                        <p class="text-sm text-gray-600">@ONEBALIWASAN</p>
+                                    </div>
+                                </a>
+                                <a href="mailto:iannaellis.mg@gmail.com" class="flex items-center gap-3 p-3 bg-white rounded-lg hover:shadow-md transition-all">
+                                    <div class="w-10 h-10 bg-[#0f442b] rounded-full flex items-center justify-center text-white text-lg">
+                                        ✉
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-[#0f442b]">Email Us</p>
+                                        <p class="text-sm text-gray-600">iannaellis.mg@gmail.com</p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+           
+                <div class="flex flex-col md:flex-row justify-between items-center pt-6 text-gray-500 text-sm border-t border-gray-200">
+                    <p>© 2026 Barangay Baliwasan. All Rights Reserved</p>
+                    <div class="flex gap-4 md:gap-6 mt-3 md:mt-0">
+                        <a href="#" class="hover:text-[#0f442b] transition-colors">Privacy Policy</a>
+                        <a href="#" class="hover:text-[#0f442b] transition-colors">Terms & Conditions</a>
+                        <a href="#" class="hover:text-[#0f442b] transition-colors">Sitemap</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
         function updatePortalClock() {
             const now = new Date();
-            const dateOptions = { month: 'long', day: 'numeric', year: 'numeric' };
-            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            const options = { 
+                month: 'long', 
+                day: 'numeric', 
+                year: 'numeric',
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit',
+                hour12: true
+            };
             
-            const dateString = now.toLocaleDateString('en-US', dateOptions);
-            const timeString = now.toLocaleTimeString('en-US', timeOptions);
-            
-            document.getElementById('portal-clock').innerText = `${dateString} at ${timeString}`;
+            document.getElementById('portal-clock').innerText = now.toLocaleString('en-US', options);
         }
 
         setInterval(updatePortalClock, 1000);
         updatePortalClock();
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+         //get directions pop up
+        function openDirections() {
+       
+            const latitude = 6.9157146;
+            const longitude = 122.0600172;
+            const locationName = "Barangay Baliwasan, 550 San Jose Road, Zamboanga City";
+            
+            
+            window.open(
+                `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}&destination_place_id=${encodeURIComponent(locationName)}&travelmode=driving`,
+                '_blank'
+            );
+        }
+
     </script>
 </body>
 </html>
