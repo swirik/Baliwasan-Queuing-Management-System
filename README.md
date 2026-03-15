@@ -1,4 +1,4 @@
-# Barangay Baliwasan Digital Portal & Queuing System
+# Barangay Baliwasan Digital Portal & Queuing System (Outdated)
 
 A real-time **WebSocket-powered queuing management system and digital portal** built for **Barangay Baliwasan**.
 
