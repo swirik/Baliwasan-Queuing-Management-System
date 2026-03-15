@@ -2,12 +2,37 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const path = require('path');
+const multer = require('multer');
+const fs = require('fs');
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
+const mediaDir = path.join(__dirname, 'public', 'media');
+if (fs.existsSync(mediaDir)) {
+    fs.mkdirSync(mediaDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, mediaDir);
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + '-' + file.originalname.replace(/\s+/g, '-'));
+    }
+});
+const upload = multer({ storage: storage });
+
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.post('/upload', upload.single('mediaFile'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ error: 'No file uploaded' });
+    }
+    const fileUrl = '/media/' + req.file.filename;
+    res.json({ url: fileUrl });
+});
 
 let queueState = { 
     counters: [

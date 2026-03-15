@@ -816,6 +816,10 @@ video {
   width: 100vw;
 }
 
+.w-14 {
+  width: 3.5rem;
+}
+
 .max-w-4xl {
   max-width: 56rem;
 }
@@ -1633,6 +1637,10 @@ video {
   opacity: 0.2;
 }
 
+.opacity-50 {
+  opacity: 0.5;
+}
+
 .opacity-80 {
   opacity: 0.8;
 }
@@ -1739,6 +1747,47 @@ video {
   transition-duration: 500ms;
 }
 
+.file\:mr-4::file-selector-button {
+  margin-right: 1rem;
+}
+
+.file\:rounded-full::file-selector-button {
+  border-radius: 9999px;
+}
+
+.file\:border-0::file-selector-button {
+  border-width: 0px;
+}
+
+.file\:bg-\[\#FFD500\]::file-selector-button {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 213 0 / var(--tw-bg-opacity, 1));
+}
+
+.file\:px-4::file-selector-button {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.file\:py-2::file-selector-button {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.file\:text-xs::file-selector-button {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.file\:font-bold::file-selector-button {
+  font-weight: 700;
+}
+
+.file\:text-black::file-selector-button {
+  --tw-text-opacity: 1;
+  color: rgb(0 0 0 / var(--tw-text-opacity, 1));
+}
+
 .hover\:border-\[\#FFD500\]:hover {
   --tw-border-opacity: 1;
   border-color: rgb(255 213 0 / var(--tw-border-opacity, 1));
@@ -1812,6 +1861,11 @@ video {
 .hover\:text-white:hover {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
+}
+
+.hover\:file\:bg-\[\#FFDC2E\]::file-selector-button:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 220 46 / var(--tw-bg-opacity, 1));
 }
 
 .focus\:border-\[\#FFD500\]:focus {

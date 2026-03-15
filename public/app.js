@@ -5,11 +5,50 @@ const dateDisplay = document.getElementById('date-display');
 const timeDisplay = document.getElementById('time-display');
 const mediaContainer = document.getElementById('media-container');
 
+const chimeSound = new Audio('/media/chime.mp3');
 let currentMediaUrl = '';
+let currentlyServingC1 = null;
+let currentlyServingC2 = null;
+
+document.body.addEventListener('click', () => {
+    chimeSound.play().then(() => {
+        chimeSound.pause();
+        chimeSound.currentTime = 0;
+    }).catch(err => console.log(err));
+}, { once: true });
 
 socket.on('queueUpdated', (state) => {
     const c1 = state.counters.find(c => c.id === 1);
     const c2 = state.counters.find(c => c.id === 2);
+
+    let newlyCalledTicket = null;
+    let newlyCalledCounter = null;
+
+    if (c1.currentTicket !== null && c1.currentTicket !== currentlyServingC1) {
+        newlyCalledTicket = c1.currentTicket;
+        newlyCalledCounter = 1;
+        currentlyServingC1 = c1.currentTicket;
+    }
+    
+    if (c2.currentTicket !== null && c2.currentTicket !== currentlyServingC2) {
+        newlyCalledTicket = c2.currentTicket;
+        newlyCalledCounter = 2;
+        currentlyServingC2 = c2.currentTicket;
+    }
+    
+    if (newlyCalledTicket !== null) {
+        chimeSound.currentTime = 0;
+        chimeSound.play().catch(e => console.log(e));
+
+        const formattedTicket = newlyCalledTicket.toString().padStart(4, '0');
+        const spokenTicket = formattedTicket.split('').join(' ');
+        
+        const utterance = new SpeechSynthesisUtterance(`Ticket number, ${spokenTicket}, please proceed to counter ${newlyCalledCounter}`);
+        utterance.rate = 0.85;
+        
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utterance);
+    }
 
     document.getElementById('c1-ticket').innerText = c1.currentTicket ? c1.currentTicket.toString().padStart(4, '0') : "----";
     document.getElementById('c1-doc').innerText = c1.currentDocument;
