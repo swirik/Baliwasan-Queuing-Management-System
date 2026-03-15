@@ -1,14 +1,17 @@
 const socket = io();
 const waitingListContainer = document.getElementById('waiting-list-container');
 const waitingCount = document.getElementById('waiting-count');
-const dateDisplay = document.getElementById('date-display');
-const timeDisplay = document.getElementById('time-display');
+const dateDisplay = document.getElementById('clock-date');
+const timeDisplay = document.getElementById('clock-time');
 const mediaContainer = document.getElementById('media-container');
+const displayTicket = document.getElementById('current-ticket');
+const displayCounter = document.getElementById('current-counter');
+const displayDoc = document.getElementById('current-doc');
+const tickerDisplay = document.getElementById('scrolling-ticker');
 
 const chimeSound = new Audio('/media/chime.mp3');
 let currentMediaUrl = '';
-let currentlyServingC1 = null;
-let currentlyServingC2 = null;
+let currentlyServingTicket = null;
 
 document.body.addEventListener('click', () => {
     chimeSound.play().then(() => {
@@ -18,43 +21,43 @@ document.body.addEventListener('click', () => {
 }, { once: true });
 
 socket.on('queueUpdated', (state) => {
-    const c1 = state.counters.find(c => c.id === 1);
-    const c2 = state.counters.find(c => c.id === 2);
-
-    let newlyCalledTicket = null;
-    let newlyCalledCounter = null;
-
-    if (c1.currentTicket !== null && c1.currentTicket !== currentlyServingC1) {
-        newlyCalledTicket = c1.currentTicket;
-        newlyCalledCounter = 1;
-        currentlyServingC1 = c1.currentTicket;
-    }
     
-    if (c2.currentTicket !== null && c2.currentTicket !== currentlyServingC2) {
-        newlyCalledTicket = c2.currentTicket;
-        newlyCalledCounter = 2;
-        currentlyServingC2 = c2.currentTicket;
-    }
-    
-    if (newlyCalledTicket !== null) {
-        chimeSound.currentTime = 0;
-        chimeSound.play().catch(e => console.log(e));
+    tickerDisplay.innerText = state.tickerText || "WELCOME TO BARANGAY BALIWASAN";
 
-        const formattedTicket = newlyCalledTicket.toString().padStart(4, '0');
-        const spokenTicket = formattedTicket.split('').join(' ');
+    if (!state.lastCalled || state.lastCalled.ticket === null) {
+        displayTicket.innerText = "----";
+        displayCounter.innerText = "--";
+        displayDoc.innerText = "SYSTEM STANDBY";
+        currentlyServingTicket = null;
+    } else {
         
-        const utterance = new SpeechSynthesisUtterance(`Ticket number, ${spokenTicket}, please proceed to counter ${newlyCalledCounter}`);
-        utterance.rate = 0.85;
-        
-        window.speechSynthesis.cancel();
-        window.speechSynthesis.speak(utterance);
+        if (state.lastCalled.ticket !== currentlyServingTicket) {
+            currentlyServingTicket = state.lastCalled.ticket;
+
+            displayTicket.innerText = state.lastCalled.ticket.toString().padStart(4, '0');
+
+            displayTicket.classList.remove('is-blinking');
+            void displayTicket.offsetWidth;
+            displayTicket.classList.add('is-blinking');
+
+            chimeSound.currentTime = 0;
+            chimeSound.play().catch(e => console.log(e));
+
+            const formattedTicket = state.lastCalled.ticket.toString().padStart(4, '0');
+            const spokenTicket = formattedTicket.split('').join(' ');
+            
+            const utterance = new SpeechSynthesisUtterance(`Ticket number, ${spokenTicket}, please proceed to counter ${state.lastCalled.counter}`);
+            utterance.rate = 0.85;
+            
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(utterance);
+        } else {
+            displayTicket.innerText = state.lastCalled.ticket.toString().padStart(4, '0');
+        }
+
+        displayCounter.innerText = `COUNTER ${state.lastCalled.counter}`;
+        displayDoc.innerText = state.lastCalled.document;
     }
-
-    document.getElementById('c1-ticket').innerText = c1.currentTicket ? c1.currentTicket.toString().padStart(4, '0') : "----";
-    document.getElementById('c1-doc').innerText = c1.currentDocument;
-
-    document.getElementById('c2-ticket').innerText = c2.currentTicket ? c2.currentTicket.toString().padStart(4, '0') : "----";
-    document.getElementById('c2-doc').innerText = c2.currentDocument;
 
     waitingCount.innerText = state.waitingList.length;
 
@@ -63,10 +66,10 @@ socket.on('queueUpdated', (state) => {
     } else {
         waitingListContainer.innerHTML = '';
         state.waitingList.forEach((item) => {
-            const badgeColor = item.priority === 'PWD / SENIOR' ? 'bg-red-100 text-red-700 border-red-200' : 'bg-[#FFF394] text-black border-[#FFE761]';
+            const badgeColor = item.priority === 'PWD / SENIOR' ? 'bg-black text-[#FFD500] border-gray-800' : 'bg-[#FFF394] text-black border-[#FFE761]';
             
             const el = document.createElement('div');
-            el.className = 'bg-gray-50 border-l-8 border-[#FFD500] rounded-xl p-3 shadow-sm flex justify-between items-center';
+            el.className = 'bg-white border-l-8 border-[#FFD500] rounded-xl p-3 shadow-sm flex justify-between items-center';
             el.innerHTML = `
                 <div>
                     <span class="block text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Ticket</span>
@@ -74,7 +77,7 @@ socket.on('queueUpdated', (state) => {
                 </div>
                 <div class="text-right flex flex-col items-end gap-1 w-2/3">
                     <span class="block text-[9px] font-black uppercase ${badgeColor} px-2 py-0.5 rounded border">${item.priority}</span>
-                    <span class="block text-[10px] font-bold text-gray-600 bg-white px-2 py-1 rounded-md border border-gray-200 truncate w-full text-right">${item.document}</span>
+                    <span class="block text-[10px] font-bold text-gray-600 bg-gray-50 px-2 py-1 rounded-md border border-gray-200 truncate w-full text-right">${item.document}</span>
                 </div>
             `;
             waitingListContainer.appendChild(el);

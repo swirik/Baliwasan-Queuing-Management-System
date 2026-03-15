@@ -10,7 +10,7 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 const mediaDir = path.join(__dirname, 'public', 'media');
-if (fs.existsSync(mediaDir)) {
+if (!fs.existsSync(mediaDir)) {
     fs.mkdirSync(mediaDir, { recursive: true });
 }
 
@@ -46,7 +46,8 @@ let queueState = {
     },
     waitingList: [],
     ticketCounter: 0,
-    media: { type: 'none', url: '' }
+    media: { type: 'none', url: '' },
+    tickerText: 'WELCOME TO BARANGAY BALIWASAN. PLEASE WAIT FOR YOUR NUMBER TO BE CALLED.'
 };
 
 function sortQueue() {
@@ -123,6 +124,11 @@ io.on('connection', (socket) => {
         io.emit('queueUpdated', queueState);
     });
 
+    socket.on('updateTicker', (text) => {
+        queueState.tickerText = text;
+        io.emit('queueUpdated', queueState);
+    });
+
     socket.on('resetQueue', () => {
         queueState = { 
             counters: [
@@ -136,7 +142,8 @@ io.on('connection', (socket) => {
             },
             waitingList: [],
             ticketCounter: 0,
-            media: { type: 'none', url: '' }
+            media: { type: 'none', url: '' },
+            tickerText: 'WELCOME TO BARANGAY BALIWASAN. PLEASE WAIT FOR YOUR NUMBER TO BE CALLED.'
         };
         io.emit('queueUpdated', queueState);
     });
