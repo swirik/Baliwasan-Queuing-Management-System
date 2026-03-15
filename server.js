@@ -72,6 +72,7 @@ let queueState = {
         document: 'SYSTEM STANDBY'
     },
     waitingList: [],
+    appointments: [],
     ticketCounter: 0,
     media: { type: 'none', url: '' },
     tickerText: 'WELCOME TO BARANGAY BALIWASAN. PLEASE WAIT FOR YOUR NUMBER TO BE CALLED.',
@@ -81,7 +82,9 @@ let queueState = {
 db.get("SELECT state_json FROM system_state WHERE id = 1", (err, row) => {
     if (row && row.state_json) {
         try {
-            queueState = JSON.parse(row.state_json);
+            const parsed = JSON.parse(row.state_json);
+            queueState = { ...queueState, ...parsed };
+            if (!queueState.appointments) queueState.appointments = [];
         } catch (e) {
             console.error(e);
         }
@@ -105,6 +108,13 @@ function sortQueue() {
     });
 }
 
+function getTodayDate() {
+    const now = new Date();
+    const offset = now.getTimezoneOffset() * 60000;
+    const localISOTime = (new Date(now - offset)).toISOString().split('T')[0];
+    return localISOTime;
+}
+
 io.on('connection', (socket) => {
     socket.emit('queueUpdated', queueState);
 
@@ -118,20 +128,34 @@ io.on('connection', (socket) => {
             document: data.document,
             date: data.date 
         };
-        queueState.waitingList.push(newTicket);
-        sortQueue();
+
+        const today = getTodayDate();
+        let ewt = 0;
+        let isToday = false;
+
+        if (data.date === today) {
+            isToday = true;
+            queueState.waitingList.push(newTicket);
+            sortQueue();
+            
+            const position = queueState.waitingList.findIndex(t => t.ticketNumber === newTicket.ticketNumber);
+            ewt = (position + 1) * 12; 
+        } else {
+            queueState.appointments.push(newTicket);
+        }
+        
         saveState();
 
         db.run("INSERT INTO ticket_history (ticketNumber, name, contact, priority, document, scheduledDate) VALUES (?, ?, ?, ?, ?, ?)", 
             [newTicket.ticketNumber, newTicket.name, newTicket.contact, newTicket.priority, newTicket.document, newTicket.date]);
 
         io.emit('queueUpdated', queueState);
-        socket.emit('ticketIssued', newTicket);
+        socket.emit('ticketIssued', { ticket: newTicket, ewt: ewt, isToday: isToday });
     });
 
     socket.on('generateTicket', (data) => {
         queueState.ticketCounter++;
-        const walkInDate = new Date().toISOString().split('T')[0];
+        const walkInDate = getTodayDate();
         queueState.waitingList.push({
             ticketNumber: queueState.ticketCounter,
             name: 'Walk-in',
@@ -210,6 +234,7 @@ io.on('connection', (socket) => {
                 document: 'SYSTEM STANDBY'
             },
             waitingList: [],
+            appointments: [],
             ticketCounter: 0,
             media: queueState.media,
             tickerText: queueState.tickerText,
