@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barangay Baliwasan | Official Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- STYLES IN HEAD -->
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        .blend-screen {
+            mix-blend-mode: screen;
+        }
+        /* Custom animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 1s ease-out;
+        }
+        .hover-scale {
+            transition: transform 0.3s ease;
+        }
+        .hover-scale:hover {
+            transform: scale(1.05);
+        }
+        /* Carousel styles */
+        .carousel-slide {
+            transition: opacity 1s ease-in-out;
+        }
+        .carousel-slide img {
+            animation: fadeIn 0.5s ease-out;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 font-sans text-gray-900">
+    <header class="bg-white border-b-2 border-yellow-400 flex flex-col w-full fixed top-0 z-50 shadow-md">
+        <div class="flex justify-between items-center px-6 py-3">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full bg-cover bg-center border-2 border-yellow-400 shadow-sm" style="background-image: url('resources/logo.png');">
+                </div>
+                <h1 class="text-xl md:text-2xl font-bold text-black tracking-wide uppercase">ONE BALIWASAN</h1>
+            </div>
+            <nav class="flex gap-2 flex-wrap justify-end">
+                <a href="index.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">HOME</a>
+                <a href="our-barangay.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">OUR BARANGAY</a>
+                <a href="our-vision.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">VISION</a>
+                <a href="news-updates.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">NEWS & UPDATES</a>
+                <a href="queue.html" class="bg-yellow-500 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-600 uppercase ring-2 ring-offset-2 ring-yellow-400 transition-all">QUEUING SYSTEM</a>
+            </nav>
+        </div>
+        
+        <div class="bg-yellow-100 py-1.5 flex flex-col sm:flex-row justify-between items-center px-4 md:px-8 border-t border-yellow-300">
+            <div id="portal-clock" class="text-xs font-medium text-yellow-800 mb-1 sm:mb-0">Loading Date & Time...</div>
+            <div class="flex gap-2 w-full sm:w-auto">
+                <input type="text" placeholder="Search..." class="flex-1 sm:flex-none p-1 px-3 rounded text-xs border border-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:border-transparent">
+                <button class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-1 px-4 rounded text-xs transition-all hover:shadow-md">Search</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="mt-[132px] md:mt-[116px]">
+        <section id="news" class="py-20 px-4 bg-gray-50">
+            <div class="max-w-7xl mx-auto">
+                <!-- Section Header -->
+                <div class="text-center mb-16">
+                    <h2 class="text-5xl md:text-6xl font-black text-[#071c4d] mb-4 relative inline-block">
+                        NEWS & UPDATES
+                        <span class="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-32 h-1.5 bg-yellow-400 rounded-full"></span>
+                    </h2>
+                    <p class="text-gray-600 text-lg mt-8">Stay informed with the latest happenings in Barangay Baliwasan</p>
+                </div>
+
+                <!-- FIRST NEWS - IFTAR -->
+                <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-200 mb-10">
+                    <!-- Carousel -->
+                    <div class="relative">
+                        <div class="relative h-[400px] md:h-[500px] overflow-hidden">
+                            <!-- Slide 1 -->
+                            <div class="carousel-slide absolute inset-0 opacity-100 transition-opacity duration-1000">
+                                <img src="resources/iftar-1.jpg" alt="FREE IFTAR Event" class="w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                            </div>
+                            <!-- Slide 2 -->
+                            <div class="carousel-slide absolute inset-0 opacity-0 transition-opacity duration-1000">
+                                <img src="resources/iftar-2.jpg" alt="Courtesy Call with Kapitan" class="w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                            </div>
+                            <!-- Slide 3 -->
+                            <div class="carousel-slide absolute inset-0 opacity-0 transition-opacity duration-1000">
+                                <img src="resources/iftar-3.jpg" alt="Partners MBLT and JJC" class="w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                            </div>
+                        </div>
+
+                        <!-- Carousel Controls - Semi-transparent -->
+                        <button onclick="changeSlide(0, -1)" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-lg transition-all z-30 backdrop-blur-sm">
+                            ←
+                        </button>
+                        <button onclick="changeSlide(0, 1)" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-lg transition-all z-30 backdrop-blur-sm">
+                            →
+                        </button>
+
+                        <!-- Indicators - No white background -->
+                        <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-30">
+                            <button onclick="currentSlide(0, 0)" class="carousel-indicator w-2 h-2 rounded-full bg-white/50 hover:bg-white transition-all" data-carousel="0" data-index="0"></button>
+                            <button onclick="currentSlide(0, 1)" class="carousel-indicator w-2 h-2 rounded-full bg-white/50 hover:bg-white transition-all" data-carousel="0" data-index="1"></button>
+                            <button onclick="currentSlide(0, 2)" class="carousel-indicator w-2 h-2 rounded-full bg-white/50 hover:bg-white transition-all" data-carousel="0" data-index="2"></button>
+                        </div>
+
+                        <!-- Date Badge - Solid color but not white -->
+                        <div class="absolute top-4 left-4 bg-yellow-500 text-black px-4 py-2 rounded-full font-bold text-sm z-30 shadow-lg flex items-center gap-2">
+                            <span>📅</span> March 4, 2026
+                        </div>
+
+                        <!-- Organization Badge -->
+                        <div class="absolute top-4 right-4 bg-[#071c4d] text-white px-4 py-2 rounded-full font-bold text-sm z-30 shadow-lg flex items-center gap-2">
+                            <span>⭐</span> JCI Estrellas de Zamboanga
+                        </div>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="p-8 md:p-10">
+                        <h3 class="text-3xl md:text-4xl font-bold text-[#071c4d] mb-4">
+                            FREE IFTAR <span class="text-yellow-500">🤲</span>
+                        </h3>
+                        <div class="prose prose-lg max-w-none">
+                            <p class="text-gray-700 text-lg md:text-xl leading-relaxed mb-6 italic">
+                                "Alhamdulillah! A day well spent with JCI Estrellas de Zamboanga March 4, 2026. 
+                                Served FREE IFTAR to our Muslim community going home in the middle of rush hour, 
+                                followed by a courtesy call to Kapitan Amie Cabato of Barangay Baliwasan. 
+                                Grateful for our partners MBLT and JJC! See you at the next one!"
+                            </p>
+                        </div>
+
+                        <!-- Tags -->
+                        <div class="flex flex-wrap gap-3 mt-6 mb-8">
+                            <span class="bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-bold">🤝 MBLT</span>
+                            <span class="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-bold">⭐ JJC</span>
+                            <span class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full text-sm font-bold">🌙 IFTAR 2026</span>
+                            <span class="bg-purple-100 text-purple-800 px-4 py-2 rounded-full text-sm font-bold">🤲 Community Service</span>
+                        </div>
+
+                        <!-- Location -->
+                        <div class="flex flex-wrap gap-6 text-gray-500 border-t border-gray-200 pt-6">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xl">📍</span>
+                                <span>Zamboanga City</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECOND NEWS - FIRE VICTIMS -->
+                <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-200 mb-10">
+                    <!-- Carousel -->
+                    <div class="relative">
+                        <div class="relative h-[400px] md:h-[500px] overflow-hidden">
+                            <!-- Slide 1 -->
+                            <div class="carousel-slide2 absolute inset-0 opacity-100 transition-opacity duration-1000">
+                                <img src="resources/fire-1.jpg" alt="Fire Victims Relief" class="w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                            </div>
+                            <!-- Slide 2 -->
+                            <div class="carousel-slide2 absolute inset-0 opacity-0 transition-opacity duration-1000">
+                                <img src="resources/fire-2.jpg" alt="Relief Distribution" class="w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                            </div>
+                            <!-- Slide 3 -->
+                            <div class="carousel-slide2 absolute inset-0 opacity-0 transition-opacity duration-1000">
+                                <img src="resources/fire-3.jpg" alt="Volunteers" class="w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                            </div>
+                        </div>
+
+                        <!-- Carousel Controls -->
+                        <button onclick="changeSlide(1, -1)" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-lg transition-all z-30 backdrop-blur-sm">
+                            ←
+                        </button>
+                        <button onclick="changeSlide(1, 1)" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-lg transition-all z-30 backdrop-blur-sm">
+                            →
+                        </button>
+
+                        <!-- Indicators -->
+                        <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-30">
+                            <button onclick="currentSlide(1, 0)" class="carousel-indicator2 w-2 h-2 rounded-full bg-white/50 hover:bg-white transition-all" data-carousel="1" data-index="0"></button>
+                            <button onclick="currentSlide(1, 1)" class="carousel-indicator2 w-2 h-2 rounded-full bg-white/50 hover:bg-white transition-all" data-carousel="1" data-index="1"></button>
+                            <button onclick="currentSlide(1, 2)" class="carousel-indicator2 w-2 h-2 rounded-full bg-white/50 hover:bg-white transition-all" data-carousel="1" data-index="2"></button>
+                        </div>
+
+                        <!-- Date Badge -->
+                        <div class="absolute top-4 left-4 bg-yellow-500 text-black px-4 py-2 rounded-full font-bold text-sm z-30 shadow-lg flex items-center gap-2">
+                            <span>📅</span> March 1, 2026
+                        </div>
+
+                        <!-- Organization Badge -->
+                        <div class="absolute top-4 right-4 bg-[#071c4d] text-white px-4 py-2 rounded-full font-bold text-sm z-30 shadow-lg flex items-center gap-2">
+                            <span>⭐</span> BALIWASAN HEALTH DISTRICT & CSWDO
+                        </div>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="p-8 md:p-10">
+                        <h3 class="text-3xl md:text-4xl font-bold text-[#071c4d] mb-4">
+                            FIRE VICTIMS <span class="text-yellow-500">🆘</span>
+                        </h3>
+                        <div class="prose prose-lg max-w-none">
+                            <p class="text-gray-700 text-lg md:text-xl leading-relaxed mb-6 italic">
+                                "Immediate relief assistance from the City Government,
+                                led by Mayor Khymer Olaso, was successfully distributed 
+                                to our fire victims. Grateful to the Baliwasan Health
+                                District, CSWDO, and all the volunteers for their hard work 
+                                on the ground."
+                            </p>
+                        </div>
+
+                        <!-- Tags -->
+                        <div class="flex flex-wrap gap-3 mt-6 mb-8">
+                            <span class="bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-bold">🤝 BALIWASAN HEALTH CENTER</span>
+                            <span class="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-bold">⭐ CSWDO</span>
+                            <span class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full text-sm font-bold">🆘 FIRE VICTIMS</span>
+                            <span class="bg-purple-100 text-purple-800 px-4 py-2 rounded-full text-sm font-bold">🤲 Community Service</span>
+                        </div>
+
+                        <!-- Location -->
+                        <div class="flex flex-wrap gap-6 text-gray-500 border-t border-gray-200 pt-6">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xl">📍</span>
+                                <span>Mangal Drive Baliwasan, Zamboanga City</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- THIRD NEWS - COMELEC -->
+                <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-200 mb-10">
+                    <!-- Carousel -->
+                    <div class="relative">
+                        <div class="relative h-[400px] md:h-[500px] overflow-hidden">
+                            <!-- Slide 1 -->
+                            <div class="carousel-slide3 absolute inset-0 opacity-100 transition-opacity duration-1000">
+                                <img src="resources/comelec-1.jpg" alt="COMELEC Registration" class="w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                            </div>
+                            <!-- Slide 2 -->
+                            <div class="carousel-slide3 absolute inset-0 opacity-0 transition-opacity duration-1000">
+                                <img src="resources/comelec-2.jpg" alt="Voter Registration" class="w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                            </div>
+                            <!-- Slide 3 -->
+                            <div class="carousel-slide3 absolute inset-0 opacity-0 transition-opacity duration-1000">
+                                <img src="resources/comelec-3.jpg" alt="Community Members" class="w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                            </div>
+                        </div>
+
+                        <!-- Carousel Controls -->
+                        <button onclick="changeSlide(2, -1)" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-lg transition-all z-30 backdrop-blur-sm">
+                            ←
+                        </button>
+                        <button onclick="changeSlide(2, 1)" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-lg transition-all z-30 backdrop-blur-sm">
+                            →
+                        </button>
+
+                        <!-- Indicators -->
+                        <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-30">
+                            <button onclick="currentSlide(2, 0)" class="carousel-indicator3 w-2 h-2 rounded-full bg-white/50 hover:bg-white transition-all" data-carousel="2" data-index="0"></button>
+                            <button onclick="currentSlide(2, 1)" class="carousel-indicator3 w-2 h-2 rounded-full bg-white/50 hover:bg-white transition-all" data-carousel="2" data-index="1"></button>
+                            <button onclick="currentSlide(2, 2)" class="carousel-indicator3 w-2 h-2 rounded-full bg-white/50 hover:bg-white transition-all" data-carousel="2" data-index="2"></button>
+                        </div>
+
+                        <!-- Date Badge -->
+                        <div class="absolute top-4 left-4 bg-yellow-500 text-black px-4 py-2 rounded-full font-bold text-sm z-30 shadow-lg flex items-center gap-2">
+                            <span>📅</span> March 4, 2026
+                        </div>
+
+                        <!-- Organization Badge -->
+                        <div class="absolute top-4 right-4 bg-[#071c4d] text-white px-4 py-2 rounded-full font-bold text-sm z-30 shadow-lg flex items-center gap-2">
+                            <span>⭐</span> COMELEC
+                        </div>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="p-8 md:p-10">
+                        <h3 class="text-3xl md:text-4xl font-bold text-[#071c4d] mb-4">
+                            COMELEC REGISTRATION <span class="text-yellow-500">🗳️</span>
+                        </h3>
+                        <div class="prose prose-lg max-w-none">
+                            <p class="text-gray-700 text-lg md:text-xl leading-relaxed mb-6 italic">
+                                "Successful COMELEC Satellite Registration for Barangay Baliwasan! 
+                                We were there to document as our community prepares for the BSKE 
+                                Election on November 2, 2026. Thank you to everyone who
+                                came out to register!"
+                            </p>
+                        </div>
+
+                        <!-- Tags -->
+                        <div class="flex flex-wrap gap-3 mt-6 mb-8">
+                            <span class="bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-bold">🤝 COMELEC</span>
+                            <span class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full text-sm font-bold">🗳️ 2028 ELECTION</span>
+                            <span class="bg-purple-100 text-purple-800 px-4 py-2 rounded-full text-sm font-bold">🤲 Community Service</span>
+                        </div>
+
+                        <!-- Location -->
+                        <div class="flex flex-wrap gap-6 text-gray-500 border-t border-gray-200 pt-6">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xl">📍</span>
+                                <span>Baliwasan Elementary School, Zamboanga City</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Related News Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+                    <!-- News Card 1 -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all">
+                        <div class="h-48 bg-gray-300 relative">
+                            <img src="resources/upcoming-event.jpg" alt="Upcoming Event" class="w-full h-full object-cover">
+                            <div class="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                                UPCOMING
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h4 class="font-bold text-lg mb-2">FREE IFTAR</h4>
+                            <p class="text-gray-600 text-sm">Join us for the next community iftar</p>
+                        </div>
+                    </div>
+
+                    <!-- News Card 2 -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all">
+                        <div class="h-48 bg-gray-300 relative">
+                            <img src="resources/prev-event.jpg" alt="Previous Event" class="w-full h-full object-cover">
+                            <div class="absolute top-2 left-2 bg-yellow-500 text-black px-2 py-1 rounded-full text-xs font-bold">
+                                FEB 2026
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h4 class="font-bold text-lg mb-2">Ramadhan Symposium</h4>
+                            <p class="text-gray-600 text-sm">Previous Event</p>
+                        </div>
+                    </div>
+
+                    <!-- News Card 3 -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all">
+                        <div class="h-48 bg-gray-300 relative">
+                            <img src="resources/spes.jpg" alt="SPES Applicants" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-4">
+                            <h4 class="font-bold text-lg mb-2">SPES APPLICANTS</h4>
+                            <p class="text-gray-600 text-sm">EYES HERE</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer id="contact" class="bg-white w-full border-t border-gray-200">
+        <div class="w-full px-4 md:px-8 lg:px-12 py-12">
+            <div class="max-w-7xl mx-auto">
+                <!-- Top Section -->
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
+                    <div class="flex items-center gap-4 flex-wrap">
+                        <div class="w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-[#0f442b] hover-scale">
+                            <img src="resources/logo.png" alt="Barangay Logo" class="w-full h-full object-cover">
+                        </div>
+                        <div class="w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-[#0f442b] hover-scale">
+                            <img src="resources/logo2.png" alt="Barangay Logo 2" class="w-full h-full object-cover">
+                        </div>
+                        <h2 class="text-2xl md:text-3xl font-bold text-[#0f442b] tracking-wide">BARANGAY BALIWASAN</h2>
+                    </div>
+                    <button class="bg-[#0f442b] hover:bg-green-800 text-white px-8 py-3 rounded-lg font-medium tracking-wide transition-all duration-300 shadow-md hover:shadow-xl hover-scale">
+                        Connect with Us
+                    </button>
+                </div>
+
+                <!-- Contact Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                    <div class="bg-gray-50 p-6 rounded-xl hover:shadow-lg transition-shadow">
+                        <h3 class="text-xl font-bold text-[#0f442b] mb-4 flex items-center">
+                            <span class="mr-2 text-2xl">📞</span> Contact Information
+                        </h3>
+                        <p class="text-gray-600 mb-2">Telephone: <span class="font-medium">0915 324 2171</span></p>
+                        <p class="text-gray-600">Email: 
+                            <a href="mailto:iannaellis.mg@gmail.com" class="text-[#0f442b] font-medium hover:underline">
+                                iannaellis.mg@gmail.com
+                            </a>
+                        </p>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-xl hover:shadow-lg transition-shadow">
+                        <h3 class="text-xl font-bold text-[#0f442b] mb-4 flex items-center">
+                            <span class="mr-2 text-2xl">📍</span> Our Location
+                        </h3>
+                        <p class="text-gray-600 mb-3">550 San Jose Road, Zamboanga City</p>
+                        <button onclick="openDirections()" 
+                            class="inline-flex items-center gap-2 text-sm bg-[#0f442b] hover:bg-green-800 text-white px-4 py-2 rounded-lg font-medium transition-all hover:shadow-md hover:scale-105">
+                            <span>🚗</span> Get Directions
+                            <span class="text-lg">→</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Emergency Section -->
+                <div class="bg-gradient-to-br from-[#f5f6f5] to-gray-100 rounded-2xl p-6 md:p-10 mb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Emergency Hotlines -->
+                        <div>
+                            <h3 class="text-xl md:text-2xl font-bold text-[#0f442b] mb-6 flex items-center">
+                                <span class="mr-2">🚨</span> CITY EMERGENCY HOTLINE
+                            </h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between border-b border-gray-300 pb-2">
+                                    <span class="font-bold text-[#0f442b]">ZCDRRMO</span>
+                                    <span class="text-[#0f442b] font-medium bg-white px-3 py-1 rounded-full">926-1848</span>
+                                </div>
+                                <div class="flex items-center justify-between border-b border-gray-300 pb-2">
+                                    <span class="font-bold text-[#0f442b]">EMS</span>
+                                    <span class="text-[#0f442b] font-medium bg-white px-3 py-1 rounded-full">926-1849</span>
+                                </div>
+                                <div class="flex items-center justify-between border-b border-gray-300 pb-2">
+                                    <span class="font-bold text-[#0f442b]">ZCPO / ZCPO HQ</span>
+                                    <span class="text-[#0f442b] font-medium bg-white px-3 py-1 rounded-full">0977-855-8138</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Social Links -->
+                        <div>
+                            <h3 class="text-xl md:text-2xl font-bold text-[#0f442b] mb-6 flex items-center">
+                                <span class="mr-2">🌐</span> Connect With Us
+                            </h3>
+                            <div class="space-y-4">
+                                <a href="#" class="flex items-center gap-3 p-3 bg-white rounded-lg hover:shadow-md transition-all">
+                                    <div class="w-10 h-10 bg-[#0f442b] rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                        f
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-[#0f442b]">Facebook</p>
+                                        <p class="text-sm text-gray-600">@ONEBALIWASAN</p>
+                                    </div>
+                                </a>
+                                <a href="mailto:iannaellis.mg@gmail.com" class="flex items-center gap-3 p-3 bg-white rounded-lg hover:shadow-md transition-all">
+                                    <div class="w-10 h-10 bg-[#0f442b] rounded-full flex items-center justify-center text-white text-lg">
+                                        ✉
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-[#0f442b]">Email Us</p>
+                                        <p class="text-sm text-gray-600">iannaellis.mg@gmail.com</p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Bar -->
+                <div class="flex flex-col md:flex-row justify-between items-center pt-6 text-gray-500 text-sm border-t border-gray-200">
+                    <p>© 2026 Barangay Baliwasan. All Rights Reserved</p>
+                    <div class="flex gap-4 md:gap-6 mt-3 md:mt-0">
+                        <a href="#" class="hover:text-[#0f442b] transition-colors">Privacy Policy</a>
+                        <a href="#" class="hover:text-[#0f442b] transition-colors">Terms & Conditions</a>
+                        <a href="#" class="hover:text-[#0f442b] transition-colors">Sitemap</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ALL SCRIPTS AT BOTTOM -->
+    <script>
+        // Clock function
+        function updatePortalClock() {
+            const now = new Date();
+            const options = { 
+                month: 'long', 
+                day: 'numeric', 
+                year: 'numeric',
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit',
+                hour12: true
+            };
+            
+            document.getElementById('portal-clock').innerText = now.toLocaleString('en-US', options);
+        }
+
+        // Get directions
+        function openDirections() {
+            const latitude = 6.9157146;
+            const longitude = 122.0600172;
+            const locationName = "Barangay Baliwasan, 550 San Jose Road, Zamboanga City";
+            
+            window.open(
+                `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}&destination_place_id=${encodeURIComponent(locationName)}&travelmode=driving`,
+                '_blank'
+            );
+        }
+
+        // Carousel variables
+        let carousels = [
+            { slides: [], indicators: [], currentIndex: 0 },
+            { slides: [], indicators: [], currentIndex: 0 },
+            { slides: [], indicators: [], currentIndex: 0 }
+        ];
+
+        // Initialize carousels
+        document.addEventListener('DOMContentLoaded', function() {
+            // First carousel
+            carousels[0].slides = document.querySelectorAll('.carousel-slide');
+            carousels[0].indicators = document.querySelectorAll('.carousel-indicator');
+            
+            // Second carousel
+            carousels[1].slides = document.querySelectorAll('.carousel-slide2');
+            carousels[1].indicators = document.querySelectorAll('.carousel-indicator2');
+            
+            // Third carousel
+            carousels[2].slides = document.querySelectorAll('.carousel-slide3');
+            carousels[2].indicators = document.querySelectorAll('.carousel-indicator3');
+            
+            // Initialize all carousels
+            showSlide(0, 0);
+            showSlide(1, 0);
+            showSlide(2, 0);
+            
+            // Auto advance all carousels every 5 seconds
+            setInterval(() => {
+                changeSlide(0, 1);
+                changeSlide(1, 1);
+                changeSlide(2, 1);
+            }, 5000);
+        });
+
+        function showSlide(carouselId, index) {
+            let slides = carousels[carouselId].slides;
+            let indicators = carousels[carouselId].indicators;
+            
+            if (!slides.length) return;
+            
+            // Loop around if out of bounds
+            if (index >= slides.length) index = 0;
+            if (index < 0) index = slides.length - 1;
+            
+            // Hide all slides
+            slides.forEach(slide => {
+                slide.style.opacity = '0';
+            });
+            
+            // Show current slide
+            slides[index].style.opacity = '1';
+            
+            // Update indicators
+            indicators.forEach((indicator, i) => {
+                if (i === index) {
+                    indicator.classList.add('bg-white');
+                    indicator.classList.remove('bg-white/50');
+                } else {
+                    indicator.classList.remove('bg-white');
+                    indicator.classList.add('bg-white/50');
+                }
+            });
+            
+            carousels[carouselId].currentIndex = index;
+        }
+
+        function changeSlide(carouselId, direction) {
+            showSlide(carouselId, carousels[carouselId].currentIndex + direction);
+        }
+
+        function currentSlide(carouselId, index) {
+            showSlide(carouselId, index);
+        }
+
+        // Start clock
+        setInterval(updatePortalClock, 1000);
+        updatePortalClock();
+    </script>
+</body>
+</html>

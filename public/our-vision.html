@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barangay Baliwasan | Official Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+<style>
+        html {
+            scroll-behavior: smooth;
+        }
+        .blend-screen {
+            mix-blend-mode: screen;
+        }
+        /* Custom animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 1s ease-out;
+        }
+        .hover-scale {
+            transition: transform 0.3s ease;
+        }
+        .hover-scale:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 font-sans text-gray-900">
+    <header class="bg-white border-b-2 border-yellow-400 flex flex-col w-full fixed top-0 z-50 shadow-md">
+        <div class="flex justify-between items-center px-6 py-3">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full bg-cover bg-center border-2 border-yellow-400 shadow-sm" style="background-image: url('resources/logo.png');">
+                </div>
+                <h1 class="text-xl md:text-2xl font-bold text-black tracking-wide uppercase">ONE BALIWASAN</h1>
+            </div>
+            <nav class="flex gap-2 flex-wrap justify-end">
+                <a href="index.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">HOME</a>
+                <a href="our-barangay.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">OUR BARANGAY</a>
+                <a href="#vision" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">VISION</a>
+                <a href="news-updates.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">NEWS & UPDATES</a>
+                <a href="queue.html" class="bg-yellow-500 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-600 uppercase ring-2 ring-offset-2 ring-yellow-400 transition-all">QUEUING SYSTEM</a>
+            </nav>
+        </div>
+        
+        <div class="bg-yellow-100 py-1.5 flex flex-col sm:flex-row justify-between items-center px-4 md:px-8 border-t border-yellow-300">
+            <div id="portal-clock" class="text-xs font-medium text-yellow-800 mb-1 sm:mb-0">Loading Date & Time...</div>
+            <div class="flex gap-2 w-full sm:w-auto">
+                <input type="text" placeholder="Search..." class="flex-1 sm:flex-none p-1 px-3 rounded text-xs border border-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:border-transparent">
+                <button class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-1 px-4 rounded text-xs transition-all hover:shadow-md">Search</button>
+            </div>
+        </div>
+    </header>
+<main class="mt-[132px] md:mt-[116px]">
+    <section id="vision" class="relative py-24 px-4 overflow-hidden">
+        <!-- Background with overlay -->
+        <div class="absolute inset-0 z-0">
+            <img src="resources/vision-bg.jpg" alt="Baliwasan Coast" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-r from-[#071c4d]/95 to-[#0a2a6e]/90"></div>
+        </div>
+        
+        <!-- Animated wave pattern -->
+        <div class="absolute bottom-0 left-0 right-0 z-10">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" class="w-full h-auto opacity-20">
+                <path fill="#ffffff" fill-opacity="1" d="M0,192L48,197.3C96,203,192,213,288,208C384,203,480,181,576,181.3C672,181,768,203,864,224C960,245,1056,267,1152,261.3C1248,256,1344,224,1392,208L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+            </svg>
+        </div>
+        
+        <!-- Content -->
+        <div class="relative z-20 max-w-5xl mx-auto text-center">
+            <!-- Vision Badge -->
+            <div class="inline-flex items-center gap-2 bg-yellow-400 text-black px-4 py-2 rounded-full mb-8 animate-bounce">
+               
+                <span class="font-bold uppercase tracking-wider">Our Vision 2026</span>
+            </div>
+            
+            <!-- Main Vision Text -->
+            <div class="bg-white/10 backdrop-blur-md p-8 md:p-12 rounded-3xl border-2 border-yellow-400/30 shadow-2xl">
+                <h2 class="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-8 leading-tight">
+                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-yellow-200">
+                        VISION
+                    </span>
+                </h2>
+                
+                <!-- The Vision Statement (from your image) -->
+                <p class="text-xl md:text-2xl lg:text-3xl text-white/95 leading-relaxed font-medium mb-12 relative">
+                    <span class="absolute -top-6 left-0 text-6xl text-yellow-400 opacity-50">"</span>
+                    To be a firm and resilient premier coastal community in Zamboanga City, 
+                    where disciplined citizens and transparent leadership work hand-in-hand 
+                    to build a solid foundation for safety, livelihood, and sustainable progress.
+                    <span class="absolute -bottom-6 right-0 text-6xl text-yellow-400 opacity-50">"</span>
+                </p>
+                
+                <!-- Key Pillars -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+                    <div class="bg-white/5 p-6 rounded-2xl border border-white/10 backdrop-blur-sm">
+                        <div class="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">🏛️</div>
+                        <h3 class="text-xl font-bold text-white mb-2">Transparent Leadership</h3>
+                        <p class="text-white/70 text-sm">Open governance for all</p>
+                    </div>
+                    <div class="bg-white/5 p-6 rounded-2xl border border-white/10 backdrop-blur-sm">
+                        <div class="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">🤝</div>
+                        <h3 class="text-xl font-bold text-white mb-2">Disciplined Citizens</h3>
+                        <p class="text-white/70 text-sm">Community-driven progress</p>
+                    </div>
+                    <div class="bg-white/5 p-6 rounded-2xl border border-white/10 backdrop-blur-sm">
+                        <div class="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">🌊</div>
+                        <h3 class="text-xl font-bold text-white mb-2">Coastal Progress</h3>
+                        <p class="text-white/70 text-sm">Sustainable development</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Decorative Elements -->
+            <div class="flex justify-center gap-4 mt-8">
+                <div class="w-2 h-2 bg-yellow-400 rounded-full animate-ping"></div>
+                <div class="w-2 h-2 bg-yellow-400 rounded-full animate-ping animation-delay-200"></div>
+                <div class="w-2 h-2 bg-yellow-400 rounded-full animate-ping animation-delay-400"></div>
+            </div>
+        </div>
+    </section>    
+
+</main>
+    <footer id="contact" class="bg-white w-full border-t border-gray-200">
+        <div class="w-full px-4 md:px-8 lg:px-12 py-12">
+            <div class="max-w-7xl mx-auto">
+          
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
+                    <div class="flex items-center gap-4 flex-wrap">
+                        <div class="w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-[#0f442b] hover-scale">
+                            <img src="resources/logo.png" alt="Barangay Logo" class="w-full h-full object-cover">
+                        </div>
+                        <div class="w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-[#0f442b] hover-scale">
+                            <img src="resources/logo2.png" alt="Barangay Logo 2" class="w-full h-full object-cover">
+                        </div>
+                        <h2 class="text-2xl md:text-3xl font-bold text-[#0f442b] tracking-wide">BARANGAY BALIWASAN</h2>
+                    </div>
+                    <button class="bg-[#0f442b] hover:bg-green-800 text-white px-8 py-3 rounded-lg font-medium tracking-wide transition-all duration-300 shadow-md hover:shadow-xl hover-scale">
+                        Connect with Us
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                    <div class="bg-gray-50 p-6 rounded-xl hover:shadow-lg transition-shadow">
+                        <h3 class="text-xl font-bold text-[#0f442b] mb-4 flex items-center">
+                            <span class="mr-2 text-2xl">📞</span> Contact Information
+                        </h3>
+                        <p class="text-gray-600 mb-2">Telephone: <span class="font-medium">0915 324 2171</span></p>
+                        <p class="text-gray-600">Email: 
+                            <a href="mailto:iannaellis.mg@gmail.com" class="text-[#0f442b] font-medium hover:underline">
+                                iannaellis.mg@gmail.com
+                            </a>
+                        </p>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-xl hover:shadow-lg transition-shadow">
+                        <h3 class="text-xl font-bold text-[#0f442b] mb-4 flex items-center">
+                            <span class="mr-2 text-2xl">📍</span> Our Location
+                        </h3>
+                        <p class="text-gray-600 mb-3">550 San Jose Road, Zamboanga City</p>
+                        <button onclick="openDirections()" 
+                            class="inline-flex items-center gap-2 text-sm bg-[#0f442b] hover:bg-green-800 text-white px-4 py-2 rounded-lg font-medium transition-all hover:shadow-md hover:scale-105">
+                            <span>🚗</span> Get Directions
+                            <span class="text-lg">→</span>
+                        </button>
+                    </div>
+                </div>
+
+              
+                <div class="bg-gradient-to-br from-[#f5f6f5] to-gray-100 rounded-2xl p-6 md:p-10 mb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    
+                        <div>
+                            <h3 class="text-xl md:text-2xl font-bold text-[#0f442b] mb-6 flex items-center">
+                                <span class="mr-2">🚨</span> CITY EMERGENCY HOTLINE
+                            </h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between border-b border-gray-300 pb-2">
+                                    <span class="font-bold text-[#0f442b]">ZCDRRMO</span>
+                                    <span class="text-[#0f442b] font-medium bg-white px-3 py-1 rounded-full">926-1848</span>
+                                </div>
+                                <div class="flex items-center justify-between border-b border-gray-300 pb-2">
+                                    <span class="font-bold text-[#0f442b]">EMS</span>
+                                    <span class="text-[#0f442b] font-medium bg-white px-3 py-1 rounded-full">926-1849</span>
+                                </div>
+                                <div class="flex items-center justify-between border-b border-gray-300 pb-2">
+                                    <span class="font-bold text-[#0f442b]">ZCPO / ZCPO HQ</span>
+                                    <span class="text-[#0f442b] font-medium bg-white px-3 py-1 rounded-full">0977-855-8138</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-xl md:text-2xl font-bold text-[#0f442b] mb-6 flex items-center">
+                                <span class="mr-2">🌐</span> Connect With Us
+                            </h3>
+                            <div class="space-y-4">
+                                <a href="#" class="flex items-center gap-3 p-3 bg-white rounded-lg hover:shadow-md transition-all">
+                                    <div class="w-10 h-10 bg-[#0f442b] rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                        f
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-[#0f442b]">Facebook</p>
+                                        <p class="text-sm text-gray-600">@ONEBALIWASAN</p>
+                                    </div>
+                                </a>
+                                <a href="mailto:iannaellis.mg@gmail.com" class="flex items-center gap-3 p-3 bg-white rounded-lg hover:shadow-md transition-all">
+                                    <div class="w-10 h-10 bg-[#0f442b] rounded-full flex items-center justify-center text-white text-lg">
+                                        ✉
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-[#0f442b]">Email Us</p>
+                                        <p class="text-sm text-gray-600">iannaellis.mg@gmail.com</p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+           
+                <div class="flex flex-col md:flex-row justify-between items-center pt-6 text-gray-500 text-sm border-t border-gray-200">
+                    <p>© 2026 Barangay Baliwasan. All Rights Reserved</p>
+                    <div class="flex gap-4 md:gap-6 mt-3 md:mt-0">
+                        <a href="#" class="hover:text-[#0f442b] transition-colors">Privacy Policy</a>
+                        <a href="#" class="hover:text-[#0f442b] transition-colors">Terms & Conditions</a>
+                        <a href="#" class="hover:text-[#0f442b] transition-colors">Sitemap</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </footer>
+
+
+<style>
+    @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+        100% { transform: translateY(0px); }
+    }
+    
+    .animate-float {
+        animation: float 3s ease-in-out infinite;
+    }
+    
+    .animation-delay-200 {
+        animation-delay: 0.2s;
+    }
+    
+    .animation-delay-400 {
+        animation-delay: 0.4s;
+    }
+    
+    /* Wave animation */
+    .wave {
+        animation: wave 10s linear infinite;
+    }
+</style>
+
+<script>
+       // clock
+    function updatePortalClock() {
+            const now = new Date();
+            const options = { 
+                month: 'long', 
+                day: 'numeric', 
+                year: 'numeric',
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit',
+                hour12: true
+            };
+            const clockElement = document.getElementById('portal-clock');
+            if (clockElement) {
+                clockElement.innerText = now.toLocaleString('en-US', options);
+            }
+        }
+        setInterval(updatePortalClock, 1000);
+        updatePortalClock();
+
+
+        //get directions pop up
+        function openDirections() {
+       
+        const latitude = 6.9157146;
+        const longitude = 122.0600172;
+        const locationName = "Barangay Baliwasan, 550 San Jose Road, Zamboanga City";
+        
+        
+        window.open(
+             `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}&destination_place_id=${encodeURIComponent(locationName)}&travelmode=driving`,
+            '_blank'
+        );
+        }
+</script>
