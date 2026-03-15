@@ -1157,6 +1157,10 @@ video {
   border-top-width: 8px;
 }
 
+.border-r-2 {
+  border-right-width: 2px;
+}
+
 .border-dashed {
   border-style: dashed;
 }
@@ -1505,6 +1509,10 @@ video {
   padding-top: 1.5rem;
 }
 
+.pb-4 {
+  padding-bottom: 1rem;
+}
+
 .text-left {
   text-align: left;
 }
@@ -1749,6 +1757,11 @@ video {
   color: rgb(22 163 74 / var(--tw-text-opacity, 1));
 }
 
+.text-\[\#071c4d\] {
+  --tw-text-opacity: 1;
+  color: rgb(7 28 77 / var(--tw-text-opacity, 1));
+}
+
 .underline {
   text-decoration-line: underline;
 }
@@ -1891,6 +1904,10 @@ video {
 
 .duration-500 {
   transition-duration: 500ms;
+}
+
+.duration-1000 {
+  transition-duration: 1000ms;
 }
 
 .ease-in-out {

@@ -86,9 +86,6 @@
                         <span>OPEN DASHBOARD</span>
                         <span>&nearr;</span>
                     </button>
-                    <button id="btn-export-data" class="bg-white hover:bg-gray-50 text-gray-600 border-2 border-gray-200 font-bold py-3 px-4 rounded-xl transition-all uppercase tracking-widest text-xs">
-                        DOWNLOAD CSV REPORT
-                    </button>
                 </div>
             </div>
             
@@ -185,10 +182,6 @@
                 mediaFileInput.classList.add('hidden');
                 mediaUrlInput.classList.add('hidden');
             }
-        });
-
-        document.getElementById('btn-export-data').addEventListener('click', () => {
-            window.open('/export', '_blank');
         });
 
         document.getElementById('btn-open-analytics').addEventListener('click', () => {

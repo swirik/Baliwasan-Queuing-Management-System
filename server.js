@@ -93,7 +93,7 @@ db.get("SELECT state_json FROM system_state WHERE id = 1", (err, row) => {
 
 function saveState() {
     const stateStr = JSON.stringify(queueState);
-    db.run("INSERT OR REPLACE INTO system_state (id, state_json) VALUES (1, ?)", [stateStr]);
+    db.run("INSERT OR REPLACE INTO system_state (id, state_json) VALUES (1, ?)");
 }
 
 function sortQueue() {
@@ -111,12 +111,38 @@ function sortQueue() {
 function getTodayDate() {
     const now = new Date();
     const offset = now.getTimezoneOffset() * 60000;
-    const localISOTime = (new Date(now - offset)).toISOString().split('T')[0];
-    return localISOTime;
+    return (new Date(now - offset)).toISOString().split('T')[0];
+}
+
+function broadcastAnalytics() {
+    const today = getTodayDate();
+    db.all("SELECT * FROM ticket_history WHERE scheduledDate = ?", [today], (err, rows) => {
+        if (err) return;
+        const total = rows.length;
+        let pwdCount = 0;
+        const serviceCounts = {};
+        
+        rows.forEach(r => {
+            if (r.priority === 'PWD / SENIOR') pwdCount++;
+            serviceCounts[r.document] = (serviceCounts[r.document] || 0) + 1;
+        });
+
+        const sortedServices = Object.entries(serviceCounts)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 4)
+            .map(item => ({ name: item[0], count: item[1] }));
+
+        io.emit('analyticsData', { total, pwdCount, topServices: sortedServices });
+    });
 }
 
 io.on('connection', (socket) => {
     socket.emit('queueUpdated', queueState);
+    broadcastAnalytics();
+
+    socket.on('getAnalytics', () => {
+        broadcastAnalytics();
+    });
 
     socket.on('joinQueue', (data) => {
         queueState.ticketCounter++;
@@ -147,7 +173,9 @@ io.on('connection', (socket) => {
         saveState();
 
         db.run("INSERT INTO ticket_history (ticketNumber, name, contact, priority, document, scheduledDate) VALUES (?, ?, ?, ?, ?, ?)", 
-            [newTicket.ticketNumber, newTicket.name, newTicket.contact, newTicket.priority, newTicket.document, newTicket.date]);
+            [newTicket.ticketNumber, newTicket.name, newTicket.contact, newTicket.priority, newTicket.document, newTicket.date], () => {
+                broadcastAnalytics();
+            });
 
         io.emit('queueUpdated', queueState);
         socket.emit('ticketIssued', { ticket: newTicket, ewt: ewt, isToday: isToday });
@@ -168,7 +196,9 @@ io.on('connection', (socket) => {
         saveState();
 
         db.run("INSERT INTO ticket_history (ticketNumber, name, contact, priority, document, scheduledDate) VALUES (?, ?, ?, ?, ?, ?)", 
-            [queueState.ticketCounter, 'Walk-in', 'N/A', data.priority, data.document, walkInDate]);
+            [queueState.ticketCounter, 'Walk-in', 'N/A', data.priority, data.document, walkInDate], () => {
+                broadcastAnalytics();
+            });
 
         io.emit('queueUpdated', queueState);
     });

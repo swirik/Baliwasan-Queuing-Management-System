@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Analytics Dashboard - Barangay Baliwasan</title>
+    <link href="output.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 h-screen font-sans text-gray-900 p-8 overflow-y-auto">
+
+    <div class="max-w-6xl mx-auto flex flex-col gap-8">
+        
+        <header class="flex justify-between items-end border-b-4 border-[#FFD500] pb-4">
+            <div>
+                <h1 class="text-3xl font-black uppercase tracking-widest text-[#071c4d]">Daily System Analytics</h1>
+                <p class="text-gray-500 font-bold uppercase tracking-wide text-sm mt-1" id="current-date-display">Loading Date...</p>
+            </div>
+            <button id="btn-export-data" class="bg-black hover:bg-gray-800 text-[#FFD500] font-black py-3 px-6 rounded-xl shadow-lg transition-all uppercase tracking-widest text-sm flex gap-2 items-center">
+                <span>EXPORT TO CSV</span>
+                <span>&darr;</span>
+            </button>
+        </header>
+
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white p-8 rounded-3xl shadow-sm border-2 border-black flex flex-col justify-center items-center">
+                <h2 class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-2">Total Tickets Issued Today</h2>
+                <div id="stat-total" class="text-7xl font-black text-black">0</div>
+            </div>
+            
+            <div class="bg-white p-8 rounded-3xl shadow-sm border-2 border-[#FFD500] flex flex-col justify-center items-center">
+                <h2 class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-2">PWD / Senior Citizens Handled</h2>
+                <div id="stat-pwd" class="text-7xl font-black text-[#FFD500]">0</div>
+            </div>
+        </section>
+
+        <section class="bg-white p-8 rounded-3xl shadow-sm border border-gray-200">
+            <h2 class="text-lg font-black text-gray-800 uppercase tracking-widest mb-8 border-b pb-4">Top Services Demanded</h2>
+            <div id="stat-services" class="flex flex-col gap-6">
+                <div class="text-center py-10 text-gray-400 font-medium uppercase text-sm tracking-widest">No data collected yet today</div>
+            </div>
+        </section>
+
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        const dateOptions = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
+        document.getElementById('current-date-display').innerText = new Date().toLocaleDateString('en-US', dateOptions);
+
+        document.getElementById('btn-export-data').addEventListener('click', () => {
+            window.open('/export', '_blank');
+        });
+
+        socket.emit('getAnalytics');
+
+        socket.on('analyticsData', (data) => {
+            document.getElementById('stat-total').innerText = data.total;
+            document.getElementById('stat-pwd').innerText = data.pwdCount;
+            
+            const servicesContainer = document.getElementById('stat-services');
+            servicesContainer.innerHTML = '';
+            
+            if (!data.topServices || data.topServices.length === 0) {
+                servicesContainer.innerHTML = '<div class="text-center py-10 text-gray-400 font-medium uppercase text-sm tracking-widest">No data collected yet today</div>';
+                return;
+            }
+
+            const maxCount = data.topServices[0].count;
+            
+            data.topServices.forEach(srv => {
+                const widthPercent = Math.max((srv.count / maxCount) * 100, 10);
+                const el = document.createElement('div');
+                el.className = 'flex flex-col gap-2 w-full';
+                el.innerHTML = `
+                    <div class="flex justify-between items-end text-sm font-bold text-gray-700 uppercase tracking-wide">
+                        <span>${srv.name}</span>
+                        <span class="text-black font-black text-lg">${srv.count}</span>
+                    </div>
+                    <div class="w-full bg-gray-100 rounded-full h-4 overflow-hidden">
+                        <div class="bg-[#FFD500] h-4 rounded-full border-r-2 border-black transition-all duration-1000" style="width: ${widthPercent}%"></div>
+                    </div>
+                `;
+                servicesContainer.appendChild(el);
+            });
+        });
+    </script>
+</body>
+</html>
