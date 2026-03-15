@@ -11,7 +11,7 @@
     <div id="sms-toast" class="hidden fixed top-4 left-1/2 -translate-x-1/2 bg-white border-l-8 border-[#FFD500] p-5 rounded-2xl shadow-2xl w-[90%] max-w-sm z-50 transform transition-all duration-500 -translate-y-[150%]">
         <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-2">
-                <div class="bg-green-600 text-white text-[10px] px-2 py-1 rounded font-black tracking-widest uppercase">Messages</div>
+                <div class="bg-black text-[#FFD500] text-[10px] px-2 py-1 rounded font-black tracking-widest uppercase">Messages</div>
                 <span class="text-xs text-gray-400 font-bold">now</span>
             </div>
         </div>
@@ -19,14 +19,99 @@
         <div class="text-sm text-gray-600 mt-1 font-medium" id="sms-message"></div>
     </div>
 
-    <div id="step-1" class="bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-md border-t-8 border-[#FFD500] transition-all my-8">
-        <div class="text-center mb-8">
-             <img src="resources/logo.png" alt="Logo" class="w-16 h-16 rounded-full mx-auto mb-4 shadow-md object-contain">
-            <h1 class="text-xl md:text-2xl font-black uppercase tracking-widest text-gray-900">Step 1: Details</h1>
-            <p class="text-gray-500 text-xs md:text-sm mt-2">Enter your info and queue type</p>
+    <button id="btn-show-queue" class="hidden fixed bottom-6 right-6 bg-[#FFD500] text-black px-6 py-4 rounded-full font-black shadow-lg z-40 uppercase tracking-widest text-xs border-2 border-black hover:scale-105 transition-transform">
+        LIVE QUEUE
+    </button>
+
+    <div id="mobile-queue-screen" class="hidden fixed inset-0 bg-[#FFF9E2] z-[100] flex-col overflow-y-auto">
+        <div class="bg-black p-6 flex justify-between items-center shrink-0 border-b-4 border-[#FFD500] sticky top-0 z-10">
+            <h1 class="text-[#FFD500] font-black text-lg tracking-widest uppercase">Queue Status</h1>
+            <button id="btn-hide-queue" class="text-white font-bold uppercase text-[10px] tracking-wider bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition-colors">&times; CLOSE</button>
+        </div>
+        
+        <div class="p-6 flex-1 flex flex-col gap-6 max-w-md mx-auto w-full">
+            <div class="bg-white rounded-3xl shadow-lg border-t-8 border-[#FFD500] p-6 text-center shrink-0">
+                <h2 class="text-gray-500 font-black tracking-widest uppercase mb-4 text-xs">Now Serving</h2>
+                <div id="mobile-serving-ticket" class="text-[5rem] font-black text-gray-900 leading-none mb-4 tracking-tighter drop-shadow-sm">----</div>
+                <div id="mobile-serving-counter" class="text-lg font-black text-black bg-[#FFD500] px-6 py-2 rounded-xl uppercase tracking-widest inline-block mb-3 border-2 border-[#FFDC2E]">--</div>
+                <div id="mobile-serving-doc" class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">SYSTEM STANDBY</div>
+            </div>
+            
+            <div class="bg-white rounded-3xl shadow-lg border-t-8 border-gray-900 flex flex-col flex-1 overflow-hidden shrink-0">
+                <div class="bg-gray-50 p-5 border-b border-gray-100 flex justify-between items-center shrink-0">
+                    <h2 class="text-xs font-black text-gray-800 tracking-widest uppercase">Up Next</h2>
+                    <span id="mobile-waiting-count" class="bg-[#FFD500] text-black font-black px-3 py-1 rounded-md text-xs shadow-sm">0</span>
+                </div>
+                <div id="mobile-waiting-list" class="p-4 flex flex-col gap-3">
+                    <div class="text-center py-10 text-gray-300 font-bold uppercase text-xs tracking-wider">Queue is empty</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="step-1" class="bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-4xl border-t-8 border-[#FFD500] my-8 relative z-10">
+        <div class="flex items-center justify-between mb-8">
+            <div class="flex-1 text-center px-2">
+                <h1 class="text-xl md:text-2xl font-black uppercase tracking-widest text-gray-900">Step 1: Transaction</h1>
+                <p class="text-gray-500 text-xs md:text-sm mt-1">Select the service you need</p>
+            </div>
         </div>
 
-        <form id="step-1-form" class="space-y-5 md:space-y-6">
+        <div class="mb-8">
+            <h3 class="text-xs md:text-sm font-bold text-gray-400 uppercase tracking-widest mb-3 text-center md:text-left">Special Events</h3>
+            <div class="grid grid-cols-1 gap-4">
+                <button class="doc-btn bg-[#FFF394] hover:bg-[#FFD500] border-2 border-[#FFD500] text-black font-black py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-sm tracking-wide" data-doc="Ayuda / Cash Assistance">
+                    ⭐ Ayuda / Cash Assistance
+                </button>
+            </div>
+        </div>
+
+        <div>
+            <h3 class="text-xs md:text-sm font-bold text-gray-400 uppercase tracking-widest mb-3 text-center md:text-left">Standard Documents</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4" id="document-grid">
+                <button class="doc-btn bg-gray-50 border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm hover:border-[#FFD500] hover:bg-[#FFD500]" data-doc="Barangay Clearance">Barangay Clearance</button>
+                <button class="doc-btn bg-gray-50 border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm hover:border-[#FFD500] hover:bg-[#FFD500]" data-doc="Barangay ID">Barangay ID</button>
+                <button class="doc-btn bg-gray-50 border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm hover:border-[#FFD500] hover:bg-[#FFD500]" data-doc="Building and Fencing Permit">Building & Fencing Permit</button>
+                <button class="doc-btn bg-gray-50 border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm hover:border-[#FFD500] hover:bg-[#FFD500]" data-doc="Business Clearance/Permit">Business Clearance</button>
+                <button class="doc-btn bg-gray-50 border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm hover:border-[#FFD500] hover:bg-[#FFD500]" data-doc="Certificate of Indigency">Certificate of Indigency</button>
+                <button class="doc-btn bg-gray-50 border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm hover:border-[#FFD500] hover:bg-[#FFD500]" data-doc="Certificate of Residency">Certificate of Residency</button>
+                <button class="doc-btn bg-gray-50 border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm hover:border-[#FFD500] hover:bg-[#FFD500]" data-doc="First Time Jobseeker">First Time Jobseeker</button>
+                <button class="doc-btn bg-gray-50 border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm hover:border-[#FFD500] hover:bg-[#FFD500]" data-doc="Fit to Work Certificate">Fit to Work Certificate</button>
+                <button class="doc-btn bg-gray-50 border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm hover:border-[#FFD500] hover:bg-[#FFD500]" data-doc="Solo Parent Certification">Solo Parent Certification</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="step-2" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-md border-t-8 border-[#FFD500] transition-all my-8 relative z-10">
+        <div class="flex items-center justify-between mb-8">
+            <button id="btn-back-to-1" class="text-gray-400 hover:text-black font-bold uppercase text-xs md:text-sm tracking-wide shrink-0">&larr; Back</button>
+            <div class="flex-1 text-center px-2">
+                <h1 class="text-xl md:text-2xl font-black uppercase tracking-widest text-gray-900">Step 2: Schedule</h1>
+            </div>
+            <div class="w-12 shrink-0"></div>
+        </div>
+        <form id="step-2-form" class="space-y-5 md:space-y-6">
+            <div>
+                <label class="block text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">Select Date</label>
+                <input type="date" id="user-date" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] focus:ring-0 outline-none transition-colors bg-gray-50 text-sm md:text-base font-bold text-gray-800">
+            </div>
+            <button type="submit" class="w-full bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-4 px-4 rounded-xl shadow-lg text-base md:text-lg transition-all uppercase tracking-wide mt-4 flex justify-between items-center">
+                <span>Continue</span>
+                <span>&rarr;</span>
+            </button>
+        </form>
+    </div>
+
+    <div id="step-3" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-md border-t-8 border-[#FFD500] transition-all my-8 relative z-10">
+        <div class="flex items-center justify-between mb-8">
+            <button id="btn-back-to-2" class="text-gray-400 hover:text-black font-bold uppercase text-xs md:text-sm tracking-wide shrink-0">&larr; Back</button>
+            <div class="flex-1 text-center px-2">
+                <h1 class="text-xl md:text-2xl font-black uppercase tracking-widest text-gray-900">Step 3: Details</h1>
+            </div>
+            <div class="w-12 shrink-0"></div>
+        </div>
+
+        <form id="step-3-form" class="space-y-5 md:space-y-6">
             <div>
                 <label class="block text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">Full Name</label>
                 <input type="text" id="user-name" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] focus:ring-0 outline-none transition-colors bg-gray-50 text-sm md:text-base">
@@ -46,71 +131,62 @@
             </div>
 
             <button type="submit" class="w-full bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-4 px-4 rounded-xl shadow-lg text-base md:text-lg transition-all uppercase tracking-wide mt-4 flex justify-between items-center">
-                <span>Continue</span>
+                <span>Review</span>
                 <span>&rarr;</span>
             </button>
         </form>
     </div>
 
-    <div id="step-2" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-4xl border-t-8 border-[#FFD500] my-8">
-        <div class="flex items-center justify-between mb-8">
-            <button id="btn-back-to-1" class="text-gray-400 hover:text-black font-bold uppercase text-xs md:text-sm tracking-wide shrink-0">&larr; Back</button>
-            <div class="flex-1 text-center px-2">
-                <h1 class="text-xl md:text-2xl font-black uppercase tracking-widest text-gray-900">Step 2: Transaction</h1>
-                <p class="text-gray-500 text-xs md:text-sm mt-1">Tap the service you need</p>
-            </div>
-            <div class="w-12 shrink-0"></div>
-        </div>
-
-        <div class="mb-8">
-            <h3 class="text-xs md:text-sm font-bold text-gray-400 uppercase tracking-widest mb-3 text-center md:text-left">Special Events</h3>
-            <div class="grid grid-cols-1 gap-4">
-                <button class="doc-btn bg-green-50 hover:bg-green-100 border-2 border-green-200 text-green-800 font-black py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-sm tracking-wide" data-doc="Ayuda / Cash Assistance">
-                    ⭐ Ayuda / Cash Assistance
-                </button>
-            </div>
-        </div>
-
-        <div>
-            <h3 class="text-xs md:text-sm font-bold text-gray-400 uppercase tracking-widest mb-3 text-center md:text-left">Standard Documents</h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4" id="document-grid">
-                <button class="doc-btn bg-gray-50 hover:bg-[#FFD500] hover:border-[#FFD500] border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm" data-doc="Barangay Clearance">Barangay Clearance</button>
-                <button class="doc-btn bg-gray-50 hover:bg-[#FFD500] hover:border-[#FFD500] border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm" data-doc="Barangay ID">Barangay ID</button>
-                <button class="doc-btn bg-gray-50 hover:bg-[#FFD500] hover:border-[#FFD500] border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm" data-doc="Building and Fencing Permit">Building & Fencing Permit</button>
-                <button class="doc-btn bg-gray-50 hover:bg-[#FFD500] hover:border-[#FFD500] border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm" data-doc="Business Clearance/Permit">Business Clearance</button>
-                <button class="doc-btn bg-gray-50 hover:bg-[#FFD500] hover:border-[#FFD500] border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm" data-doc="Certificate of Indigency">Certificate of Indigency</button>
-                <button class="doc-btn bg-gray-50 hover:bg-[#FFD500] hover:border-[#FFD500] border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm" data-doc="Certificate of Residency">Certificate of Residency</button>
-                <button class="doc-btn bg-gray-50 hover:bg-[#FFD500] hover:border-[#FFD500] border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm" data-doc="First Time Jobseeker">First Time Jobseeker</button>
-                <button class="doc-btn bg-gray-50 hover:bg-[#FFD500] hover:border-[#FFD500] border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm" data-doc="Fit To Work Certificate">Fit To Work Certificate</button>
-                <button class="doc-btn bg-gray-50 hover:bg-[#FFD500] hover:border-[#FFD500] border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm" data-doc="Solo Parent Certification">Solo Parent Certification</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="step-confirm" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-md border-t-8 border-[#FFD500] text-center my-8">
+    <div id="step-4" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-md border-t-8 border-[#FFD500] text-center my-8 relative z-10">
         <h2 class="text-xl md:text-2xl font-black uppercase tracking-widest text-gray-900 mb-2">Confirm Request</h2>
         <p class="text-gray-500 text-sm md:text-base mb-8">Please review your transaction details.</p>
 
-        <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 mb-8 text-left">
-            <p class="text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Selected Service</p>
-            <p id="confirm-doc-name" class="text-lg font-black text-[#071c4d] mb-4">---</p>
-            
-            <p class="text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Queue Priority</p>
-            <p id="confirm-priority" class="text-sm font-bold text-gray-700 bg-white inline-block px-3 py-1 rounded border border-gray-200">---</p>
+        <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 mb-8 text-left space-y-4">
+            <div>
+                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Selected Service</p>
+                <p id="confirm-doc-name" class="text-base font-black text-black">---</p>
+            </div>
+            <div>
+                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Scheduled Date</p>
+                <p id="confirm-date" class="text-sm font-bold text-gray-900">---</p>
+            </div>
+            <div>
+                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Queue Priority</p>
+                <p id="confirm-priority" class="text-xs font-bold text-gray-700 bg-white inline-block px-2 py-1 rounded border border-gray-200">---</p>
+            </div>
         </div>
 
         <div class="flex gap-4">
-            <button id="btn-cancel-confirm" class="flex-1 border-2 border-gray-200 text-gray-500 hover:text-gray-800 hover:border-gray-400 font-bold py-4 rounded-xl transition-all uppercase tracking-wide text-sm">Cancel</button>
-            <button id="btn-confirm-queue" class="flex-1 bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-4 rounded-xl shadow-md transition-all uppercase tracking-wide text-sm">Confirm</button>
+            <button id="btn-cancel-confirm" class="flex-1 border-2 border-gray-200 text-gray-500 hover:text-gray-800 hover:border-gray-400 font-bold py-4 rounded-xl transition-all uppercase tracking-wide text-sm">Back</button>
+            <button id="btn-proceed-consent" class="flex-1 bg-black hover:bg-gray-800 text-[#FFD500] font-black py-4 rounded-xl shadow-md transition-all uppercase tracking-wide text-sm">Continue</button>
         </div>
     </div>
 
-    <div id="ticket-result" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-md border-2 border-[#FFD500] text-center my-8">
+    <div id="step-5" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-md border-t-8 border-gray-900 transition-all my-8 relative z-10">
+        <div class="flex items-center justify-between mb-8">
+            <button id="btn-back-to-4" class="text-gray-400 hover:text-black font-bold uppercase text-xs md:text-sm tracking-wide shrink-0">&larr; Back</button>
+            <div class="flex-1 text-center px-2"></div>
+            <div class="w-12 shrink-0"></div>
+        </div>
+        <div class="text-center mb-6">
+            <img src="resources/logo.png" alt="Logo" class="w-16 h-16 rounded-full mx-auto mb-4 shadow-md object-contain">
+            <h1 class="text-xl md:text-2xl font-black uppercase tracking-widest text-gray-900">DATA PRIVACY ACT OF 2012</h1>
+            <p class="text-gray-500 font-bold text-xs md:text-sm mt-2 uppercase tracking-wide">Consent Agreement</p>
+        </div>
+        <div class="text-xs md:text-sm text-gray-600 mb-8 h-40 overflow-y-auto bg-gray-50 p-4 rounded-xl border border-gray-200">
+            By proceeding, you explicitly consent to the collection, processing, and storage of your personal data (Name and Contact Number) by Barangay Baliwasan for the sole purpose of facilitating your queue transaction and administrative documentation. Your data will be kept strictly confidential in compliance with Republic Act No. 10173 (Data Privacy Act of 2012) and will not be shared with unauthorized third parties.
+        </div>
+        <button id="btn-submit-queue" class="w-full bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-4 px-4 rounded-xl shadow-lg text-base md:text-lg transition-all uppercase tracking-wide">
+            I AGREE & SUBMIT
+        </button>
+    </div>
+
+    <div id="ticket-result" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-md border-2 border-[#FFD500] text-center my-8 relative z-10">
         <h2 class="text-lg md:text-xl font-bold text-gray-500 uppercase tracking-wider mb-2">Your Ticket Number</h2>
         <div id="my-ticket-number" class="text-6xl md:text-7xl font-black text-gray-900 mb-6 drop-shadow-sm">---</div>
-        <p class="text-sm md:text-base text-gray-600 mb-8 font-medium leading-relaxed">Please wait. We will simulate an SMS notification when it is your turn.</p>
+        <p class="text-sm md:text-base text-gray-600 mb-8 font-medium leading-relaxed">Please save this ticket. If you scheduled for a future date, present this number upon arrival.</p>
         <button onclick="window.location.reload()" class="border-2 border-gray-200 text-gray-500 px-6 py-2 rounded-full font-bold hover:border-[#FFD500] hover:text-black transition-colors uppercase tracking-wide text-xs md:text-sm">
-            Get Another Ticket
+            Done
         </button>
     </div>
 
@@ -120,26 +196,44 @@
         
         const step1 = document.getElementById('step-1');
         const step2 = document.getElementById('step-2');
-        const stepConfirm = document.getElementById('step-confirm');
+        const step3 = document.getElementById('step-3');
+        const step4 = document.getElementById('step-4');
+        const step5 = document.getElementById('step-5');
         const ticketResult = document.getElementById('ticket-result');
+        const mobileQueueScreen = document.getElementById('mobile-queue-screen');
+        const btnShowQueue = document.getElementById('btn-show-queue');
+        
         const smsToast = document.getElementById('sms-toast');
         const smsMessage = document.getElementById('sms-message');
         
         const confirmDocName = document.getElementById('confirm-doc-name');
+        const confirmDate = document.getElementById('confirm-date');
         const confirmPriority = document.getElementById('confirm-priority');
 
-        let pendingUser = { name: '', contact: '', priority: '', document: '' };
+        let pendingUser = { name: '', contact: '', priority: '', document: '', date: '' };
         let myAssignedTicket = null;
 
-        document.getElementById('step-1-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            pendingUser.name = document.getElementById('user-name').value;
-            pendingUser.contact = document.getElementById('user-contact').value;
-            pendingUser.priority = document.getElementById('user-priority').value;
-            
-            step1.classList.add('hidden');
-            step2.classList.remove('hidden');
-            window.scrollTo(0, 0);
+        document.getElementById('user-date').valueAsDate = new Date();
+        document.getElementById('user-date').min = new Date().toISOString().split("T")[0];
+
+        btnShowQueue.addEventListener('click', () => {
+            mobileQueueScreen.classList.remove('hidden');
+            mobileQueueScreen.classList.add('flex');
+        });
+
+        document.getElementById('btn-hide-queue').addEventListener('click', () => {
+            mobileQueueScreen.classList.add('hidden');
+            mobileQueueScreen.classList.remove('flex');
+        });
+
+        document.querySelectorAll('.doc-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                if (e.target.disabled) return;
+                pendingUser.document = e.target.getAttribute('data-doc');
+                step1.classList.add('hidden');
+                step2.classList.remove('hidden');
+                window.scrollTo(0, 0);
+            });
         });
 
         document.getElementById('btn-back-to-1').addEventListener('click', () => {
@@ -147,42 +241,112 @@
             step1.classList.remove('hidden');
         });
 
-        document.querySelectorAll('.doc-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                pendingUser.document = e.target.getAttribute('data-doc');
-                
-                confirmDocName.innerText = pendingUser.document;
-                confirmPriority.innerText = pendingUser.priority;
-
-                step2.classList.add('hidden');
-                stepConfirm.classList.remove('hidden');
-                window.scrollTo(0, 0);
-            });
+        document.getElementById('step-2-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            pendingUser.date = document.getElementById('user-date').value;
+            step2.classList.add('hidden');
+            step3.classList.remove('hidden');
+            window.scrollTo(0, 0);
         });
 
-        document.getElementById('btn-cancel-confirm').addEventListener('click', () => {
-            stepConfirm.classList.add('hidden');
+        document.getElementById('btn-back-to-2').addEventListener('click', () => {
+            step3.classList.add('hidden');
             step2.classList.remove('hidden');
         });
 
-        document.getElementById('btn-confirm-queue').addEventListener('click', () => {
+        document.getElementById('step-3-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            pendingUser.name = document.getElementById('user-name').value;
+            pendingUser.contact = document.getElementById('user-contact').value;
+            pendingUser.priority = document.getElementById('user-priority').value;
+            
+            confirmDocName.innerText = pendingUser.document;
+            confirmDate.innerText = pendingUser.date;
+            confirmPriority.innerText = pendingUser.priority;
+
+            step3.classList.add('hidden');
+            step4.classList.remove('hidden');
+            window.scrollTo(0, 0);
+        });
+
+        document.getElementById('btn-cancel-confirm').addEventListener('click', () => {
+            step4.classList.add('hidden');
+            step3.classList.remove('hidden');
+        });
+
+        document.getElementById('btn-proceed-consent').addEventListener('click', () => {
+            step4.classList.add('hidden');
+            step5.classList.remove('hidden');
+            window.scrollTo(0, 0);
+        });
+
+        document.getElementById('btn-back-to-4').addEventListener('click', () => {
+            step5.classList.add('hidden');
+            step4.classList.remove('hidden');
+        });
+
+        document.getElementById('btn-submit-queue').addEventListener('click', () => {
             socket.emit('joinQueue', { 
                 name: pendingUser.name, 
                 contact: pendingUser.contact, 
                 priority: pendingUser.priority,
-                document: pendingUser.document 
+                document: pendingUser.document,
+                date: pendingUser.date
             });
         });
 
         socket.on('ticketIssued', (ticket) => {
-            stepConfirm.classList.add('hidden');
+            step5.classList.add('hidden');
             ticketResult.classList.remove('hidden');
+            btnShowQueue.classList.remove('hidden');
             window.scrollTo(0, 0);
             myAssignedTicket = ticket.ticketNumber;
             document.getElementById('my-ticket-number').innerText = myAssignedTicket.toString().padStart(4, '0');
         });
 
         socket.on('queueUpdated', (state) => {
+            
+            document.getElementById('mobile-serving-ticket').innerText = state.lastCalled && state.lastCalled.ticket ? state.lastCalled.ticket.toString().padStart(4, '0') : "----";
+            document.getElementById('mobile-serving-counter').innerText = state.lastCalled && state.lastCalled.counter ? `COUNTER ${state.lastCalled.counter}` : "--";
+            document.getElementById('mobile-serving-doc').innerText = state.lastCalled && state.lastCalled.document ? state.lastCalled.document : "SYSTEM STANDBY";
+
+            document.getElementById('mobile-waiting-count').innerText = state.waitingList.length;
+            const mobileList = document.getElementById('mobile-waiting-list');
+            mobileList.innerHTML = '';
+
+            if (state.waitingList.length === 0) {
+                mobileList.innerHTML = '<div class="text-center py-10 text-gray-300 font-bold uppercase text-xs tracking-wider">Queue is empty</div>';
+            } else {
+                state.waitingList.forEach(item => {
+                    const badgeColor = item.priority === 'PWD / SENIOR' ? 'bg-black text-[#FFD500] border-gray-800' : 'bg-white text-gray-600 border-gray-200';
+                    const el = document.createElement('div');
+                    el.className = 'flex justify-between items-center p-4 border border-gray-100 rounded-2xl bg-gray-50 shadow-sm';
+                    el.innerHTML = `
+                        <div class="font-black text-3xl text-gray-900">${item.ticketNumber.toString().padStart(4, '0')}</div>
+                        <div class="text-[9px] font-black uppercase ${badgeColor} px-2 py-1 rounded border tracking-widest">${item.priority}</div>
+                    `;
+                    mobileList.appendChild(el);
+                });
+            }
+
+            const disabledList = state.disabledServices || [];
+            document.querySelectorAll('.doc-btn').forEach(btn => {
+                const docName = btn.getAttribute('data-doc');
+                if (disabledList.includes(docName)) {
+                    btn.disabled = true;
+                    btn.classList.add('opacity-30', 'cursor-not-allowed', 'bg-gray-200');
+                    btn.classList.remove('hover:border-[#FFD500]', 'hover:bg-[#FFD500]', 'hover:bg-[#FFDC2E]');
+                } else {
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-30', 'cursor-not-allowed', 'bg-gray-200');
+                    if(docName === 'Ayuda / Cash Assistance') {
+                        btn.classList.add('hover:bg-[#FFD500]');
+                    } else {
+                        btn.classList.add('hover:border-[#FFD500]', 'hover:bg-[#FFD500]');
+                    }
+                }
+            });
+
             if (myAssignedTicket !== null) {
                 const servingCounter = state.counters.find(c => c.currentTicket === myAssignedTicket);
                 
