@@ -1,0 +1,2343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barangay Baliwasan | Official Portal</title>
+    <link href="output.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-50 font-sans text-gray-900">
+    
+   
+    <header class="bg-white border-b-2 border-yellow-400 flex flex-col w-full fixed top-0 z-50 shadow-md">
+        <div class="flex justify-between items-center px-6 py-3">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full bg-cover bg-center border-2 border-yellow-400 shadow-sm" style="background-image: url('resources/logo.png');"></div>
+                <h1 class="text-xl md:text-2xl font-bold text-black tracking-wide uppercase">ADMIN</h1>
+                <p class="text-xs text-yellow-500">ONE BALIWASAN</p>
+            </div>
+            <nav class="flex gap-2 flex-wrap justify-end">
+                <a href="admin.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">DASHBOARD</a>
+                <a href="citizen-profiling.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">CITIZEN PROFILING</a>
+                <a href="news&update-admin.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">NEWS & UPDATES</a>
+                <a href="queue.html" class="bg-yellow-500 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-600 uppercase ring-2 ring-offset-2 ring-yellow-400 transition-all">QUEUING SYSTEM</a>
+            </nav>
+        </div>
+        
+        <div class="bg-yellow-100 py-1.5 flex flex-col sm:flex-row justify-between items-center px-4 md:px-8 border-t border-yellow-300">
+            <div id="portal-clock" class="text-xs font-medium text-yellow-800 mb-1 sm:mb-0">Loading Date & Time...</div>
+            <div class="flex gap-2 w-full sm:w-auto">
+                <input type="text" placeholder="Search..." class="flex-1 sm:flex-none p-1 px-3 rounded text-xs border border-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:border-transparent">
+                <button class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-1 px-4 rounded text-xs transition-all hover:shadow-md">Search</button>
+            </div>
+        </div>
+
+       
+        <div class="bg-[#0a2a6e] px-8 py-3 flex flex-wrap gap-8 text-white" alt="quick updates">
+            <div class="flex items-center gap-2"><span>Active Tickets: <strong>24</strong></span></div>
+            <div class="flex items-center gap-2"><span>In Queue: <strong>18</strong></span></div>
+            <div class="flex items-center gap-2"><span>Avg. Wait: <strong>12 min</strong></span></div>
+        </div>
+    </header>
+
+   
+    <div class="flex pt-[136px] min-h-screen" alt="side bar">
+        
+        
+        <aside class="w-64 bg-[#071c4d] text-white fixed h-[calc(100vh-136px)] overflow-y-auto custom-scrollbar">
+           
+            
+            <nav class="px-4 space-y-1 pb-8 p-10" alt="navigation bar">
+                <button onclick="showSection('dashboard')" class="sidebar-item w-full text-left flex items-center gap-3 px-4 py-3 rounded-lg text-sm" id="nav-dashboard">Dashboard</button>
+                <button onclick="showSection('profiling')" class="sidebar-item w-full text-left flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-white/80 hover:text-white" id="nav-profiling">Resident Profiling</button>
+                <button onclick="showSection('employment')" class="sidebar-item w-full text-left flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-white/80 hover:text-white" id="nav-employment">Employment Tracking</button>
+                <button onclick="showSection('employers')" class="sidebar-item w-full text-left flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-white/80 hover:text-white" id="nav-employers">Employers</button>
+                
+           
+                <div class="pt-4 pb-2">
+                    <div class="text-xs text-yellow-400 font-semibold px-4 py-1 uppercase tracking-wider">SERVICES</div>
+                    <button onclick="showSection('cdsp')" class="sidebar-item w-full text-left flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-white/80 hover:text-white pl-8" id="nav-cdsp">CDSP</button>
+                    <button onclick="showSection('livelihood')" class="sidebar-item w-full text-left flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-white/80 hover:text-white pl-8" id="nav-livelihood">Livelihood</button>
+                    <button onclick="showSection('accreditation')" class="sidebar-item w-full text-left flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-white/80 hover:text-white pl-8" id="nav-accreditation">Employment Accreditation</button>
+                    <button onclick="showSection('skills')" class="sidebar-item w-full text-left flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-white/80 hover:text-white pl-8" id="nav-skills">Skills Training</button>
+                </div>
+                
+                <button onclick="showSection('reports')" class="sidebar-item w-full text-left flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-white/80 hover:text-white" id="nav-reports">Reports</button>
+                
+                <div class="border-t border-white/20 my-4"></div>
+                
+                <button onclick="showSection('settings')" class="sidebar-item w-full text-left flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-white/80 hover:text-white" id="nav-settings">⚙️ Settings</button>
+                
+            
+                <div class="pt-4 mt-4 text-xs text-white/40 border-t border-white/20" alt="nav footer">
+                    <p>Version 1.0.0</p>
+                    <p>© 2026 Barangay Baliwasan</p>
+                </div>
+            </nav>
+        </aside>
+
+     
+        <main class="flex-1 ml-64 p-8">
+            
+            
+            <div  id="page-title" class="hidden" alt="dashboard">
+                
+            </div>
+            
+             
+            
+                <div id="section-dashboard" class="section">
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-white rounded-xl shadow-sm p-4"><p class="text-sm text-gray-500">Total Beneficiaries</p><p class="text-2xl font-bold">56</p></div>
+                        <div class="bg-white rounded-xl shadow-sm p-4"><p class="text-sm text-gray-500">Employed</p><p class="text-2xl font-bold">24</p></div>
+                        <div class="bg-white rounded-xl shadow-sm p-4"><p class="text-sm text-gray-500">Unemployed</p><p class="text-2xl font-bold">18</p></div>
+                        <div class="bg-white rounded-xl shadow-sm p-4"><p class="text-sm text-gray-500">Self-Employed</p><p class="text-2xl font-bold">14</p></div>
+                    </div>
+
+                   
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <div class="bg-white rounded-xl shadow-sm p-4">
+                            <h3 class="text-lg font-bold text-[#071c4d] mb-4">Enrollment by Academic Year</h3>
+                            <canvas id="enrollmentChart" height="200"></canvas>
+                        </div>
+                        <div class="bg-white rounded-xl shadow-sm p-4">
+                            <h3 class="text-lg font-bold text-[#071c4d] mb-4">Employment Status by Education Level</h3>
+                            <div class="space-y-4">
+                                <div><div class="flex justify-between text-sm mb-1"><span>Elementary</span><span>24</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-yellow-400 h-2 rounded-full" style="width: 40%"></div></div></div>
+                                <div><div class="flex justify-between text-sm mb-1"><span>High School</span><span>18</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-yellow-400 h-2 rounded-full" style="width: 30%"></div></div></div>
+                                <div><div class="flex justify-between text-sm mb-1"><span>College</span><span>12</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-yellow-400 h-2 rounded-full" style="width: 20%"></div></div></div>
+                                <div><div class="flex justify-between text-sm mb-1"><span>Vocational</span><span>10</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-yellow-400 h-2 rounded-full" style="width: 17%"></div></div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                  
+                    <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                        <h3 class="text-lg font-bold text-[#071c4d] mb-4">Unemployment Trend by Year</h3>
+                        <div class="grid grid-cols-4 gap-4 text-center mb-4">
+                            <div class="p-3 bg-gray-50 rounded-lg"><p class="text-sm text-gray-500">2021-2022</p><p class="text-xl font-bold text-red-600">0</p></div>
+                            <div class="p-3 bg-gray-50 rounded-lg"><p class="text-sm text-gray-500">2022-2023</p><p class="text-xl font-bold text-red-600">8</p></div>
+                            <div class="p-3 bg-gray-50 rounded-lg"><p class="text-sm text-gray-500">2023-2024</p><p class="text-xl font-bold text-red-600">12</p></div>
+                            <div class="p-3 bg-gray-50 rounded-lg"><p class="text-sm text-gray-500">2025-2026</p><p class="text-xl font-bold text-red-600">16</p></div>
+                        </div>
+                    </div>
+
+                 
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6" alt="recent beneficiarires">
+                        <div class="lg:col-span-2 bg-white rounded-xl shadow-sm p-6">
+                            <h3 class="text-lg font-bold text-[#071c4d] mb-4">Recent Beneficiaries</h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm">
+                                    <thead class="bg-gray-50"><tr><th class="px-4 py-2 text-left">Name</th><th class="px-4 py-2 text-left">Location</th><th class="px-4 py-2 text-left">Academic Year</th><th class="px-4 py-2 text-left">Date Enrolled</th><th class="px-4 py-2 text-left">Status</th></tr></thead>
+                                    <tbody class="divide-y">
+                                        <tr><td class="px-4 py-2">Miguel Villarosa</td><td class="px-4 py-2">Mangal</td><td class="px-4 py-2">2025-2026</td><td class="px-4 py-2">6/07/2024</td><td class="px-4 py-2"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Completed</span></td></tr>
+                                        <tr><td class="px-4 py-2">Sofia Ramos</td><td class="px-4 py-2">Ranches</td><td class="px-4 py-2">2025-2026</td><td class="px-4 py-2">27/02/2025</td><td class="px-4 py-2"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Completed</span></td></tr>
+                                        <tr><td class="px-4 py-2">Carlos Reyes</td><td class="px-4 py-2">Acacia Drive</td><td class="px-4 py-2">2025-2026</td><td class="px-4 py-2">15/03/2025</td><td class="px-4 py-2"><span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs">Pending</span></td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+         
+            <div id="section-profiling" class="section hidden" alt="resident-profiling">
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                    <div class="flex justify-between items-center mb-4">
+                       
+                        <div class="flex gap-2">
+                            <button class="bg-gray-100 hover:bg-green-600 text-black hover:text-white px-4 py-2 rounded-lg text-sm">Export</button>
+                            <button class="bg-gray-100 hover:bg-red-600 text-black hover:text-white px-4 py-2 rounded-lg text-sm">Print</button>
+                            <button class="bg-[#071c4d] text-white hover:bg-[#0a2a6e] px-4 py-2 rounded-lg text-sm">+ Add Resident</button>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-4 items-center mt-4">
+                        <div class="flex items-center gap-2">
+                            <label class="text-sm font-medium text-gray-700">Employment:</label>
+                            <select class="border rounded-lg px-3 py-2 text-sm">
+                                <option>All</option><option>Employed</option><option>Unemployed</option><option>Self-Employed</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <label class="text-sm font-medium text-gray-700">Beneficiary:</label>
+                            <select class="border rounded-lg px-3 py-2 text-sm">
+                                <option>All</option><option>Yes</option><option>No</option>
+                            </select>
+                        </div>
+                        <input type="text" placeholder="Search by name..." class="border rounded-lg px-3 py-2 text-sm flex-1">
+                        <button class="bg-[#071c4d] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#0a2a6e]">Search</button>
+                    </div>
+                </div>
+                
+        
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-xl shadow-sm p-6"><p class="text-sm text-gray-500">Total Residents</p><p class="text-3xl font-bold text-black">156</p></div>
+                    <div class="bg-white rounded-xl shadow-sm p-6"><p class="text-sm text-gray-500">Beneficiaries</p><p class="text-3xl font-bold text-black">78</p></div>
+                    <div class="bg-white rounded-xl shadow-sm p-6"><p class="text-sm text-gray-500">Employed</p><p class="text-3xl font-bold text-black">42</p></div>
+                    <div class="bg-white rounded-xl shadow-sm p-6"><p class="text-sm text-gray-500">Unemployed</p><p class="text-3xl font-bold text-black">36</p></div>
+                </div>
+                
+           
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h3 class="text-lg font-bold text-[#071c4d] mb-4">Age Distribution</h3>
+                        <canvas id="ageChart" height="200"></canvas>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h3 class="text-lg font-bold text-[#071c4d] mb-4">Education Level</h3>
+                        <canvas id="educationChart" height="200"></canvas>
+                    </div>
+                </div>
+                
+             
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50">
+                                <tr><th class="px-4 py-3 text-left">Name</th><th class="px-4 py-3 text-left">Gender</th><th class="px-4 py-3 text-left">Age</th><th class="px-4 py-3 text-left">Location</th><th class="px-4 py-3 text-left">Education</th><th class="px-4 py-3 text-left">Employment Status</th><th class="px-4 py-3 text-left">Industry</th><th class="px-4 py-3 text-left">Income Range</th><th class="px-4 py-3 text-left">Academic Year</th><th class="px-4 py-3 text-left">Beneficiary</th><th class="px-4 py-3 text-left">Actions</th></tr>
+                            </thead>
+                            <tbody class="divide-y">
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-medium">Carlos Reyes</td><td class="px-4 py-3">Male</td><td class="px-4 py-3">53</td><td class="px-4 py-3">Aquino Drive</td><td class="px-4 py-3">College</td>
+                                    <td class="px-4 py-3"><span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs">Unemployed</span></td>
+                                    <td class="px-4 py-3">N/A</td><td class="px-4 py-3">N/A</td><td class="px-4 py-3">2023-2024</td>
+                                    <td class="px-4 py-3"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Yes</span></td>
+                                    <td class="px-4 py-3"><button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button><button class="text-red-600 hover:text-red-800">Delete</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                 
+                    <div class="flex items-center justify-between mt-6">
+                        <p class="text-sm text-gray-600">Showing 1 to 6 of 156 entries</p>
+                        <div class="flex gap-2">
+                            <button class="px-3 py-1 border rounded hover:bg-gray-50">Previous</button>
+                            <button class="px-3 py-1 bg-[#071c4d] text-white rounded">1</button>
+                            <button class="px-3 py-1 border rounded hover:bg-gray-50">2</button>
+                            <button class="px-3 py-1 border rounded hover:bg-gray-50">3</button>
+                            <button class="px-3 py-1 border rounded hover:bg-gray-50">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+           
+            <div id="section-employment" class="section hidden" alt="employment-tracking">
+               
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <p class="text-sm text-gray-500">Total Labor Force</p>
+                        <p class="text-3xl font-bold text-black">156</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <p class="text-sm text-gray-500">Employed</p>
+                        <p class="text-3xl font-bold text-black">78</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <p class="text-sm text-gray-500">Unemployed</p>
+                        <p class="text-3xl font-bold text-black">42</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <p class="text-sm text-gray-500">Self-Employed</p>
+                        <p class="text-3xl font-bold text-black">36</p>
+                    </div>
+                </div>
+
+                
+                <div class="bg-white rounded-xl shadow-sm p-4 mb-8 flex flex-wrap gap-4 items-center justify-between">
+                    <div class="flex flex-wrap gap-4 items-center">
+                        <div class="flex items-center gap-2">
+                            <label class="text-sm font-medium text-gray-700">Year:</label>
+                            <select class="border rounded-lg px-3 py-2 text-sm">
+                                <option>All Years</option>
+                                <option>2025-2026</option>
+                                <option>2024-2025</option>
+                                <option>2023-2024</option>
+                                <option>2022-2023</option>
+                                <option>2021-2022</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <label class="text-sm font-medium text-gray-700">Status:</label>
+                            <select class="border rounded-lg px-3 py-2 text-sm">
+                                <option>All</option>
+                                <option>Employed</option>
+                                <option>Unemployed</option>
+                                <option>Self-Employed</option>
+                            </select>
+                        </div>
+                        <button class="bg-[#071c4d] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#0a2a6e]">
+                            Apply Filters
+                        </button>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 flex items-center gap-2">
+                             Export Report
+                        </button>
+                        <button class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 flex items-center gap-2">
+                             Add Record
+                        </button>
+                    </div>
+                </div>
+
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                 
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-bold text-[#071c4d]">Employment Trend</h3>
+                            <span class="text-xs bg-gray-100 px-2 py-1 rounded">Last 5 Years</span>
+                        </div>
+                        <canvas id="employmentTrendChart" height="200"></canvas>
+                    </div>
+
+                  
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h3 class="text-lg font-bold text-[#071c4d] mb-4">Employment by Industry</h3>
+                        <div class="space-y-4">
+                            <div><div class="flex justify-between text-sm mb-1"><span>Healthcare</span><span>24</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-yellow-400 h-2 rounded-full" style="width: 31%"></div></div></div>
+                            <div><div class="flex justify-between text-sm mb-1"><span>Retail</span><span>18</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-yellow-400  h-2 rounded-full" style="width: 23%"></div></div></div>
+                            <div><div class="flex justify-between text-sm mb-1"><span>Education</span><span>15</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-yellow-400  h-2 rounded-full" style="width: 19%"></div></div></div>
+                            <div><div class="flex justify-between text-sm mb-1"><span>Construction</span><span>12</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-yellow-400  h-2 rounded-full" style="width: 15%"></div></div></div>
+                            <div><div class="flex justify-between text-sm mb-1"><span>IT/Technology</span><span>9</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-yellow-400  h-2 rounded-full" style="width: 12%"></div></div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                  
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h3 class="text-lg font-bold text-[#071c4d] mb-4">Unemployment by Barangay</h3>
+                        <div class="space-y-4">
+                            <div><div class="flex justify-between text-sm mb-1"><span>Mabuhay</span><span class="text-red-600">12</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-red-500 h-2 rounded-full" style="width: 29%"></div></div></div>
+                            <div><div class="flex justify-between text-sm mb-1"><span>Tagaytay</span><span class="text-red-600">8</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-red-500 h-2 rounded-full" style="width: 19%"></div></div></div>
+                            <div><div class="flex justify-between text-sm mb-1"><span>Malubog</span><span class="text-red-600">7</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-red-500 h-2 rounded-full" style="width: 17%"></div></div></div>
+                            <div><div class="flex justify-between text-sm mb-1"><span>Caniangan</span><span class="text-red-600">10</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-red-500 h-2 rounded-full" style="width: 24%"></div></div></div>
+                            <div><div class="flex justify-between text-sm mb-1"><span>Poblacion</span><span class="text-red-600">5</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-red-500 h-2 rounded-full" style="width: 12%"></div></div></div>
+                        </div>
+                    </div>
+
+                  
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h3 class="text-lg font-bold text-[#071c4d] mb-4">Income Distribution</h3>
+                        <div class="space-y-4">
+                            <div><div class="flex justify-between text-sm mb-1"><span>Below ₱10,000</span><span>15</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-blue-500 h-2 rounded-full" style="width: 19%"></div></div></div>
+                            <div><div class="flex justify-between text-sm mb-1"><span>₱10,000 - ₱15,000</span><span>22</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-blue-500 h-2 rounded-full" style="width: 28%"></div></div></div>
+                            <div><div class="flex justify-between text-sm mb-1"><span>₱15,000 - ₱25,000</span><span>24</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-blue-500 h-2 rounded-full" style="width: 31%"></div></div></div>
+                            <div><div class="flex justify-between text-sm mb-1"><span>₱25,000 - ₱35,000</span><span>12</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-blue-500 h-2 rounded-full" style="width: 15%"></div></div></div>
+                            <div><div class="flex justify-between text-sm mb-1"><span>₱35,000+</span><span>5</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-blue-500 h-2 rounded-full" style="width: 6%"></div></div></div>
+                        </div>
+                    </div>
+                </div>
+
+              
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold text-[#071c4d]">Employment Records</h3>
+                        <div class="flex gap-2">
+                            <button class="text-sm text-gray-600 hover:text-gray-800">Copy</button>
+                            <button class="text-sm text-gray-600 hover:text-gray-800">CSV</button>
+                            <button class="text-sm text-gray-600 hover:text-gray-800">PDF</button>
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left">Name</th>
+                                    <th class="px-4 py-3 text-left">Age</th>
+                                    <th class="px-4 py-3 text-left">Gender</th>
+                                    <th class="px-4 py-3 text-left">Location</th>
+                                    <th class="px-4 py-3 text-left">Education</th>
+                                    <th class="px-4 py-3 text-left">Employment Status</th>
+                                    <th class="px-4 py-3 text-left">Industry</th>
+                                    <th class="px-4 py-3 text-left">Income Range</th>
+                                    <th class="px-4 py-3 text-left">Year</th>
+                                    <th class="px-4 py-3 text-left">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y">
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-medium">Miguel Villarosa</td>
+                                    <td class="px-4 py-3">22</td>
+                                    <td class="px-4 py-3">Male</td>
+                                    <td class="px-4 py-3">Manggal</td>
+                                    <td class="px-4 py-3">High School</td>
+                                    <td class="px-4 py-3"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Employed</span></td>
+                                    <td class="px-4 py-3">Healthcare</td>
+                                    <td class="px-4 py-3">₱25,000-35,000</td>
+                                    <td class="px-4 py-3">2021-2022</td>
+                                    <td class="px-4 py-3">
+                                        <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                                        <button class="text-red-600 hover:text-red-800">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-medium">Sofia Ramos</td>
+                                    <td class="px-4 py-3">63</td>
+                                    <td class="px-4 py-3">Female</td>
+                                    <td class="px-4 py-3">Aquino Drive</td>
+                                    <td class="px-4 py-3">Elementary</td>
+                                    <td class="px-4 py-3"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Employed</span></td>
+                                    <td class="px-4 py-3">Retail</td>
+                                    <td class="px-4 py-3">₱35,000+</td>
+                                    <td class="px-4 py-3">2023-2024</td>
+                                    <td class="px-4 py-3">
+                                        <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                                        <button class="text-red-600 hover:text-red-800">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-medium">Carlos Reyes</td>
+                                    <td class="px-4 py-3">53</td>
+                                    <td class="px-4 py-3">Male</td>
+                                    <td class="px-4 py-3">Ranchez Drive</td>
+                                    <td class="px-4 py-3">College</td>
+                                    <td class="px-4 py-3"><span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs">Unemployed</span></td>
+                                    <td class="px-4 py-3">N/A</td>
+                                    <td class="px-4 py-3">N/A</td>
+                                    <td class="px-4 py-3">2023-2024</td>
+                                    <td class="px-4 py-3">
+                                        <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                                        <button class="text-red-600 hover:text-red-800">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-medium">Isabel Villarosa</td>
+                                    <td class="px-4 py-3">44</td>
+                                    <td class="px-4 py-3">Female</td>
+                                    <td class="px-4 py-3">Acacia Drive</td>
+                                    <td class="px-4 py-3">College</td>
+                                    <td class="px-4 py-3"><span class="bg-yellow-100 text-purple-800 px-2 py-1 rounded-full text-xs">Self-Employed</span></td>
+                                    <td class="px-4 py-3">N/A</td>
+                                    <td class="px-4 py-3">N/A</td>
+                                    <td class="px-4 py-3">2025-2026</td>
+                                    <td class="px-4 py-3">
+                                        <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                                        <button class="text-red-600 hover:text-red-800">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-medium">Laura Bautista</td>
+                                    <td class="px-4 py-3">34</td>
+                                    <td class="px-4 py-3">Female</td>
+                                    <td class="px-4 py-3">Newslane</td>
+                                    <td class="px-4 py-3">High School</td>
+                                    <td class="px-4 py-3"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Employed</span></td>
+                                    <td class="px-4 py-3">Healthcare</td>
+                                    <td class="px-4 py-3">₱15,000-25,000</td>
+                                    <td class="px-4 py-3">2023-2024</td>
+                                    <td class="px-4 py-3">
+                                        <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                                        <button class="text-red-600 hover:text-red-800">Delete</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                  
+                    <div class="flex items-center justify-between mt-6">
+                        <p class="text-sm text-gray-600">Showing 1 to 5 of 78 entries</p>
+                        <div class="flex gap-2">
+                            <button class="px-3 py-1 border rounded hover:bg-gray-50">Previous</button>
+                            <button class="px-3 py-1 bg-[#071c4d] text-white rounded">1</button>
+                            <button class="px-3 py-1 border rounded hover:bg-gray-50">2</button>
+                            <button class="px-3 py-1 border rounded hover:bg-gray-50">3</button>
+                            <button class="px-3 py-1 border rounded hover:bg-gray-50">4</button>
+                            <button class="px-3 py-1 border rounded hover:bg-gray-50">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        <div id="section-employers" class="section hidden" alt="employers">
+           
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <h3 class="text-2xl font-bold text-[#071c4d]">Manage and track employer partners</h3>
+                        <p class="text-sm text-gray-500 mt-1"></p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="bg-[#071c4d] text-white hover:bg-[#0a2a6e] px-4 py-2 rounded-lg text-sm flex items-center gap-2">
+                            Add Employer
+                        </button>
+                        <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm flex items-center gap-2">
+                            Export
+                        </button>
+                    </div>
+                </div>
+                
+             
+                <div class="flex flex-wrap gap-4 items-center">
+                    <div class="flex-1 min-w-[300px]">
+                        <div class="relative">
+                            <input type="text" placeholder="Search by company name, industry, or location..." 
+                                class="w-full border rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                            
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <select class="border rounded-lg px-3 py-2 text-sm">
+                            <option>All Industries</option>
+                            <option>Retail</option>
+                            <option>Government</option>
+                            <option>Finance</option>
+                            <option>IT/Technology</option>
+                            <option>Healthcare</option>
+                            <option>Education</option>
+                            <option>Construction</option>
+                        </select>
+                        <select class="border rounded-lg px-3 py-2 text-sm">
+                            <option>All Locations</option>
+                            <option>Malubog</option>
+                            <option>Silanga</option>
+                            <option>Tagaytay</option>
+                            <option>Mabuhay</option>
+                            <option>Poblacion</option>
+                        </select>
+                        <select class="border rounded-lg px-3 py-2 text-sm">
+                            <option>All Status</option>
+                            <option>Active</option>
+                            <option>Inactive</option>
+                        </select>
+                        <button class="bg-[#071c4d] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#0a2a6e]">
+                            Apply Filters
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+           
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden" alt="employers table">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50 border-b">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company Name</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Industry</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact Person</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact Number</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                               
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-medium text-gray-900">Easyelectronycs</td>
+                                    <td class="px-4 py-3">Retail</td>
+                                    <td class="px-4 py-3">BCC Compound</td>
+                                    <td class="px-4 py-3">Mary Dela Cruz</td>
+                                    <td class="px-4 py-3">0917 849 6822</td>
+                                    <td class="px-4 py-3"><span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs">Inactive</span></td>
+                                    <td class="px-4 py-3">
+                                        <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                                        <button class="text-red-600 hover:text-red-800">Delete</button>
+                                    </td>
+                                    </td>
+                                </tr>
+                                
+                                
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-medium text-gray-900">Shell</td>
+                                    <td class="px-4 py-3">Retail</td>
+                                    <td class="px-4 py-3">San Jose Road</td>
+                                    <td class="px-4 py-3">Robert Santos</td>
+                                    <td class="px-4 py-3">+63 9525327532</td>
+                                    <td class="px-4 py-3"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Active</span></td>
+                                    <td class="px-4 py-3">
+                                        <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                                        <button class="text-red-600 hover:text-red-800">Delete</button>
+                                    </td>
+                                </tr>
+                                
+                               
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-medium text-gray-900">Manolo Halo-Halo</td>
+                                    <td class="px-4 py-3">Food</td>
+                                    <td class="px-4 py-3">Newslane</td>
+                                    <td class="px-4 py-3">Jane Villiarosa</td>
+                                    <td class="px-4 py-3">+63 9385729435</td>
+                                    <td class="px-4 py-3"><span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs">Inactive</span></td>
+                                    <td class="px-4 py-3">
+                                        <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                                        <button class="text-red-600 hover:text-red-800">Delete</button>
+                                    </td>
+                                    </td>
+                                </tr>
+                                
+                               
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-medium text-gray-900">Alatas Car Rental Services</td>
+                                    <td class="px-4 py-3">Rental</td>
+                                    <td class="px-4 py-3">Baliwasan Grande</td>
+                                    <td class="px-4 py-3">Mark Agustin</td>
+                                    <td class="px-4 py-3">+63 9482768924</td>
+                                    <td class="px-4 py-3"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Active</span></td>
+                                    <td class="px-4 py-3">
+                                        <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                                        <button class="text-red-600 hover:text-red-800">Delete</button>
+                                    </td>
+                                    </td>
+                                </tr>
+                                
+                            
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-medium text-gray-900">Western Mindanao State University</td>
+                                    <td class="px-4 py-3">Education</td>
+                                    <td class="px-4 py-3">Normal Road</td>
+                                    <td class="px-4 py-3">Robert Del Mundo</td>
+                                    <td class="px-4 py-3">+63 912125707</td>
+                                    <td class="px-4 py-3"><span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs">Inactive</span></td>
+                                    <td class="px-4 py-3">
+                                        <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                                        <button class="text-red-600 hover:text-red-800">Delete</button>
+                                    </td>
+                                    </td>
+                                </tr>
+                                
+                                
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-medium text-gray-900">2GO Express Inc</td>
+                                    <td class="px-4 py-3">Retail</td>
+                                    <td class="px-4 py-3">Seaside</td>
+                                    <td class="px-4 py-3">Denver Abelleon</td>
+                                    <td class="px-4 py-3">+63 932549989</td>
+                                    <td class="px-4 py-3"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Active</span></td>
+                                    <td class="px-4 py-3">
+                                    <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                                        <button class="text-red-600 hover:text-red-800">Delete</button>
+                                    </td>
+                                    </td>
+                                </tr>
+                                
+                                
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-medium text-gray-900">Dennis COffe Garden</td>
+                                    <td class="px-4 py-3">Food</td>
+                                    <td class="px-4 py-3">San Jose Road</td>
+                                    <td class="px-4 py-3">Micah Tahil</td>
+                                    <td class="px-4 py-3">+63 927031606</td>
+                                    <td class="px-4 py-3"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Active</span></td>
+                                    <td class="px-4 py-3">
+                                    <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                                        <button class="text-red-600 hover:text-red-800">Delete</button>
+                                    </td>
+                                    </td>
+                                </tr>
+                                
+                               
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-medium text-gray-900">South Galaxy</td>
+                                    <td class="px-4 py-3">Retail</td>
+                                    <td class="px-4 py-3">San Jose Road/td>
+                                    <td class="px-4 py-3">Duane Mendoza </td>
+                                    <td class="px-4 py-3">+63 980090754</td>
+                                    <td class="px-4 py-3"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Active</span></td>
+                                    <td class="px-4 py-3">
+                                        <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                                        <button class="text-red-600 hover:text-red-800">Delete</button>
+                                    </td>
+                                    </td>
+                                </tr>
+                                
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-medium text-gray-900">Royal Chille</td>
+                                    <td class="px-4 py-3">Food</td>
+                                    <td class="px-4 py-3">Baliwasan</td>
+                                    <td class="px-4 py-3">Ethan Reyes</td>
+                                    <td class="px-4 py-3">+63 981373143</td>
+                                    <td class="px-4 py-3"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Active</span></td>
+                                    <td class="px-4 py-3">
+                                        <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                                        <button class="text-red-600 hover:text-red-800">Delete</button>
+                                    </td>
+                                    </td>
+                                </tr>
+                                
+                              
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-medium text-gray-900">Petron </td>
+                                    <td class="px-4 py-3">Retail</td>
+                                    <td class="px-4 py-3">Baliwasan</td>
+                                    <td class="px-4 py-3">Jace Navarro</td>
+                                    <td class="px-4 py-3">+63 9317503475</td>
+                                    <td class="px-4 py-3"><span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs">Inactive</span></td>
+                                    <td class="px-4 py-3">
+                                        <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                                        <button class="text-red-600 hover:text-red-800">Delete</button>
+                                    </td>
+                                    </td>
+                                </tr>
+                                
+                              
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-medium text-gray-900">Baliwasan Central School</td>
+                                    <td class="px-4 py-3">Education</td>
+                                    <td class="px-4 py-3">San Jose Road</td>
+                                    <td class="px-4 py-3">Adrian Baustista</td>
+                                    <td class="px-4 py-3">+63 9429003565</td>
+                                    <td class="px-4 py-3"><span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs">Inactive</span></td>
+                                    <td class="px-4 py-3">
+                                        <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                                        <button class="text-red-600 hover:text-red-800">Delete</button>
+                                    </td>
+                                    </td>
+                                </tr>
+                                
+                               
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-medium text-gray-900">Baliwasan Barangay Hall</td>
+                                    <td class="px-4 py-3">Government</td>
+                                    <td class="px-4 py-3">San Jose Road</td>
+                                    <td class="px-4 py-3">Rafael Gomez</td>
+                                    <td class="px-4 py-3">+63 901188244</td>
+                                    <td class="px-4 py-3"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Active</span></td>
+                                    <td class="px-4 py-3">
+                                        <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                                        <button class="text-red-600 hover:text-red-800">Delete</button>
+                                    </td>
+                                    </td>
+                                </tr>
+                                
+                                
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-medium text-gray-900">Landbank of the Philippines</td>
+                                    <td class="px-4 py-3">Bank</td>
+                                    <td class="px-4 py-3">San Jose Road</td>
+                                    <td class="px-4 py-3">Sofia Valdez</td>
+                                    <td class="px-4 py-3">+63 9413376023</td>
+                                    <td class="px-4 py-3"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Active</span></td>
+                                    <td class="px-4 py-3">
+                                    <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                                        <button class="text-red-600 hover:text-red-800">Delete</button>
+                                    </td>
+                                    </td>
+                                </tr>
+                                
+                                
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-medium text-gray-900">Ole-Ole Malaysian Resturant</td>
+                                    <td class="px-4 py-3">Food</td>
+                                    <td class="px-4 py-3">San Jose Road</td>
+                                    <td class="px-4 py-3">Camille Aquino</td>
+                                    <td class="px-4 py-3">+63 9078637786</td>
+                                    <td class="px-4 py-3"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Active</span></td>
+                                    <td class="px-4 py-3">
+                                        <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                                        <button class="text-red-600 hover:text-red-800">Delete</button>
+                                    </td>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    
+                    <div class="px-4 py-3 border-t flex items-center justify-between">
+                        <p class="text-sm text-gray-600">Showing 1 to 14 of 47 entries</p>
+                        <div class="flex gap-2">
+                            <button class="px-3 py-1 border rounded hover:bg-gray-50 text-sm">Previous</button>
+                            <button class="px-3 py-1 bg-[#071c4d] text-white rounded text-sm">1</button>
+                            <button class="px-3 py-1 border rounded hover:bg-gray-50 text-sm">2</button>
+                            <button class="px-3 py-1 border rounded hover:bg-gray-50 text-sm">3</button>
+                            <button class="px-3 py-1 border rounded hover:bg-gray-50 text-sm">4</button>
+                            <button class="px-3 py-1 border rounded hover:bg-gray-50 text-sm">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                    
+            <div id="section-cdsp" class="section hidden" alt="CDSP">
+                
+                <div class="mb-6">
+                    <h3 class="text-2xl font-bold text-[#071c4d]">Community Development Support Program</h3>
+                    
+                </div>
+
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <p class="text-sm text-gray-500">Total Beneficiaries</p>
+                        <p class="text-3xl font-bold text-black">59</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <p class="text-sm text-gray-500">Active</p>
+                        <p class="text-3xl font-bold text-black">24</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <p class="text-sm text-gray-500">Completed</p>
+                        <p class="text-3xl font-bold text-black">17</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm p-4 mb-8 flex flex-wrap gap-4 items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-2">
+                            <label class="text-sm font-medium text-gray-700">Academic Year:</label>
+                            <select class="border rounded-lg px-3 py-2 text-sm">
+                                <option>All Years</option>
+                                <option>2025-2026</option>
+                                <option>2024-2025</option>
+                                <option>2023-2024</option>
+                                <option>2022-2023</option>
+                                <option>2021-2022</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <label class="text-sm font-medium text-gray-700">Status:</label>
+                            <select class="border rounded-lg px-3 py-2 text-sm">
+                                <option>All</option>
+                                <option>Active</option>
+                                <option>Completed</option>
+                                <option>Pending</option>
+                            </select>
+                        </div>
+                        <button class="bg-[#071c4d] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#0a2a6e]">
+                            Apply Filters
+                        </button>
+                    </div>
+                    <button class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 flex items-center gap-2">
+                        Add Beneficiary
+                    </button>
+                </div>
+
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                   
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-bold text-[#071c4d]">Enrollment by Academic Year</h3>
+                            <span class="text-xs bg-gray-100 px-2 py-1 rounded">Last 5 Years</span>
+                        </div>
+                        <canvas id="cdspEnrollmentChart" height="200"></canvas>
+                        <div class="flex justify-center mt-4">
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 bg-blue-600 rounded-full"></span>
+                                <span class="text-sm">Beneficiaries</span>
+                            </div>
+                        </div>
+                    </div>
+
+                  
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h3 class="text-lg font-bold text-[#071c4d] mb-4">Top Location</h3>
+                        <canvas id="barangayChart" height="200"></canvas>
+                    </div>
+                </div>
+
+                
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <div class="px-6 py-4 border-b flex justify-between items-center">
+                        <h3 class="text-lg font-bold text-[#071c4d]">CDSP Beneficiaries</h3>
+                        <div class="flex gap-2">
+                            <button class="text-sm text-gray-600 hover:text-gray-800">Copy</button>
+                            <button class="text-sm text-gray-600 hover:text-gray-800">CSV</button>
+                            <button class="text-sm text-gray-600 hover:text-gray-800">PDF</button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Barangay</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Academic Year</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Enrolled</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 font-medium text-gray-900">Rosa Gonzales</td>
+                                    <td class="px-6 py-4">Manggal</td>
+                                    <td class="px-6 py-4">2025-2026</td>
+                                    <td class="px-6 py-4">22/07/2020</td>
+                                    <td class="px-6 py-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Completed</span></td>
+                                    <td class="px-6 py-4">
+                                        <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                                        <button class="text-red-600 hover:text-red-800">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 font-medium text-gray-900">Isabel Bautista</td>
+                                    <td class="px-6 py-4">Aquino</td>
+                                    <td class="px-6 py-4">2024-2025</td>
+                                    <td class="px-6 py-4">17/09/2023</td>
+                                    <td class="px-6 py-4"><span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs">Pending</span></td>
+                                    <td class="px-6 py-4">
+                                         <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                                        <button class="text-red-600 hover:text-red-800">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 font-medium text-gray-900">Luis Lopez</td>
+                                    <td class="px-6 py-4">Manggal</td>
+                                    <td class="px-6 py-4">2022-2023</td>
+                                    <td class="px-6 py-4">15/03/2022</td>
+                                    <td class="px-6 py-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Completed</span></td>
+                                    <td class="px-6 py-4">
+                                         <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                                        <button class="text-red-600 hover:text-red-800">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 font-medium text-gray-900">Maria Santos</td>
+                                    <td class="px-6 py-4">Ranchez</td>
+                                    <td class="px-6 py-4">2023-2024</td>
+                                    <td class="px-6 py-4">10/11/2023</td>
+                                    <td class="px-6 py-4"><span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">Active</span></td>
+                                    <td class="px-6 py-4">
+                                         <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                                        <button class="text-red-600 hover:text-red-800">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 font-medium text-gray-900">Juan Dela Cruz</td>
+                                    <td class="px-6 py-4">Ranchez</td>
+                                    <td class="px-6 py-4">2021-2022</td>
+                                    <td class="px-6 py-4">05/02/2021</td>
+                                    <td class="px-6 py-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Completed</span></td>
+                                    <td class="px-6 py-4">
+                                         <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                                        <button class="text-red-600 hover:text-red-800">Delete</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                   
+                    <div class="px-6 py-4 border-t flex items-center justify-between">
+                        <p class="text-sm text-gray-600">Showing 1 to 5 of 59 entries</p>
+                        <div class="flex gap-2">
+                            <button class="px-3 py-1 border rounded hover:bg-gray-50 text-sm">Previous</button>
+                            <button class="px-3 py-1 bg-[#071c4d] text-white rounded text-sm">1</button>
+                            <button class="px-3 py-1 border rounded hover:bg-gray-50 text-sm">2</button>
+                            <button class="px-3 py-1 border rounded hover:bg-gray-50 text-sm">3</button>
+                            <button class="px-3 py-1 border rounded hover:bg-gray-50 text-sm">4</button>
+                            <button class="px-3 py-1 border rounded hover:bg-gray-50 text-sm">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        <div id="section-livelihood" class="section hidden" alt="livelihood">
+            
+          
+            <div class="mb-6">
+                <h3 class="text-2xl font-bold text-[#071c4d]">Manage and track livelihood programs and beneficiaries</h3>
+                <p class="text-sm text-gray-500 mt-1"></p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <p class="text-sm text-gray-500">Total Programs</p>
+                    <p class="text-3xl font-bold text-black">12</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <p class="text-sm text-gray-500">Active Programs</p>
+                    <p class="text-3xl font-bold text-black">8</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <p class="text-sm text-gray-500">Total Beneficiaries</p>
+                    <p class="text-3xl font-bold text-black">245</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <p class="text-sm text-gray-500">Completed</p>
+                    <p class="text-3xl font-bold text-black">127</p>
+                </div>
+            </div>
+
+            
+            <div class="bg-white rounded-xl shadow-sm p-4 mb-8 flex flex-wrap gap-4 items-center justify-between">
+                <div class="flex flex-wrap gap-4 items-center">
+                   
+                    <div class="flex items-center gap-2">
+                        <label class="text-sm font-medium text-gray-700">Program Type:</label>
+                        <select class="border rounded-lg px-3 py-2 text-sm">
+                            <option>All Programs</option>
+                            <option>Small Business</option>
+                            <option>Agricultural</option>
+                            <option>Fishery</option>
+                            <option>Handicraft</option>
+                            <option>Food Processing</option>
+                            <option>Livestock</option>
+                        </select>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <label class="text-sm font-medium text-gray-700">Status:</label>
+                        <select class="border rounded-lg px-3 py-2 text-sm">
+                            <option>All</option>
+                            <option>Active</option>
+                            <option>Completed</option>
+                            <option>Pending</option>
+                        </select>
+                    </div>
+                    <button class="bg-[#071c4d] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#0a2a6e]">
+                        Apply Filters
+                    </button>
+                </div>
+                <div class="flex gap-2">
+                    <button class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 flex items-center gap-2">
+                         Add Program
+                    </button>
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 flex items-center gap-2">
+                         Export
+                    </button>
+                </div>
+            </div>
+
+          
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+               
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <h3 class="text-lg font-bold text-[#071c4d] mb-4">Programs by Type</h3>
+                    <canvas id="programTypeChart" height="200"></canvas>
+                </div>
+
+              
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <h3 class="text-lg font-bold text-[#071c4d] mb-4">Beneficiaries by Location</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Manggal</span>
+                                <span class="font-medium">45</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-green-500 h-2 rounded-full" style="width: 45%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Ranchez</span>
+                                <span class="font-medium">38</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-green-500 h-2 rounded-full" style="width: 38%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Aquino</span>
+                                <span class="font-medium">32</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-green-500 h-2 rounded-full" style="width: 32%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Acacia</span>
+                                <span class="font-medium">28</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-green-500 h-2 rounded-full" style="width: 28%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Newslane</span>
+                                <span class="font-medium">24</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-green-500 h-2 rounded-full" style="width: 24%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+          
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-8">
+                <div class="px-6 py-4 border-b flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-[#071c4d]">Active Livelihood Programs</h3>
+                    <div class="flex gap-2">
+                        <button class="text-sm text-gray-600 hover:text-gray-800">Copy</button>
+                        <button class="text-sm text-gray-600 hover:text-gray-800">CSV</button>
+                        <button class="text-sm text-gray-600 hover:text-gray-800">PDF</button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Program Name</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Beneficiaries</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 font-medium text-gray-900">Sari-Sari Store Starter</td>
+                                <td class="px-6 py-4">Small Business</td>
+                                <td class="px-6 py-4">Baliwasan Barangay Hall</td>
+                                <td class="px-6 py-4">15</td>
+                                <td class="px-6 py-4">12/01/2025</td>
+                                <td class="px-6 py-4">12/06/2025</td>
+                                <td class="px-6 py-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Active</span></td>
+                                <td class="px-6 py-4">
+                                    <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                                    <button class="text-red-600 hover:text-red-800">Delete</button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 font-medium text-gray-900">Rice Farming Support</td>
+                                <td class="px-6 py-4">Agricultural</td>
+                                <td class="px-6 py-4">Baliwasan Barangay Hall</td>
+                                <td class="px-6 py-4">24</td>
+                                <td class="px-6 py-4">05/03/2025</td>
+                                <td class="px-6 py-4">05/09/2025</td>
+                                <td class="px-6 py-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Active</span></td>
+                                <td class="px-6 py-4">
+                                    <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                                    <button class="text-red-600 hover:text-red-800">Delete</button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 font-medium text-gray-900">Fishing Boat Assistance</td>
+                                <td class="px-6 py-4">Fishery</td>
+                                <td class="px-6 py-4">Baliwasan Barangay Hall</td>
+                                <td class="px-6 py-4">12</td>
+                                <td class="px-6 py-4">20/02/2025</td>
+                                <td class="px-6 py-4">20/08/2025</td>
+                                <td class="px-6 py-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Active</span></td>
+                                <td class="px-6 py-4">
+                                   <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                                    <button class="text-red-600 hover:text-red-800">Delete</button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 font-medium text-gray-900">Handicraft Training</td>
+                                <td class="px-6 py-4">Handicraft</td>
+                                <td class="px-6 py-4">Baliwasan Barangay Hall</td>
+                                <td class="px-6 py-4">18</td>
+                                <td class="px-6 py-4">10/01/2025</td>
+                                <td class="px-6 py-4">10/04/2025</td>
+                                <td class="px-6 py-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Active</span></td>
+                                <td class="px-6 py-4">
+                                    <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                                    <button class="text-red-600 hover:text-red-800">Delete</button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 font-medium text-gray-900">Food Processing Workshop</td>
+                                <td class="px-6 py-4">Food Processing</td>
+                                <td class="px-6 py-4">Baliwasan Barangay Hall</td>
+                                <td class="px-6 py-4">22</td>
+                                <td class="px-6 py-4">15/03/2025</td>
+                                <td class="px-6 py-4">15/06/2025</td>
+                                <td class="px-6 py-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Active</span></td>
+                                <td class="px-6 py-4">
+                                    <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                                    <button class="text-red-600 hover:text-red-800">Delete</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+          
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-[#071c4d]">Recently Completed</h3>
+                    <a href="#" class="text-sm text-blue-600 hover:underline">View All →</a>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Program Name</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Beneficiaries</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Completed Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 font-medium text-gray-900">Poultry Livelihood</td>
+                                <td class="px-6 py-4">Livestock</td>
+                                <td class="px-6 py-4">Baliwasan Barangay Hall</td>
+                                <td class="px-6 py-4">20</td>
+                                <td class="px-6 py-4">28/02/2025</td>
+                                <td class="px-6 py-4">
+                                    <button class="text-blue-600 hover:text-blue-800 mr-2">View</button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 font-medium text-gray-900">Vegetable Farming</td>
+                                <td class="px-6 py-4">Agricultural</td>
+                                <td class="px-6 py-4">Baliwasan Barangay Hall</td>
+                                <td class="px-6 py-4">16</td>
+                                <td class="px-6 py-4">15/01/2025</td>
+                                <td class="px-6 py-4">
+                                    <button class="text-blue-600 hover:text-blue-800 mr-2">View</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                
+                <div class="px-6 py-4 border-t flex items-center justify-between">
+                    <p class="text-sm text-gray-600">Showing 1 to 2 of 7 completed programs</p>
+                    <div class="flex gap-2">
+                        <button class="px-3 py-1 border rounded hover:bg-gray-50 text-sm">Previous</button>
+                        <button class="px-3 py-1 bg-[#071c4d] text-white rounded text-sm">1</button>
+                        <button class="px-3 py-1 border rounded hover:bg-gray-50 text-sm">2</button>
+                        <button class="px-3 py-1 border rounded hover:bg-gray-50 text-sm">3</button>
+                        <button class="px-3 py-1 border rounded hover:bg-gray-50 text-sm">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+         
+<div id="section-accreditation" class="section hidden" alt="employment-accreditation">
+    
+    
+    <div class="mb-6">
+        <h3 class="text-2xl font-bold text-[#071c4d]">Manage and track employment accreditation applications</h3>
+        <p class="text-sm text-gray-500 mt-1"></p>
+    </div>
+
+    
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white rounded-xl shadow-sm p-6">
+            <p class="text-sm text-gray-500">Total Applications</p>
+            <p class="text-3xl font-bold  text-black">156</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-6">
+            <p class="text-sm text-gray-500">Approved</p>
+            <p class="text-3xl font-bold  text-black">89</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-6">
+            <p class="text-sm text-gray-500">Pending</p>
+            <p class="text-3xl font-bold  text-black">42</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-6">
+            <p class="text-sm text-gray-500">For Renewal</p>
+            <p class="text-3xl font-bold text-black">25</p>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm p-4 mb-8 flex flex-wrap gap-4 items-center justify-between">
+        <div class="flex flex-wrap gap-4 items-center">
+            <div class="flex items-center gap-2">
+                <label class="text-sm font-medium text-gray-700">Application Type:</label>
+                <select class="border rounded-lg px-3 py-2 text-sm">
+                    <option>All Types</option>
+                    <option>New Applicant</option>
+                    <option>Renewal</option>
+                    <option>Upgrade</option>
+                </select>
+            </div>
+            <div class="flex items-center gap-2">
+                <label class="text-sm font-medium text-gray-700">Status:</label>
+                <select class="border rounded-lg px-3 py-2 text-sm">
+                    <option>All Status</option>
+                    <option>Approved</option>
+                    <option>Pending</option>
+                    <option>For Renewal</option>
+                    <option>Rejected</option>
+                </select>
+            </div>
+            <div class="flex items-center gap-2">
+                <label class="text-sm font-medium text-gray-700">Date Range:</label>
+                <select class="border rounded-lg px-3 py-2 text-sm">
+                    <option>Last 30 days</option>
+                    <option>Last 90 days</option>
+                    <option>This Year</option>
+                    <option>Custom</option>
+                </select>
+            </div>
+            <button class="bg-[#071c4d] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#0a2a6e]">
+                Apply Filters
+            </button>
+        </div>
+        <div class="flex gap-2">
+            <button class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 flex items-center gap-2">
+                 New Application
+            </button>
+            <button class="bg-red-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-700 flex items-center gap-2">
+                 Export
+            </button>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        
+        <div class="bg-white rounded-xl shadow-sm p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-[#071c4d]">Applications Trend</h3>
+                <span class="text-xs bg-gray-100 px-2 py-1 rounded">Last 6 Months</span>
+            </div>
+            <canvas id="accreditationTrendChart" height="200"></canvas>
+        </div>
+
+       
+        <div class="bg-white rounded-xl shadow-sm p-6">
+            <h3 class="text-lg font-bold text-[#071c4d] mb-4">Applications by Type</h3>
+            <div class="space-y-4">
+                <div>
+                    <div class="flex justify-between text-sm mb-1">
+                        <span>New Applicant</span>
+                        <span class="font-medium">78</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-blue-600 h-2 rounded-full" style="width: 50%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between text-sm mb-1">
+                        <span>Renewal</span>
+                        <span class="font-medium">52</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-blue-600 h-2 rounded-full" style="width: 33%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between text-sm mb-1">
+                        <span>Upgrade</span>
+                        <span class="font-medium">26</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-blue-600 h-2 rounded-full" style="width: 17%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+            <div class="px-6 py-4 border-b flex justify-between items-center">
+                <h3 class="text-lg font-bold text-[#071c4d]">Accreditation Applications</h3>
+                <div class="flex gap-2">
+                    <button class="text-sm text-gray-600 hover:text-gray-800">Copy</button>
+                    <button class="text-sm text-gray-600 hover:text-gray-800">CSV</button>
+                    <button class="text-sm text-gray-600 hover:text-gray-800">PDF</button>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Applicant Name</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company/Organization</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Application Type</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Applied</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expiry Date</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                   
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4">
+                                <div class="font-medium text-gray-900">Maria Santos</div>
+                                <div class="text-xs text-gray-500">maria.santos@email.com</div>
+                            </td>
+                            <td class="px-6 py-4">Santos Trading</td>
+                            <td class="px-6 py-4">New Applicant</td>
+                            <td class="px-6 py-4">15/01/2025</td>
+                            <td class="px-6 py-4">15/01/2027</td>
+                            <td class="px-6 py-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Approved</span></td>
+                            <td class="px-6 py-4">
+                                <button class="text-blue-600 hover:text-blue-800 mr-2" title="Edit">Edit</button>
+                                <button class="text-green-600 hover:text-green-800 mr-2" title="View Certificate">View</button>
+                                <button class="text-red-600 hover:text-red-800" title="Delete">Delete</button>
+                            </td>
+                        </tr>
+                        
+                     
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4">
+                                <div class="font-medium text-gray-900">Juan Dela Cruz</div>
+                                <div class="text-xs text-gray-500">juan.dc@email.com</div>
+                            </td>
+                            <td class="px-6 py-4">Dela Cruz Construction</td>
+                            <td class="px-6 py-4">New Applicant</td>
+                            <td class="px-6 py-4">03/02/2025</td>
+                            <td class="px-6 py-4">—</td>
+                            <td class="px-6 py-4"><span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs">Pending Review</span></td>
+                            <td class="px-6 py-4">
+                                <button class="text-blue-600 hover:text-blue-800 mr-2" title="Edit">Edit</button>
+                                <button class="text-green-600 hover:text-green-800 mr-2" title="View Certificate">View</button>
+                                <button class="text-red-600 hover:text-red-800" title="Delete">Delete</button>
+                            </td>
+                        </tr>
+                        
+                      
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4">
+                                <div class="font-medium text-gray-900">Robert Rodriguez</div>
+                                <div class="text-xs text-gray-500">robert.r@email.com</div>
+                            </td>
+                            <td class="px-6 py-4">Rodriguez Enterprises</td>
+                            <td class="px-6 py-4">Renewal</td>
+                            <td class="px-6 py-4">10/12/2024</td>
+                            <td class="px-6 py-4">10/03/2025</td>
+                            <td class="px-6 py-4"><span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">For Renewal</span></td>
+                            <td class="px-6 py-4">
+                                <button class="text-blue-600 hover:text-blue-800 mr-2" title="Edit">Edit</button>
+                                <button class="text-green-600 hover:text-green-800 mr-2" title="View Certificate">View</button>
+                                <button class="text-red-600 hover:text-red-800" title="Delete">Delete</button>
+                            </td>
+                        </tr>
+                        
+                      
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4">
+                                <div class="font-medium text-gray-900">Ana Lopez</div>
+                                <div class="text-xs text-gray-500">ana.lopez@email.com</div>
+                            </td>
+                            <td class="px-6 py-4">Lopez Food Products</td>
+                            <td class="px-6 py-4">Upgrade</td>
+                            <td class="px-6 py-4">22/02/2025</td>
+                            <td class="px-6 py-4">—</td>
+                            <td class="px-6 py-4"><span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs">Pending</span></td>
+                            <td class="px-6 py-4">
+                               <button class="text-blue-600 hover:text-blue-800 mr-2" title="Edit">Edit</button>
+                                <button class="text-green-600 hover:text-green-800 mr-2" title="View Certificate">View</button>
+                                <button class="text-red-600 hover:text-red-800" title="Delete">Delete</button>
+                            </td>
+                        </tr>
+                        
+                    
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4">
+                                <div class="font-medium text-gray-900">Pedro Reyes</div>
+                                <div class="text-xs text-gray-500">pedro.reyes@email.com</div>
+                            </td>
+                            <td class="px-6 py-4">Reyes Hardware</td>
+                            <td class="px-6 py-4">Renewal</td>
+                            <td class="px-6 py-4">05/01/2025</td>
+                            <td class="px-6 py-4">05/01/2026</td>
+                            <td class="px-6 py-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Approved</span></td>
+                            <td class="px-6 py-4">
+                                <button class="text-blue-600 hover:text-blue-800 mr-2" title="Edit">Edit</button>
+                                <button class="text-green-600 hover:text-green-800 mr-2" title="View Certificate">View</button>
+                                <button class="text-red-600 hover:text-red-800" title="Delete">Delete</button>
+                            </td>
+                        </tr>
+                        
+                    
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4">
+                                <div class="font-medium text-gray-900">Cynthia Tan</div>
+                                <div class="text-xs text-gray-500">cynthia.tan@email.com</div>
+                            </td>
+                            <td class="px-6 py-4">Tan Trading</td>
+                            <td class="px-6 py-4">New Applicant</td>
+                            <td class="px-6 py-4">18/01/2025</td>
+                            <td class="px-6 py-4">—</td>
+                            <td class="px-6 py-4"><span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs">Rejected</span></td>
+                            <td class="px-6 py-4">
+                               <button class="text-blue-600 hover:text-blue-800 mr-2" title="Edit">Edit</button>
+                                <button class="text-green-600 hover:text-green-800 mr-2" title="View Certificate">View</button>
+                                <button class="text-red-600 hover:text-red-800" title="Delete">Delete</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+     
+            <div class="px-6 py-4 border-t flex items-center justify-between">
+                <p class="text-sm text-gray-600">Showing 1 to 6 of 156 entries</p>
+                <div class="flex gap-2">
+                    <button class="px-3 py-1 border rounded hover:bg-gray-50 text-sm">Previous</button>
+                    <button class="px-3 py-1 bg-[#071c4d] text-white rounded text-sm">1</button>
+                    <button class="px-3 py-1 border rounded hover:bg-gray-50 text-sm">2</button>
+                    <button class="px-3 py-1 border rounded hover:bg-gray-50 text-sm">3</button>
+                    <button class="px-3 py-1 border rounded hover:bg-gray-50 text-sm">4</button>
+                    <button class="px-3 py-1 border rounded hover:bg-gray-50 text-sm">5</button>
+                    <button class="px-3 py-1 border rounded hover:bg-gray-50 text-sm">Next</button>
+                </div>
+            </div>
+        </div>
+
+       
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h4 class="text-sm font-medium text-gray-500 mb-2">Average Processing Time</h4>
+                <p class="text-2xl font-bold text-[#071c4d]">5.2 days</p>
+                <p class="text-xs text-green-600 mt-1">↓ 1.3 days from last month</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h4 class="text-sm font-medium text-gray-500 mb-2">Approval Rate</h4>
+                <p class="text-2xl font-bold text-[#071c4d]">78%</p>
+                <p class="text-xs text-green-600 mt-1">↑ 5% from last month</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h4 class="text-sm font-medium text-gray-500 mb-2">Expiring This Month</h4>
+                <p class="text-2xl font-bold text-[#071c4d]">12</p>
+                <p class="text-xs text-yellow-600 mt-1">Renewal notice required</p>
+            </div>
+        </div>
+    </div>
+
+                 
+        <div id="section-skills" class="section hidden" alt="Skills-training">
+            
+           
+            <div class="mb-6">
+                <h3 class="text-2xl font-bold text-[#071c4d]">Manage and track skills training programs and participants</h3>
+                <p class="text-sm text-gray-500 mt-1"></p>
+            </div>
+
+           
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <p class="text-sm text-gray-500">Total Programs</p>
+                    <p class="text-3xl font-bold text-black">18</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <p class="text-sm text-gray-500">Ongoing</p>
+                    <p class="text-3xl font-bold text-black">7</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <p class="text-sm text-gray-500">Total Participants</p>
+                    <p class="text-3xl font-bold text-black">342</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <p class="text-sm text-gray-500">Graduated</p>
+                    <p class="text-3xl font-bold text-black">187</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm p-4 mb-8 flex flex-wrap gap-4 items-center justify-between">
+                <div class="flex flex-wrap gap-4 items-center">
+                    <div class="flex items-center gap-2">
+                        <label class="text-sm font-medium text-gray-700">Training Category:</label>
+                        <select class="border rounded-lg px-3 py-2 text-sm">
+                            <option>All Categories</option>
+                            <option>Technical</option>
+                            <option>Vocational</option>
+                            <option>Digital Skills</option>
+                            <option>Entrepreneurship</option>
+                            <option>Agriculture</option>
+                            <option>Healthcare</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <label class="text-sm font-medium text-gray-700">Status:</label>
+                        <select class="border rounded-lg px-3 py-2 text-sm">
+                            <option>All Status</option>
+                            <option>Ongoing</option>
+                            <option>Completed</option>
+                            <option>Upcoming</option>
+                            <option>Cancelled</option>
+                        </select>
+                    </div>
+                    <button class="bg-[#071c4d] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#0a2a6e]">
+                        Apply Filters
+                    </button>
+                </div>
+                <div class="flex gap-2">
+                    <button class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 flex items-center gap-2">
+                         Add Training
+                    </button>
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 flex items-center gap-2">
+                        Export
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+              
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <h3 class="text-lg font-bold text-[#071c4d] mb-4">Training Programs by Category</h3>
+                    <canvas id="trainingCategoryChart" height="200"></canvas>
+                </div>
+
+              
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold text-[#071c4d]">Monthly Enrollment</h3>
+                        <span class="text-xs bg-gray-100 px-2 py-1 rounded">Current Year</span>
+                    </div>
+                    <canvas id="monthlyEnrollmentChart" height="200"></canvas>
+                </div>
+            </div>
+
+          
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-8">
+                <div class="px-6 py-4 border-b flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-[#071c4d]">Active Training Programs</h3>
+                    <div class="flex gap-2">
+                        <button class="text-sm text-gray-600 hover:text-gray-800">Copy</button>
+                        <button class="text-sm text-gray-600 hover:text-gray-800">CSV</button>
+                        <button class="text-sm text-gray-600 hover:text-gray-800">PDF</button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Program Name</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trainer</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Participants</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 font-medium text-gray-900">Electrical Installation NC II</td>
+                                <td class="px-6 py-4">Technical</td>
+                                <td class="px-6 py-4">John Reyes</td>
+                                <td class="px-6 py-4">Manggal</td>
+                                <td class="px-6 py-4">Mar 15 - Jun 15</td>
+                                <td class="px-6 py-4">18</td>
+                                <td class="px-6 py-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Ongoing</span></td>
+                                <td class="px-6 py-4">
+                                    <button class="text-blue-600 hover:text-blue-800 mr-2" title="Edit">Edit</button>
+                                    <button class="text-green-600 hover:text-green-800 mr-2" title="View Participants">View</button>
+                                    <button class="text-red-600 hover:text-red-800" title="Delete">Delete</button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 font-medium text-gray-900">Bread and Pastry Production</td>
+                                <td class="px-6 py-4">Vocational</td>
+                                <td class="px-6 py-4">Maria Santos</td>
+                                <td class="px-6 py-4">Newslane</td>
+                                <td class="px-6 py-4">Apr 01 - Jul 01</td>
+                                <td class="px-6 py-4">22</td>
+                                <td class="px-6 py-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Ongoing</span></td>
+                                <td class="px-6 py-4">
+                                     <button class="text-blue-600 hover:text-blue-800 mr-2" title="Edit">Edit</button>
+                                    <button class="text-green-600 hover:text-green-800 mr-2" title="View Participants">View</button>
+                                    <button class="text-red-600 hover:text-red-800" title="Delete">Delete</button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 font-medium text-gray-900">Digital Marketing Workshop</td>
+                                <td class="px-6 py-4">Digital Skills</td>
+                                <td class="px-6 py-4">Anna Lopez</td>
+                                <td class="px-6 py-4">Acacia</td>
+                                <td class="px-6 py-4">May 10 - Jun 10</td>
+                                <td class="px-6 py-4">15</td>
+                                <td class="px-6 py-4"><span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs">Upcoming</span></td>
+                                <td class="px-6 py-4">
+                                     <button class="text-blue-600 hover:text-blue-800 mr-2" title="Edit">Edit</button>
+                                    <button class="text-green-600 hover:text-green-800 mr-2" title="View Participants">View</button>
+                                    <button class="text-red-600 hover:text-red-800" title="Delete">Delete</button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 font-medium text-gray-900">Organic Farming Techniques</td>
+                                <td class="px-6 py-4">Agriculture</td>
+                                <td class="px-6 py-4">Pedro Gomez</td>
+                                <td class="px-6 py-4">Ranchez</td>
+                                <td class="px-6 py-4">Feb 01 - May 01</td>
+                                <td class="px-6 py-4">24</td>
+                                <td class="px-6 py-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Ongoing</span></td>
+                                <td class="px-6 py-4">
+                                     <button class="text-blue-600 hover:text-blue-800 mr-2" title="Edit">Edit</button>
+                                    <button class="text-green-600 hover:text-green-800 mr-2" title="View Participants">View</button>
+                                    <button class="text-red-600 hover:text-red-800" title="Delete">Delete</button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 font-medium text-gray-900">Shielded Metal Arc Welding</td>
+                                <td class="px-6 py-4">Technical</td>
+                                <td class="px-6 py-4">Ramon Diaz</td>
+                                <td class="px-6 py-4">Manggal</td>
+                                <td class="px-6 py-4">Apr 15 - Jul 15</td>
+                                <td class="px-6 py-4">16</td>
+                                <td class="px-6 py-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Ongoing</span></td>
+                                <td class="px-6 py-4">
+                                     <button class="text-blue-600 hover:text-blue-800 mr-2" title="Edit">Edit</button>
+                                    <button class="text-green-600 hover:text-green-800 mr-2" title="View Participants">View</button>
+                                    <button class="text-red-600 hover:text-red-800" title="Delete">Delete</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+        
+                <div class="px-6 py-4 border-t flex items-center justify-between">
+                    <p class="text-sm text-gray-600">Showing 1 to 5 of 18 programs</p>
+                    <div class="flex gap-2">
+                        <button class="px-3 py-1 border rounded hover:bg-gray-50 text-sm">Previous</button>
+                        <button class="px-3 py-1 bg-[#071c4d] text-white rounded text-sm">1</button>
+                        <button class="px-3 py-1 border rounded hover:bg-gray-50 text-sm">2</button>
+                        <button class="px-3 py-1 border rounded hover:bg-gray-50 text-sm">3</button>
+                        <button class="px-3 py-1 border rounded hover:bg-gray-50 text-sm">4</button>
+                        <button class="px-3 py-1 border rounded hover:bg-gray-50 text-sm">Next</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-[#071c4d]">Recent Participants</h3>
+                    <a href="#" class="text-sm text-blue-600 hover:underline">View All →</a>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Participant Name</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Training Program</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Enrolled</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Certificate</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 font-medium text-gray-900">Isabel Villarosa</td>
+                                <td class="px-6 py-4">Bread and Pastry Production</td>
+                                <td class="px-6 py-4">Newslane</td>
+                                <td class="px-6 py-4">05/04/2025</td>
+                                <td class="px-6 py-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Active</span></td>
+                                <td class="px-6 py-4"><button class="text-red-500 hover:text-gray-700"> Pending</button></td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 font-medium text-gray-900">Carlos Reyes</td>
+                                <td class="px-6 py-4">Electrical Installation NC II</td>
+                                <td class="px-6 py-4">Aquino</td>
+                                <td class="px-6 py-4">20/03/2025</td>
+                                <td class="px-6 py-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Active</span></td>
+                                <td class="px-6 py-4"><button class="text-red-500 hover:text-gray-700"> Pending</button></td>                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 font-medium text-gray-900">Sofia Ramos</td>
+                                <td class="px-6 py-4">Organic Farming Techniques</td>
+                                <td class="px-6 py-4">San jose Road</td>
+                                <td class="px-6 py-4">15/02/2025</td>
+                                <td class="px-6 py-4"><span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">Graduated</span></td>
+                               <td class="px-6 py-4"><button class="text-red-500 hover:text-gray-700"> Pending</button></td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 font-medium text-gray-900">Miguel Villarosa</td>
+                                <td class="px-6 py-4">Digital Marketing Workshop</td>
+                                <td class="px-6 py-4">Acacia</td>
+                                <td class="px-6 py-4">10/04/2025</td>
+                                <td class="px-6 py-4"><span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs">Enrolled</span></td>
+                                <td class="px-6 py-4"><button class="text-red-500 hover:text-gray-700"> Pending</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+                 
+        <div id="section-reports" class="section hidden" alt="reports">
+            
+         
+            <div class="mb-6">
+                <h3 class="text-2xl font-bold text-[#071c4d]">Generate and export comprehensive reports</h3>
+                <p class="text-sm text-gray-500 mt-1"></p>
+            </div>
+
+          
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                <h4 class="text-lg font-bold text-[#071c4d] mb-6">Report Configuration</h4>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                 
+                    <div class="space-y-4">
+                        <div>
+                            <p class="text-sm font-medium text-gray-700 mb-2">Report Type</p>
+                            <select class="w-full border rounded-lg px-3 py-2 text-sm bg-gray-50">
+                                <option>Academic Year</option>
+                                <option>Monthly Summary</option>
+                                <option>Quarterly Report</option>
+                                <option>Annual Report</option>
+                            </select>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-sm font-medium text-gray-700 mb-2">All Residents</p>
+                                <select class="w-full border rounded-lg px-3 py-2 text-sm bg-gray-50">
+                                    <option>All</option>
+                                    <option>Beneficiaries Only</option>
+                                    <option>Non-Beneficiaries</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-sm font-medium text-gray-700 mb-2">Employment Status</p>
+                                <select class="w-full border rounded-lg px-3 py-2 text-sm bg-gray-50">
+                                    <option>Unemployed</option>
+                                    <option>Employed</option>
+                                    <option>Self-Employed</option>
+                                    <option>All</option>
+                                </select>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-700 mb-2">Beneficiaries</p>
+                                <select class="w-full border rounded-lg px-3 py-2 text-sm bg-gray-50">
+                                    <option>All</option>
+                                    <option>Yes</option>
+                                    <option>No</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                   
+                    <div class="bg-gray-50 rounded-lg p-6">
+                        <h5 class="text-sm font-medium text-gray-600 mb-4">Summary Statistics</h5>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-2xl font-bold text-[#071c4d]">150</p>
+                                <p class="text-xs text-gray-500">Total</p>
+                            </div>
+                            <div>
+                                <p class="text-2xl font-bold text-green-600">50</p>
+                                <p class="text-xs text-gray-500">Employed</p>
+                            </div>
+                            <div>
+                                <p class="text-2xl font-bold text-red-600">45</p>
+                                <p class="text-xs text-gray-500">Unemployed</p>
+                            </div>
+                            <div>
+                                <p class="text-2xl font-bold text-blue-600">44</p>
+                                <p class="text-xs text-gray-500">Beneficiaries</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="flex gap-4 mt-8 pt-4 border-t">
+                    <button class="bg-[#071c4d] text-white px-6 py-2 rounded-lg text-sm hover:bg-[#0a2a6e] flex items-center gap-2">
+                         Generate Report
+                    </button>
+                    <button class="bg-green-600 text-white px-6 py-2 rounded-lg text-sm hover:bg-green-700 flex items-center gap-2">
+                         Export PDF
+                    </button>
+                    <button class="bg-blue-600 text-white px-6 py-2 rounded-lg text-sm hover:bg-blue-700 flex items-center gap-2">
+                         Export CSV
+                    </button>
+                    <button class="bg-gray-100 text-gray-700 px-6 py-2 rounded-lg text-sm hover:bg-gray-200 flex items-center gap-2">
+                         Print
+                    </button>
+
+                </div>
+            </div>
+
+        
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h4 class="text-lg font-bold text-[#071c4d]">Report Preview</h4>
+                    <span class="text-xs bg-gray-100 px-2 py-1 rounded">150 records</span>
+                </div>
+
+              
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gender</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Age</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Education</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employment Status</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Beneficiary</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                           
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-4 py-3 font-medium">Miguel Bautista</td>
+                                <td class="px-4 py-3">Female</td>
+                                <td class="px-4 py-3">64</td>
+                                <td class="px-4 py-3">Baliwasan Grande</td>
+                                <td class="px-4 py-3">Vocational</td>
+                                <td class="px-4 py-3"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Employed</span></td>
+                                <td class="px-4 py-3"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Yes</span></td>
+                            </tr>
+                            
+                            
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-4 py-3 font-medium">Juan Torres</td>
+                                <td class="px-4 py-3">Female</td>
+                                <td class="px-4 py-3">29</td>
+                                <td class="px-4 py-3">Manggal</td>
+                                <td class="px-4 py-3">High School</td>
+                                <td class="px-4 py-3"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Employed</span></td>
+                                <td class="px-4 py-3"><span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs">No</span></td>
+                            </tr>
+                            
+                       
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-4 py-3 font-medium">Ana Lopez</td>
+                                <td class="px-4 py-3">Female</td>
+                                <td class="px-4 py-3">62</td>
+                                <td class="px-4 py-3">Seaside</td>
+                                <td class="px-4 py-3">Vocational</td>
+                                <td class="px-4 py-3"><span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs">Self-Employed</span></td>
+                                <td class="px-4 py-3"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Yes</span></td>
+                            </tr>
+                            
+                           
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-4 py-3 font-medium">Sofia Lopez</td>
+                                <td class="px-4 py-3">Male</td>
+                                <td class="px-4 py-3">19</td>
+                                <td class="px-4 py-3">Monseratt</td>
+                                <td class="px-4 py-3">Vocational</td>
+                                <td class="px-4 py-3"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Employed</span></td>
+                                <td class="px-4 py-3"><span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs">No</span></td>
+                            </tr>
+                            
+                          
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-4 py-3 font-medium">Miguel Gonzales</td>
+                                <td class="px-4 py-3">Female</td>
+                                <td class="px-4 py-3">35</td>
+                                <td class="px-4 py-3">Lemon</td>
+                                <td class="px-4 py-3">College</td>
+                                <td class="px-4 py-3"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Employed</span></td>
+                                <td class="px-4 py-3"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Yes</span></td>
+                            </tr>
+                            
+                         
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-4 py-3 font-medium">Rosa Gonzales</td>
+                                <td class="px-4 py-3">Female</td>
+                                <td class="px-4 py-3">34</td>
+                                <td class="px-4 py-3">Manggal</td>
+                                <td class="px-4 py-3">College</td>
+                                <td class="px-4 py-3"><span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs">Unemployed</span></td>
+                                <td class="px-4 py-3"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Yes</span></td>
+                            </tr>
+                            
+            
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-4 py-3 font-medium">Laura Santiago</td>
+                                <td class="px-4 py-3">Female</td>
+                                <td class="px-4 py-3">25</td>
+                                <td class="px-4 py-3">Aquino</td>
+                                <td class="px-4 py-3">Vocational</td>
+                                <td class="px-4 py-3"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Employed</span></td>
+                                <td class="px-4 py-3"><span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs">No</span></td>
+                            </tr>
+                            
+                          
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-4 py-3 font-medium">Carlos Ramos</td>
+                                <td class="px-4 py-3">Female</td>
+                                <td class="px-4 py-3">60</td>
+                                <td class="px-4 py-3">Baliwasan Grande</td>
+                                <td class="px-4 py-3">College</td>
+                                <td class="px-4 py-3"><span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs">Unemployed</span></td>
+                                <td class="px-4 py-3"><span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs">No</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+               
+                <div class="flex items-center justify-between mt-6">
+                    <p class="text-sm text-gray-600">Showing 1 to 8 of 150 entries</p>
+                    <div class="flex gap-2">
+                        <button class="px-3 py-1 border rounded hover:bg-gray-50 text-sm">Previous</button>
+                        <button class="px-3 py-1 bg-[#071c4d] text-white rounded text-sm">1</button>
+                        <button class="px-3 py-1 border rounded hover:bg-gray-50 text-sm">2</button>
+                        <button class="px-3 py-1 border rounded hover:bg-gray-50 text-sm">3</button>
+                        <button class="px-3 py-1 border rounded hover:bg-gray-50 text-sm">4</button>
+                        <button class="px-3 py-1 border rounded hover:bg-gray-50 text-sm">5</button>
+                        <button class="px-3 py-1 border rounded hover:bg-gray-50 text-sm">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+           
+        <div id="section-settings" class="section hidden" alt="settings">
+            
+        
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                <h4 class="text-lg font-bold text-[#071c4d] mb-4">System Information</h4>
+                
+                <div class="space-y-3">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">System Name</p>
+                        <p class="text-base">ONE BALIWASAN Management System</p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Version</p>
+                        <p class="text-base">1.0.0</p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Admin Email</p>
+                        <p class="text-base text-blue-600">iannaellis.mg@gmail.com</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                <h4 class="text-lg font-bold text-[#071c4d] mb-4">Data Management</h4>
+                
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded">
+                        <span>Backup Database</span>
+                        <button class="bg-blue-600 text-white px-4 py-1 rounded text-sm hover:bg-blue-700">Backup</button>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded">
+                        <span>Clear Cache</span>
+                        <button class="bg-yellow-600 text-white px-4 py-1 rounded text-sm hover:bg-yellow-700">Clear</button>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-red-50 rounded border border-red-200">
+                        <span class="text-red-800">Reset All Data</span>
+                        <button class="bg-red-600 text-white px-4 py-1 rounded text-sm hover:bg-red-700">Reset</button>
+                    </div>
+                </div>
+            </div>
+
+          
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h4 class="text-lg font-bold text-[#071c4d] mb-4">About</h4>
+                
+                <p class="text-sm text-gray-600 leading-relaxed">
+                    ONE BALIWASAN Management System is designed to streamline the management of resident profiling, employment tracking, and service delivery for the Public Employment Service Office of Barangay Baliwasan.
+                </p>
+                
+                <p class="text-xs text-gray-400 mt-4">© 2026 ONE BALIWASAN. All rights reserved.</p>
+            </div>
+        </div>
+
+            
+            
+    <script>
+        function updatePortalClock() {
+            const now = new Date();
+            const options = { month: 'long', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+            const clockElement = document.getElementById('portal-clock');
+            if (clockElement) clockElement.innerText = now.toLocaleString('en-US', options);
+        }
+
+        function showSection(sectionName) {
+            document.querySelectorAll('.section').forEach(section => section.classList.add('hidden'));
+            const selectedSection = document.getElementById('section-' + sectionName);
+            if (selectedSection) selectedSection.classList.remove('hidden');
+            
+            const titles = {
+                'dashboard': 'Dashboard', 'profiling': 'Resident Profiling', 'employment': 'Employment Tracking',
+                'employers': 'Employers', 'cdsp': 'CDSP', 'livelihood': 'Livelihood',
+                'accreditation': 'Accreditation', 'skills': 'Skills Training', 'reports': 'Reports', 'settings': 'Settings'
+            };
+            document.getElementById('page-title').innerText = titles[sectionName] || 'Dashboard';
+            
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.classList.remove('active', 'bg-yellow-400', 'text-[#071c4d]', 'font-bold');
+                item.classList.add('text-white/80');
+            });
+            
+            const activeButton = document.getElementById('nav-' + sectionName);
+            if (activeButton) {
+                activeButton.classList.add('active', 'bg-yellow-400', 'text-[#071c4d]', 'font-bold');
+                activeButton.classList.remove('text-white/80');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('enrollmentChart')?.getContext('2d');
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['2021-2022', '2022-2023', '2023-2024', '2024-2025', '2025-2026'],
+                        datasets: [{
+                            label: 'Beneficiaries',
+                            data: [4, 8, 12, 16, 20],
+                            borderColor: '#071c4d',
+                            backgroundColor: 'rgba(7, 28, 77, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 20 } } }
+                });
+            }
+
+            const ageCtx = document.getElementById('ageChart')?.getContext('2d');
+            if (ageCtx) {
+                new Chart(ageCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['18-25', '26-35', '36-45', '46-55', '56+'],
+                        datasets: [{
+                            label: 'Number of Residents',
+                            data: [28, 42, 35, 24, 27],
+                            backgroundColor: '#054E98',
+                            borderRadius: 6
+                        }]
+                    },
+                    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+                });
+            }
+
+            const eduCtx = document.getElementById('educationChart')?.getContext('2d');
+            if (eduCtx) {
+                new Chart(eduCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Elementary', 'High School', 'College', 'Vocational'],
+                        datasets: [{
+                            data: [24, 18, 12, 10],
+                            backgroundColor: ['#f59e0b', '#10b981', '#3b82f6', '#8b5cf6'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+                });
+            }
+
+            const employmentCtx = document.getElementById('employmentTrendChart')?.getContext('2d');
+            if (employmentCtx) {
+                new Chart(employmentCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['2021-2022', '2022-2023', '2023-2024', '2024-2025', '2025-2026'],
+                        datasets: [
+                            { label: 'Employed', data: [45, 52, 58, 64, 78], borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', tension: 0.4, fill: false },
+                            { label: 'Unemployed', data: [28, 32, 35, 38, 42], borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.1)', tension: 0.4, fill: false }
+                        ]
+                    },
+                    options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true, max: 100 } } }
+                });
+            }
+
+            document.querySelector('.bg-gradient-to-r button')?.addEventListener('click', function() {
+                if(confirm('Send emergency alert to all citizens?')) alert('Emergency alert sent!');
+            });
+
+            updatePortalClock();
+            setInterval(updatePortalClock, 1000);
+            showSection('dashboard');
+        });
+        const cdspCtx = document.getElementById('cdspEnrollmentChart')?.getContext('2d');
+        if (cdspCtx) {
+            new Chart(cdspCtx, {
+                type: 'line',
+                data: {
+                    labels: ['2021-2022', '2022-2023', '2023-2024', '2024-2025', '2025-2026'],
+                    datasets: [{
+                        label: 'Beneficiaries',
+                        data: [4, 8, 12, 16, 20],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { 
+                            beginAtZero: true,
+                            max: 20,
+                            grid: { display: true }
+                        }
+                    }
+                }
+            });
+        }
+
+        const barangayCtx = document.getElementById('barangayChart')?.getContext('2d');
+        if (barangayCtx) {
+            new Chart(barangayCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Baliwasan Grande', 'Manggal', 'Acacia Drive', 'Seaside', 'Tabuk', 'Lemon Drive', 'Newslane', 'Monseratt', 'Aquino', 'Ranchez'],
+                    datasets: [{
+                        label: 'Number of Beneficiaries',
+                        data: [8, 7, 6, 6, 5, 5, 4, 4, 3, 2],
+                        backgroundColor: '#f59e0b',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { 
+                            beginAtZero: true,
+                            max: 10,
+                            grid: { display: true }
+                        }
+                    }
+                }
+            });
+        }
+
+        const programCtx = document.getElementById('programTypeChart')?.getContext('2d');
+        if (programCtx) {
+            new Chart(programCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Small Business', 'Agricultural', 'Fishery', 'Handicraft', 'Food Processing', 'Livestock'],
+                    datasets: [{
+                        data: [4, 3, 2, 2, 1, 1],
+                        backgroundColor: ['#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899', '#ef4444'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        const accreditationCtx = document.getElementById('accreditationTrendChart')?.getContext('2d');
+        if (accreditationCtx) {
+            new Chart(accreditationCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'],
+                    datasets: [
+                        {
+                            label: 'Applications',
+                            data: [18, 22, 25, 28, 32, 31],
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { 
+                            beginAtZero: true,
+                            max: 40,
+                            grid: { display: true }
+                        }
+                    }
+                }
+            });
+        }
+
+        const categoryCtx = document.getElementById('trainingCategoryChart')?.getContext('2d');
+        if (categoryCtx) {
+            new Chart(categoryCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Technical', 'Vocational', 'Digital Skills', 'Entrepreneurship', 'Agriculture', 'Healthcare'],
+                    datasets: [{
+                        data: [5, 4, 3, 2, 3, 1],
+                        backgroundColor: ['#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899', '#ef4444'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+
+        const monthlyCtx = document.getElementById('monthlyEnrollmentChart')?.getContext('2d');
+        if (monthlyCtx) {
+            new Chart(monthlyCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'New Enrollees',
+                        data: [24, 32, 45, 38, 28, 18],
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { 
+                            beginAtZero: true,
+                            max: 50,
+                            grid: { display: true }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+    <style>
+        @keyframes pulse-emergency {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .emergency-pulse {
+            animation: pulse-emergency 2s infinite;
+        }
+        .sidebar-item {
+            transition: all 0.2s ease;
+        }
+        .sidebar-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding-left: 1.5rem;
+        }
+        .sidebar-item.active {
+            background-color: #eab308;
+            color: #071c4d;
+            font-weight: bold;
+        }
+        .hidden {
+            display: none;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+    </style>
+</body>
+</html>

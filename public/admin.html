@@ -2,349 +2,474 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Queue Admin - Barangay Baliwasan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barangay Baliwasan | Official Portal</title>
     <link href="output.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body class="bg-[#FFF9E2] h-screen flex flex-col items-center justify-center font-sans text-gray-900 p-6 overflow-hidden">
-    <div class="bg-white p-6 rounded-3xl shadow-2xl w-full max-w-[95rem] flex gap-6 border-t-8 border-[#FFD500] h-full max-h-[95vh]">
+
+<body class="bg-gray-50 font-sans text-gray-900 ">
+    
+    <header class="bg-white border-b-2 border-yellow-400 flex flex-col w-full fixed top-0 z-50 shadow-md">
+        <div class="flex justify-between items-center px-6 py-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-cover bg-center border-2 border-yellow-400 shadow-sm" style="background-image: url('resources/logo.png');">
+                    </div>
+                    <h1 class="text-xl md:text-2xl font-bold text-black tracking-wide uppercase">ADMIN</h1>
+                    <p class=" text-xs text-yellow-500">ONE BALIWASAN</p>
+                </div>
+                <nav class="flex gap-2 flex-wrap justify-end">
+                    <a href="#admin" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">DASHBOARD</a>
+                    <a href="citizen-profiling.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">CITIZEN PROFILING</a>
+                    <a href="news-updates.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">NEWS&UPDATES</a>
+                    <a href="admin-queue.html" class="bg-yellow-500 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-600 uppercase ring-2 ring-offset-2 ring-yellow-400 transition-all">QUEUING SYSTEM</a>
+                </nav>
+        </div>
         
-        <div class="w-1/3 flex flex-col gap-6 overflow-y-auto pr-2 custom-scrollbar">
-            <h1 class="text-2xl font-black uppercase tracking-wider shrink-0">ADMIN SIDE</h1>
+        <div class="bg-yellow-100 py-1.5 flex flex-col sm:flex-row justify-between items-center px-4 md:px-8 border-t border-yellow-300">
+            <div id="portal-clock" class="text-xs font-medium text-yellow-800 mb-1 sm:mb-0">Loading Date & Time...</div>
+            <div class="flex gap-2 w-full sm:w-auto">
+                <input type="text" placeholder="Search..." class="flex-1 sm:flex-none p-1 px-3 rounded text-xs border border-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:border-transparent">
+                <button class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-1 px-4 rounded text-xs transition-all hover:shadow-md">Search</button>
+            </div>
+        </div>
+
+       
+        <div class="bg-[#0a2a6e] px-6 py-2 flex flex-wrap gap-6 text-white" alt="quick-update">
+            <div class="flex items-center gap-2">
+                <span class="text-white"></span>
+                <span>Active Tickets: <strong>24</strong></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-white"></span>
+                <span>In Queue: <strong>18</strong></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-white"></span>
+                <span>Avg. Wait: <strong>12 min</strong></span>
+            </div>
+        </div>
+    </header>
+    <main id="admin" class="pt-[136px] mt-14 pb-10 px-6 bg-[#1a3d63]" alt="transaction-logs">
+      
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
-            <div class="bg-gray-50 p-5 rounded-2xl border border-gray-100 shrink-0">
-                <h2 class="text-sm font-bold text-gray-400 mb-3 uppercase tracking-widest">1. ISSUE WALK-IN TICKET</h2>
-                <div class="flex flex-col gap-2">
-                    <select id="admin-priority" class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] outline-none bg-white font-bold text-xs">
-                        <option value="REGULAR">Regular</option>
-                        <option value="PWD / SENIOR">PWD / Senior Citizen</option>
-                    </select>
-
-                    <select id="admin-document" class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] outline-none bg-white font-bold text-xs">
-                        <optgroup label="Special Events">
-                            <option value="Ayuda / Cash Assistance">⭐ Ayuda / Cash Assistance</option>
-                        </optgroup>
-                        <optgroup label="Standard Documents">
-                            <option value="Barangay Clearance">Barangay Clearance</option>
-                            <option value="Barangay ID">Barangay ID</option>
-                            <option value="Building and Fencing Permit">Building and Fencing Permit</option>
-                            <option value="Business Clearance/Permit">Business Clearance/Permit</option>
-                            <option value="Certificate of Indigency">Certificate of Indigency</option>
-                            <option value="Certificate of Residency">Certificate of Residency</option>
-                            <option value="First Time Jobseeker">First Time Jobseeker</option>
-                            <option value="Fit to Work Certificate">Fit to Work Certificate</option>
-                            <option value="Solo Parent Certification">Solo Parent Certification</option>
-                        </optgroup>
-                    </select>
-
-                    <button id="btn-gen-walkin" class="bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-3 px-4 rounded-xl shadow-md transition-all uppercase tracking-widest mt-1 text-sm">
-                        + ADD WALK-IN
-                    </button>
-                </div>
-            </div>
-
-            <div class="bg-gray-50 p-5 rounded-2xl border border-gray-100 shrink-0">
-                <h2 class="text-sm font-bold text-gray-400 mb-3 uppercase tracking-widest flex justify-between items-center">
-                    <span>2. MANAGE SERVICES</span>
-                    <span class="text-[9px] bg-black text-[#FFD500] px-2 py-1 rounded">LIVE</span>
-                </h2>
-                <div class="flex flex-col gap-2 max-h-40 overflow-y-auto pr-2 custom-scrollbar" id="service-toggles"></div>
-            </div>
-
-            <div class="bg-gray-50 p-5 rounded-2xl border border-gray-100 shrink-0">
-                <h2 class="text-sm font-bold text-gray-400 mb-3 uppercase tracking-widest">3. DISPLAY MEDIA</h2>
-                <div class="flex flex-col gap-2">
-                    <select id="media-type" class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] outline-none bg-white font-bold text-xs">
-                        <option value="none">None (Blank)</option>
-                        <option value="upload">Upload File (MP4/PNG/JPG)</option>
-                        <option value="youtube">YouTube Embed URL</option>
-                    </select>
-
-                    <input type="text" id="media-url" placeholder="Paste URL here..." class="hidden w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] outline-none bg-white text-xs">
+            <div class="lg:col-span-2 space-y-8">
+                
+              
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     
-                    <input type="file" id="media-file" accept="video/mp4, video/webm, image/jpeg, image/png" class="hidden w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] outline-none bg-white text-xs bg-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[#FFD500] file:text-black hover:file:bg-[#FFDC2E]">
+                    <div class="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all hover-scale">
+                        <div class="bg-gradient-to-br from-yellow-500 to-yellow-300 p-4 text-white">
+                            <div class="flex items-center gap-3">
+                                <h3 class="text-xl font-bold text-black">Transaction Logs</h3>
+                                
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-600">Today's transactions:</span>
+                                    <span class="font-bold text-lg">47</span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-600">This week:</span>
+                                    <span class="font-bold text-lg">312</span>
+                                </div>
+                                <div class="flex gap-2 mt-4">
+                                    <button class="flex-1 bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2">
+                                         Download PDF
+                                    </button>
+                                    <button class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2">
+                                         Export CSV
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                    <button id="btn-push-media" class="bg-black hover:bg-gray-800 text-[#FFD500] font-black py-3 px-4 rounded-xl shadow-md transition-all uppercase tracking-widest mt-1 text-sm">
-                        PUSH TO SCREEN
-                    </button>
+                   
+                    <div alt="profiling" class="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all hover-scale">
+                        <div class="bg-gradient-to-br from-yellow-500 to-yellow-300 p-4 text-white">
+                            <div class="flex items-center gap-3">
+                                <span class="text-3xl"></span>
+                                <h3 class="text-xl font-bold text-black">Citizen Profiling</h3>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-600">Registered citizens:</span>
+                                    <span class="text-2xl font-bold text-blue-800">1,284</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-blue-900 h-2 rounded-full" style="width: 78%"></div>
+                                </div>
+                                <p class="text-sm text-gray-500">78% profiling complete</p>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button class="bg-blue-600 hover:bg-blue-800 text-white py-2 rounded-lg text-sm transition-all">
+                                        + Add New
+                                    </button>
+                                    <button class="border border-blue-600 text-blue-600 hover:bg-blue-800 py-2 hover:text-white rounded-lg text-sm transition-all">
+                                        View All
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+               
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden" alt="active-tickets">
+                    <div class="bg-gradient-to-br from-yellow-500 to-yellow-400 p-4 text-white">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                
+                                <h3 class="text-xl font-bold text-black">Active Queue Tickets</h3>
+                            </div>
+                            <span class="bg-white text-black px-3 py-1 rounded-full text-sm font-bold">
+                                18 Waiting
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="p-6">
+                     
+                        <div class="grid grid-cols-4 gap-2 mb-6 text-center" alt="summary-tickets">
+                            <div class="bg-gray-200 p-3 rounded-lg">
+                                <div class="text-2xl font-bold text-blue-900">A01</div>
+                                <div class="text-xs text-gray-500">Now Serving </div>
+                                <div class="text-xs text-gray-500">COUNTER 1 </div>
+                            </div>
+                            <div class="bg-gray-200 p-3 rounded-lg">
+                                <div class="text-2xl font-bold text-blue-900">A02</div>
+                                <div class="text-xs text-gray-500">Now Serving </div>
+                                <div class="text-xs text-gray-500">COUNTER 2 </div>
+                            </div>
+                            <div class="bg-gray-200 p-3 rounded-lg">
+                                <div class="text-2xl font-bold text-blue-900">A03</div>
+                                <div class="text-xs text-gray-500">Waiting</div>
+                            </div>
+                            <div class="bg-gray-200 p-3 rounded-lg">
+                                <div class="text-2xl font-bold text-blue-900">A04</div>
+                                <div class="text-xs text-gray-500">Waiting</div>
+                            </div>
+                        </div>
+
+                    
+                        <div alt="fake-customer" class="space-y-3 max-h-[300px] overflow-y-auto custom-scrollbar pr-2">
+                            
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all">
+                                <div class="flex items-center gap-3">
+                                    <span class="bg-yellow-400 w-8 h-8 rounded-full flex items-center justify-center font-bold">A01</span>
+                                    <div>
+                                        <p class="font-medium">Juan Dela Cruz</p>
+                                        <p class="text-xs text-gray-500">Business Permit</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <button class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg text-xs">
+                                        Serve
+                                    </button>
+                                </div>
+                            </div>
+                            
+                          
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all">
+                                <div class="flex items-center gap-3">
+                                    <span class="bg-blue-400 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold">A02</span>
+                                    <div>
+                                        <p class="font-medium">Maria Santos</p>
+                                        <p class="text-xs text-gray-500">Barangay Clearance</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <button class="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded-lg text-xs">
+                                        Hold
+                                    </button>
+                                </div>
+                            </div>
+                            
+                        
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all">
+                                <div class="flex items-center gap-3">
+                                    <span class="bg-purple-400 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold">A03</span>
+                                    <div>
+                                        <p class="font-medium">Pedro Reyes</p>
+                                        <p class="text-xs text-gray-500">Cedula</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <button class="bg-yellow-400 hover:bg-yellow-500 px-3 py-1 rounded-lg text-xs">
+                                        Call
+                                    </button>
+                                </div>
+                            </div>
+                            
+                           
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all">
+                                <div class="flex items-center gap-3">
+                                    <span class="bg-green-400 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold">A04</span>
+                                    <div>
+                                        <p class="font-medium">Ana Lopez</p>
+                                        <p class="text-xs text-gray-500">Business Permit</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <button class="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded-lg text-xs">
+                                        Hold
+                                    </button>
+                                </div>
+                            </div>
+
+                             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all">
+                                <div class="flex items-center gap-3">
+                                    <span class="bg-yellow-400 w-8 h-8 rounded-full flex items-center justify-center font-bold">A01</span>
+                                    <div>
+                                        <p class="font-medium">Juan Dela Cruz</p>
+                                        <p class="text-xs text-gray-500">Business Permit</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <button class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg text-xs">
+                                        Serve
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        
+                    </div>
                 </div>
             </div>
 
-            <div class="bg-gray-50 p-5 rounded-2xl border border-gray-100 shrink-0">
-                <h2 class="text-sm font-bold text-gray-400 mb-3 uppercase tracking-widest">4. ANNOUNCEMENT TICKER</h2>
-                <div class="flex flex-col gap-2">
-                    <input type="text" id="ticker-input" placeholder="Enter scrolling text..." class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] outline-none bg-white text-xs">
-                    <button id="btn-update-ticker" class="bg-black hover:bg-gray-800 text-[#FFD500] font-black py-3 px-4 rounded-xl shadow-md transition-all uppercase tracking-widest mt-1 text-sm">
-                        UPDATE TICKER
-                    </button>
+           
+            <div class="space-y-6">
+                <div class="bg-white rounded-2xl shadow-xl p-6" alt="system-status">
+                    <h4 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                        System Status
+                    </h4>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Server:</span>
+                            <span class="text-green-600 font-medium">Online</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Queue Server:</span>
+                            <span class="text-green-600 font-medium">Active</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Last Sync:</span>
+                            <span class="text-gray-800">2 min ago</span>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <div class="bg-gray-50 p-5 rounded-2xl border border-gray-100 shrink-0">
-                <h2 class="text-sm font-bold text-gray-400 mb-3 uppercase tracking-widest">5. SYSTEM DATA & ANALYTICS</h2>
-                <div class="flex flex-col gap-3">
-                    <button id="btn-open-analytics" class="bg-black hover:bg-gray-800 text-[#FFD500] font-black py-3 px-4 rounded-xl shadow-md transition-all uppercase tracking-widest text-sm flex justify-between items-center">
-                        <span>OPEN DASHBOARD</span>
-                        <span>&nearr;</span>
-                    </button>
+             
+                <div class="bg-white rounded-2xl shadow-xl p-6" alt="today-summary">
+                    <h4 class="text-lg font-bold text-gray-800 mb-4">Today's Summary</h4>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span>Total Transactions</span>
+                            <span class="text-2xl font-bold text-black">47</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span>Completed</span>
+                            <span class="text-2xl font-bold text-black">32</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span>Cancelled</span>
+                            <span class="text-2xl font-bold text-black">5</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span>In Queue</span>
+                            <span class="text-2xl font-bold text-black">18</span>
+                        </div>
+                    </div>
+                </div>
+
+      
+                <div class="bg-white rounded-2xl shadow-xl p-6" alt="recent-alerts">
+                    <h4 class="text-lg font-bold text-gray-800 mb-4">Recent Alerts</h4>
+                    <div class="space-y-3">
+                        <div class="flex items-start gap-2 text-sm">
+                            <span class="text-green-500">●</span>
+                            <p>System backup completed</p>
+                        </div>
+                        <div class="flex items-start gap-2 text-sm">
+                            <span class="text-yellow-500">●</span>
+                            <p>Queue #A02 waiting > 15 min</p>
+                        </div>
+                        <div class="flex items-start gap-2 text-sm">
+                            <span class="text-blue-700">●</span>
+                            <p>New citizen registered</p>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div class="bg-[#1a3d63] rounded-2xl  p-6" alt="emergency-button">
+                    <div class="bg-gradient-to-r from-red-600 to-red-500 rounded-2xl shadow-2xl emergency-pulse">
+                        <div class="flex flex-col md:flex-row items-center justify-between p-6 text-white">
+                            <div class="flex items-center gap-4 mb-4 md:mb-0">
+                                <span class="text-5xl">🚨</span>
+                                <div>
+                                    <h2 class="text-2xl font-bold">Emergency Notification</h2>
+                                    <p class="text-red-100">Broadcast urgent alerts to all citizens</p>
+                                </div>
+                            </div>
+                            <button class="bg-white text-red-600 hover:bg-red-50 px-8 py-4 rounded-xl font-bold text-lg shadow-xl transition-all hover:scale-105 flex items-center gap-2">
+                                <span>🔔</span> SEND EMERGENCY ALERT
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
-            
-            <button id="btn-reset" class="text-black hover:bg-[#FFD500] font-bold py-2 px-4 rounded-xl transition-all w-full uppercase text-xs tracking-widest mt-auto border-2 border-transparent hover:border-black shrink-0">
-                RESET SYSTEM
+        </div>
+
+        
+        <div class="mt-8 flex justify-end gap-4">
+            <button class="bg-gray-200 hover:bg-black text-black hover:text-white px-6 py-3 rounded-lg font-medium transition-all">
+                View Full Reports
+            </button>
+            <button class="bg-[#071c4d] hover:bg-[#0a2a6e] text-white px-6 py-3 rounded-lg font-medium transition-all shadow-lg">
+                Open Queue Monitor
             </button>
         </div>
 
-        <div class="w-1/3 flex flex-col gap-4">
-            <div class="bg-[#FFF9E2] p-6 rounded-3xl border-2 border-[#FFF394] flex flex-col h-1/2 relative shadow-sm">
-                <h2 class="text-xs font-bold text-gray-500 mb-1 uppercase tracking-widest">COUNTER 1</h2>
-                <div id="c1-ticket" class="text-7xl font-black text-gray-900 mb-1">----</div>
-                <div id="c1-name" class="text-lg font-bold text-gray-700 mb-1 truncate">Name: ---</div>
-                <div id="c1-doc" class="text-xs font-bold text-[#FFD500] bg-black px-3 py-1 rounded-md inline-block mb-4 self-start">SYSTEM STANDBY</div>
-
-                <button id="btn-call-1" class="w-full bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-5 px-4 rounded-2xl shadow-lg text-xl transition-all mt-auto uppercase tracking-tighter">
-                    CALL NEXT (C1)
-                </button>
-            </div>
-
-            <div class="bg-[#FFF9E2] p-6 rounded-3xl border-2 border-[#FFF394] flex flex-col h-1/2 relative shadow-sm">
-                <h2 class="text-xs font-bold text-gray-500 mb-1 uppercase tracking-widest">COUNTER 2</h2>
-                <div id="c2-ticket" class="text-7xl font-black text-gray-900 mb-1">----</div>
-                <div id="c2-name" class="text-lg font-bold text-gray-700 mb-1 truncate">Name: ---</div>
-                <div id="c2-doc" class="text-xs font-bold text-[#FFD500] bg-black px-3 py-1 rounded-md inline-block mb-4 self-start">SYSTEM STANDBY</div>
-
-                <button id="btn-call-2" class="w-full bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-5 px-4 rounded-2xl shadow-lg text-xl transition-all mt-auto uppercase tracking-tighter">
-                    CALL NEXT (C2)
-                </button>
-            </div>
+        <div class="mt-8 flex justify-center">
+            <button onclick="logout()" 
+                    class="bg-red-600 hover:bg-red-700 text-white px-10 py-4 rounded-xl font-bold text-lg shadow-xl transition-all hover:scale-105 flex items-center gap-3 mx-auto">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>LOGOUT</span>
+                <i class="fas fa-arrow-right"></i>
+            </button>
         </div>
+    </main>
 
-        <div class="w-1/3 flex flex-col gap-4 h-full">
-            <div class="flex flex-col bg-gray-50 rounded-3xl border border-gray-100 overflow-hidden h-1/2">
-                <div class="p-4 bg-gray-100 border-b border-gray-200 flex justify-between items-center shrink-0">
-                    <h2 class="text-sm font-bold text-gray-600 uppercase tracking-widest">LIVE QUEUE</h2>
-                    <span id="admin-waiting-count" class="bg-black text-[#FFD500] px-3 py-1 rounded-lg font-black text-sm shadow-sm">0</span>
-                </div>
-                <div id="admin-waiting-list" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
-                    <div class="text-center py-10 text-gray-400 font-medium uppercase text-xs tracking-widest">No residents in queue</div>
-                </div>
-            </div>
-
-            <div class="flex flex-col bg-gray-50 rounded-3xl border border-gray-100 overflow-hidden h-1/2">
-                <div class="p-4 bg-gray-100 border-b border-gray-200 flex justify-between items-center shrink-0">
-                    <h2 class="text-sm font-bold text-gray-600 uppercase tracking-widest">UPCOMING APPOINTMENTS</h2>
-                    <span id="admin-appointment-count" class="bg-gray-300 text-gray-800 px-3 py-1 rounded-lg font-black text-sm shadow-sm">0</span>
-                </div>
-                <div id="admin-appointment-list" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
-                    <div class="text-center py-10 text-gray-400 font-medium uppercase text-xs tracking-widest">No future appointments</div>
-                </div>
-            </div>
+    <div class="bg-[#1a3d63] flex flex-col md:flex-row justify-between items-center text-white text-sm py-4 px-6">
+        <p>© 2026 Barangay Baliwasan. All Rights Reserved</p>
+        <div class="flex gap-4 md:gap-6 mt-3 md:mt-0">
+            <a href="#" class="hover:text-yellow-400 transition-colors">Privacy Policy</a>
+            <a href="#" class="hover:text-yellow-400 transition-colors">Terms & Conditions</a>
+            <a href="#" class="hover:text-yellow-400 transition-colors">Sitemap</a>
         </div>
-
     </div>
 
-    <style>
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #E5E7EB; border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #D1D5DB; }
-    </style>
-
-    <script src="/socket.io/socket.io.js"></script>
     <script>
-        const socket = io();
+    function logout() {
+        if (confirm('Are you sure you want to logout?')) {
+           
+            window.location.href = 'admin-login.html'; }
+    }
 
-        const servicesList = [
-            "Ayuda / Cash Assistance",
-            "Barangay Clearance",
-            "Barangay ID",
-            "Building and Fencing Permit",
-            "Business Clearance/Permit",
-            "Certificate of Indigency",
-            "Certificate of Residency",
-            "First Time Jobseeker",
-            "Fit to Work Certificate",
-            "Solo Parent Certification"
-        ];
+    function updatePortalClock() {
+        const now = new Date();
+        const options = { 
+            month: 'long', 
+            day: 'numeric', 
+            year: 'numeric',
+            hour: '2-digit', 
+            minute: '2-digit', 
+            second: '2-digit',
+            hour12: true
+        };
+        const clockElement = document.getElementById('portal-clock');
+        if (clockElement) {
+            clockElement.innerText = now.toLocaleString('en-US', options);
+        }
+    }
 
-        const mediaTypeSelect = document.getElementById('media-type');
-        const mediaUrlInput = document.getElementById('media-url');
-        const mediaFileInput = document.getElementById('media-file');
-        const pushBtn = document.getElementById('btn-push-media');
 
-        mediaTypeSelect.addEventListener('change', (e) => {
-            if (e.target.value === 'upload') {
-                mediaUrlInput.classList.add('hidden');
-                mediaFileInput.classList.remove('hidden');
-            } else if (e.target.value === 'youtube') {
-                mediaFileInput.classList.add('hidden');
-                mediaUrlInput.classList.remove('hidden');
-            } else {
-                mediaFileInput.classList.add('hidden');
-                mediaUrlInput.classList.add('hidden');
-            }
-        });
-
-        document.getElementById('btn-open-analytics').addEventListener('click', () => {
-            window.open('analytics.html', '_blank');
-        });
-
-        document.getElementById('btn-gen-walkin').addEventListener('click', () => {
-            const priority = document.getElementById('admin-priority').value;
-            const documentType = document.getElementById('admin-document').value;
-            socket.emit('generateTicket', { priority, document: documentType });
-        });
-
-        document.getElementById('btn-call-1').addEventListener('click', () => {
-            socket.emit('callNext', { counterId: 1 });
-        });
-
-        document.getElementById('btn-call-2').addEventListener('click', () => {
-            socket.emit('callNext', { counterId: 2 });
-        });
-
-        document.getElementById('btn-update-ticker').addEventListener('click', () => {
-            const text = document.getElementById('ticker-input').value;
-            if(text) {
-                socket.emit('updateTicker', text);
-                document.getElementById('ticker-input').value = '';
-            }
-        });
-
-        pushBtn.addEventListener('click', async () => {
-            const type = mediaTypeSelect.value;
-            
-            if (type === 'none') {
-                socket.emit('updateMedia', { type: 'none', url: '' });
-                return;
-            }
-
-            if (type === 'youtube') {
-                const url = mediaUrlInput.value;
-                if (!url) return alert('Enter a valid YouTube URL');
-                socket.emit('updateMedia', { type: 'youtube', url: url });
-                return;
-            }
-
-            if (type === 'upload') {
-                const file = mediaFileInput.files[0];
-                if (!file) return alert('Select a file to upload first.');
-
-                pushBtn.innerText = 'UPLOADING...';
-                pushBtn.classList.add('opacity-50', 'pointer-events-none');
-
-                const formData = new FormData();
-                formData.append('mediaFile', file);
-
-                try {
-                    const response = await fetch('/upload', {
-                        method: 'POST',
-                        body: formData
-                    });
-                    
-                    if (!response.ok) throw new Error('Upload failed');
-                    
-                    const data = await response.json();
-                    const detectedType = file.type.startsWith('video') ? 'video' : 'image';
-                    
-                    socket.emit('updateMedia', { type: detectedType, url: data.url });
-                    
-                    mediaFileInput.value = '';
-                } catch (error) {
-                    alert('Error uploading file: ' + error.message);
-                } finally {
-                    pushBtn.innerText = 'PUSH TO SCREEN';
-                    pushBtn.classList.remove('opacity-50', 'pointer-events-none');
+    document.addEventListener('DOMContentLoaded', function() {
+        updatePortalClock();
+        setInterval(updatePortalClock, 1000);
+        
+        const emergencyBtn = document.querySelector('.bg-gradient-to-r.from-red-600 .bg-white');
+        if (emergencyBtn) {
+            emergencyBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                if(confirm('Send emergency alert to all citizens?')) {
+                    alert('Emergency alert sent!');
                 }
-            }
-        });
-
-        document.getElementById('btn-reset').addEventListener('click', () => {
-            if(confirm("DANGER: This will wipe all current queue data. Proceed?")) {
-                socket.emit('resetQueue');
-            }
-        });
-
-        function renderToggles(disabledList) {
-            const container = document.getElementById('service-toggles');
-            container.innerHTML = '';
-            servicesList.forEach(service => {
-                const isOff = disabledList.includes(service);
-                const colorClass = isOff ? 'bg-black' : 'bg-[#FFD500] border-2 border-black';
-                const textClass = isOff ? 'text-gray-400 line-through' : 'text-gray-900';
-                const knobClass = isOff ? 'bg-gray-600 left-0.5' : 'bg-black left-4';
-                
-                const el = document.createElement('div');
-                el.className = 'flex justify-between items-center p-2 bg-white rounded-lg border border-gray-100 shadow-sm';
-                el.innerHTML = `
-                    <span class="text-[10px] font-bold ${textClass} truncate pr-2 uppercase">${service}</span>
-                    <button class="shrink-0 w-8 h-4 rounded-full ${colorClass} transition-colors relative" onclick="socket.emit('toggleService', '${service}')">
-                        <div class="w-3 h-3 rounded-full absolute top-[1px] transition-all ${knobClass}"></div>
-                    </button>
-                `;
-                container.appendChild(el);
             });
         }
 
-        function createTicketCard(item, isLive) {
-            const badgeColor = item.priority === 'PWD / SENIOR' ? 'bg-black text-[#FFD500] border-gray-800' : 'bg-[#FFF9E2] text-gray-700 border-[#FFE761]';
-            const dateColor = isLive ? 'text-green-600' : 'text-gray-500';
+        const downloadButtons = document.querySelectorAll('.bg-red-500, .bg-green-600');
+        downloadButtons.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('Downloading transaction logs...');
+            });
+        });
+
+        const ticketSection = document.querySelector('[class*="from-yellow-500"]')?.closest('.bg-white');
+        if (ticketSection) {
+            const serveButtons = ticketSection.querySelectorAll('.bg-green-500');
+            const holdButtons = ticketSection.querySelectorAll('.bg-gray-200');
+            const callButtons = ticketSection.querySelectorAll('.bg-yellow-400');
             
-            const el = document.createElement('div');
-            el.className = 'bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex flex-col gap-2';
-            el.innerHTML = `
-                <div class="flex justify-between items-start">
-                    <div>
-                        <div class="font-black text-xl text-gray-900">${item.ticketNumber.toString().padStart(4, '0')}</div>
-                        <div class="text-sm font-bold text-gray-800">${item.name}</div>
-                        <div class="text-[10px] text-gray-400 font-medium">${item.contact}</div>
-                        <div class="text-[10px] font-bold mt-1 ${dateColor}">${item.date}</div>
-                    </div>
-                    <div class="text-[9px] font-black uppercase ${badgeColor} px-2 py-1 rounded-md border tracking-tighter">
-                        ${item.priority}
-                    </div>
-                </div>
-                <div class="text-[11px] font-bold bg-gray-50 text-gray-500 px-3 py-2 rounded-xl border border-gray-100 mt-1 uppercase truncate">
-                    ${item.document}
-                </div>
-            `;
-            return el;
+            serveButtons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    alert('Serving ticket...');
+                });
+            });
+            
+            holdButtons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    alert('Holding ticket...');
+                });
+            });
+            
+            callButtons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    alert('Calling ticket...');
+                });
+            });
         }
 
-        socket.on('queueUpdated', (state) => {
-            const c1 = state.counters.find(c => c.id === 1);
-            const c2 = state.counters.find(c => c.id === 2);
-
-            document.getElementById('c1-ticket').innerText = c1.currentTicket ? c1.currentTicket.toString().padStart(4, '0') : "----";
-            document.getElementById('c1-name').innerText = c1.currentName ? `Name: ${c1.currentName}` : "Name: ---";
-            document.getElementById('c1-doc').innerText = c1.currentDocument;
-
-            document.getElementById('c2-ticket').innerText = c2.currentTicket ? c2.currentTicket.toString().padStart(4, '0') : "----";
-            document.getElementById('c2-name').innerText = c2.currentName ? `Name: ${c2.currentName}` : "Name: ---";
-            document.getElementById('c2-doc').innerText = c2.currentDocument;
-            
-            document.getElementById('admin-waiting-count').innerText = state.waitingList.length;
-            document.getElementById('ticker-input').placeholder = state.tickerText;
-            
-            renderToggles(state.disabledServices || []);
-
-            const listContainer = document.getElementById('admin-waiting-list');
-            listContainer.innerHTML = '';
-            if (state.waitingList.length === 0) {
-                listContainer.innerHTML = '<div class="text-center py-10 text-gray-400 font-medium uppercase text-xs tracking-widest">No residents in queue</div>';
-            } else {
-                state.waitingList.forEach(item => listContainer.appendChild(createTicketCard(item, true)));
-            }
-
-            const appointmentList = state.appointments || [];
-            document.getElementById('admin-appointment-count').innerText = appointmentList.length;
-            const apptContainer = document.getElementById('admin-appointment-list');
-            apptContainer.innerHTML = '';
-            if (appointmentList.length === 0) {
-                apptContainer.innerHTML = '<div class="text-center py-10 text-gray-400 font-medium uppercase text-xs tracking-widest">No future appointments</div>';
-            } else {
-                appointmentList.forEach(item => apptContainer.appendChild(createTicketCard(item, false)));
-            }
-        });
+        const generateBtn = document.querySelector('.bg-\\[\\#071c4d\\]');
+        if (generateBtn) {
+            generateBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('Generating new ticket...');
+            });
+        }
+    });
     </script>
+
+    <style>
+        @keyframes pulse-emergency {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .emergency-pulse {
+            animation: pulse-emergency 2s infinite;
+        }
+        .hover-scale {
+            transition: transform 0.2s ease;
+        }
+        .hover-scale:hover {
+            transform: scale(1.02);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #a1a1a1;
+        }
+    </style>
 </body>
 </html>
