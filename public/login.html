@@ -182,16 +182,11 @@
     </div>
 
     <div id="ticket-result" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-md border-2 border-[#FFD500] text-center my-8 relative z-10">
-        <h2 class="text-lg md:text-xl font-bold text-gray-500 uppercase tracking-wider mb-2">Your Ticket Number</h2>
-        <div id="my-ticket-number" class="text-6xl md:text-7xl font-black text-gray-900 mb-4 drop-shadow-sm">---</div>
-        
-        <div id="ewt-container" class="bg-gray-50 border border-gray-200 rounded-xl p-4 mb-6">
-            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Estimated Wait Time</p>
-            <p id="ewt-display" class="text-2xl font-black text-black">Wait for Admin's Approval</p>
+        <h2 class="text-lg md:text-xl font-bold text-gray-500 uppercase tracking-wider mb-2">Wait for Admin's approval</h2>
+        <div id="my-ticket-number" class="text-6xl md:text-7xl font-black text-gray-900 mb-4 drop-shadow-sm">---</div>        
         </div>
 
         <p id="appt-message" class="hidden text-sm md:text-base text-gray-600 mb-8 font-medium leading-relaxed">Please save this ticket. Present this number upon arrival on your scheduled date.</p>
-        <p id="live-message" class="text-sm md:text-base text-gray-600 mb-8 font-medium leading-relaxed">Please wait. Monitor the Live Queue to track your position.</p>
 
         <button onclick="window.location.reload()" class="border-2 border-gray-200 text-gray-500 px-6 py-2 rounded-full font-bold hover:border-[#FFD500] hover:text-black transition-colors uppercase tracking-wide text-xs md:text-sm">
             Done
@@ -313,9 +308,6 @@
             ticketResult.classList.remove('hidden');
             window.scrollTo(0, 0);
             
-            myAssignedTicket = response.ticket.ticketNumber;
-            document.getElementById('my-ticket-number').innerText = myAssignedTicket.toString().padStart(4, '0');
-
             if (response.isToday) {
                 document.getElementById('ewt-container').classList.remove('hidden');
                 document.getElementById('live-message').classList.remove('hidden');
