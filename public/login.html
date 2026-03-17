@@ -57,28 +57,8 @@
             </div>
         </div>
 
-        <div class="mb-8">
-            <h3 class="text-xs md:text-sm font-bold text-gray-400 uppercase tracking-widest mb-3 text-center md:text-left">Special Events</h3>
-            <div class="grid grid-cols-1 gap-4">
-                <button class="doc-btn bg-[#FFF394] hover:bg-[#FFD500] border-2 border-[#FFD500] text-black font-black py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-sm tracking-wide" data-doc="Ayuda / Cash Assistance">
-                    ⭐ Ayuda / Cash Assistance
-                </button>
-            </div>
-        </div>
-
-        <div>
-            <h3 class="text-xs md:text-sm font-bold text-gray-400 uppercase tracking-widest mb-3 text-center md:text-left">Standard Documents</h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4" id="document-grid">
-                <button class="doc-btn bg-gray-50 border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm hover:border-[#FFD500] hover:bg-[#FFD500]" data-doc="Barangay Clearance">Barangay Clearance</button>
-                <button class="doc-btn bg-gray-50 border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm hover:border-[#FFD500] hover:bg-[#FFD500]" data-doc="Barangay ID">Barangay ID</button>
-                <button class="doc-btn bg-gray-50 border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm hover:border-[#FFD500] hover:bg-[#FFD500]" data-doc="Building and Fencing Permit">Building & Fencing Permit</button>
-                <button class="doc-btn bg-gray-50 border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm hover:border-[#FFD500] hover:bg-[#FFD500]" data-doc="Business Clearance/Permit">Business Clearance</button>
-                <button class="doc-btn bg-gray-50 border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm hover:border-[#FFD500] hover:bg-[#FFD500]" data-doc="Certificate of Indigency">Certificate of Indigency</button>
-                <button class="doc-btn bg-gray-50 border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm hover:border-[#FFD500] hover:bg-[#FFD500]" data-doc="Certificate of Residency">Certificate of Residency</button>
-                <button class="doc-btn bg-gray-50 border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm hover:border-[#FFD500] hover:bg-[#FFD500]" data-doc="First Time Jobseeker">First Time Jobseeker</button>
-                <button class="doc-btn bg-gray-50 border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm hover:border-[#FFD500] hover:bg-[#FFD500]" data-doc="Fit to Work Certificate">Fit to Work Certificate</button>
-                <button class="doc-btn bg-gray-50 border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm hover:border-[#FFD500] hover:bg-[#FFD500]" data-doc="Solo Parent Certification">Solo Parent Certification</button>
-            </div>
+        <div id="dynamic-services-container" class="space-y-8">
+            <div class="text-center py-10 text-gray-400 font-bold uppercase text-xs tracking-widest">Loading Services...</div>
         </div>
     </div>
 
@@ -217,25 +197,16 @@
         const confirmDocName = document.getElementById('confirm-doc-name');
         const confirmDate = document.getElementById('confirm-date');
         const confirmPriority = document.getElementById('confirm-priority');
+        const dynamicServicesContainer = document.getElementById('dynamic-services-container');
 
         let pendingUser = { name: '', contact: '', priority: '', document: '', date: '' };
         let myAssignedTicket = null;
-        let myAssignedDoc = null;
+        let myAssignedCat = null;
 
-        function formatTicket(num, doc) {
+        function formatTicket(num, cat) {
             if (!num) return "----";
-            let prefix = "TK";
-            if(doc === 'Ayuda / Cash Assistance') prefix = 'ACA';
-            else if(doc === 'Barangay Clearance') prefix = 'BC';
-            else if(doc === 'Barangay ID') prefix = 'BI';
-            else if(doc === 'Building and Fencing Permit') prefix = 'BFP';
-            else if(doc === 'Business Clearance/Permit') prefix = 'BCP';
-            else if(doc === 'Certificate of Indigency') prefix = 'CI';
-            else if(doc === 'Certificate of Residency') prefix = 'CR';
-            else if(doc === 'First Time Jobseeker') prefix = 'FTJ';
-            else if(doc === 'Fit to Work Certificate') prefix = 'FWC';
-            else if(doc === 'Solo Parent Certification') prefix = 'SPC';
-            return prefix + num.toString().padStart(3, '0');
+            const prefix = cat ? cat : "M";
+            return `${prefix}-${num.toString().padStart(3, '0')}`;
         }
 
         const dateInput = document.getElementById('user-date');
@@ -256,15 +227,17 @@
             mobileQueueScreen.classList.remove('flex');
         });
 
-        document.querySelectorAll('.doc-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                if (e.target.disabled) return;
-                pendingUser.document = e.target.getAttribute('data-doc');
-                step1.classList.add('hidden');
-                step2.classList.remove('hidden');
-                window.scrollTo(0, 0);
+        function setupDocButtons() {
+            document.querySelectorAll('.doc-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    if (e.target.disabled) return;
+                    pendingUser.document = e.target.getAttribute('data-doc');
+                    step1.classList.add('hidden');
+                    step2.classList.remove('hidden');
+                    window.scrollTo(0, 0);
+                });
             });
-        });
+        }
 
         document.getElementById('btn-back-to-1').addEventListener('click', () => {
             step2.classList.add('hidden');
@@ -331,8 +304,8 @@
             window.scrollTo(0, 0);
             
             myAssignedTicket = response.ticket.ticketNumber;
-            myAssignedDoc = response.ticket.document;
-            document.getElementById('my-ticket-number').innerText = formatTicket(myAssignedTicket, myAssignedDoc);
+            myAssignedCat = response.ticket.category;
+            document.getElementById('my-ticket-number').innerText = formatTicket(myAssignedTicket, myAssignedCat);
 
             if (response.isToday) {
                 document.getElementById('ewt-display').innerText = `~${response.ewt} mins`;
@@ -348,7 +321,53 @@
 
         socket.on('queueUpdated', (state) => {
             
-            document.getElementById('mobile-serving-ticket').innerText = state.lastCalled && state.lastCalled.ticket ? formatTicket(state.lastCalled.ticket, state.lastCalled.document) : "----";
+            dynamicServicesContainer.innerHTML = '';
+            
+            const specialServices = state.services.filter(s => s.category === 'S');
+            if(specialServices.length > 0) {
+                const specialHTML = specialServices.map(s => {
+                    const disabledClass = state.disabledServices.includes(s.name) ? 'opacity-30 cursor-not-allowed bg-gray-200' : 'bg-[#FFF394] hover:bg-[#FFD500] hover:border-[#FFD500]';
+                    const newBadge = s.isNew ? '<span class="bg-red-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded absolute -top-2 -right-2 tracking-widest shadow-sm">NEW</span>' : '';
+                    return `
+                        <button ${state.disabledServices.includes(s.name) ? 'disabled' : ''} class="doc-btn ${disabledClass} relative border-2 border-[#FFD500] text-black font-black py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-sm tracking-wide w-full" data-doc="${s.name}">
+                            ${newBadge}
+                            ⭐ ${s.name}
+                        </button>
+                    `;
+                }).join('');
+                
+                dynamicServicesContainer.innerHTML += `
+                    <div>
+                        <h3 class="text-xs md:text-sm font-bold text-gray-400 uppercase tracking-widest mb-3 text-center md:text-left">Special Events</h3>
+                        <div class="grid grid-cols-1 gap-4">${specialHTML}</div>
+                    </div>
+                `;
+            }
+
+            const standardServices = state.services.filter(s => s.category !== 'S');
+            if(standardServices.length > 0) {
+                const standardHTML = standardServices.map(s => {
+                    const disabledClass = state.disabledServices.includes(s.name) ? 'opacity-30 cursor-not-allowed bg-gray-200' : 'bg-gray-50 hover:bg-[#FFD500] hover:border-[#FFD500]';
+                    const newBadge = s.isNew ? '<span class="bg-red-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded absolute -top-2 -right-2 tracking-widest shadow-sm">NEW</span>' : '';
+                    return `
+                        <button ${state.disabledServices.includes(s.name) ? 'disabled' : ''} class="doc-btn ${disabledClass} relative border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm w-full" data-doc="${s.name}">
+                            ${newBadge}
+                            ${s.name}
+                        </button>
+                    `;
+                }).join('');
+
+                dynamicServicesContainer.innerHTML += `
+                    <div>
+                        <h3 class="text-xs md:text-sm font-bold text-gray-400 uppercase tracking-widest mb-3 text-center md:text-left">Standard Documents</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">${standardHTML}</div>
+                    </div>
+                `;
+            }
+            
+            setupDocButtons();
+
+            document.getElementById('mobile-serving-ticket').innerText = state.lastCalled && state.lastCalled.ticket ? formatTicket(state.lastCalled.ticket, state.lastCalled.category) : "----";
             document.getElementById('mobile-serving-counter').innerText = state.lastCalled && state.lastCalled.counter ? `COUNTER ${state.lastCalled.counter}` : "--";
             document.getElementById('mobile-serving-doc').innerText = state.lastCalled && state.lastCalled.document ? state.lastCalled.document : "SYSTEM STANDBY";
 
@@ -364,36 +383,18 @@
                     const el = document.createElement('div');
                     el.className = 'flex justify-between items-center p-4 border border-gray-100 rounded-2xl bg-gray-50 shadow-sm';
                     el.innerHTML = `
-                        <div class="font-black text-3xl text-gray-900">${formatTicket(item.ticketNumber, item.document)}</div>
+                        <div class="font-black text-3xl text-gray-900">${formatTicket(item.ticketNumber, item.category)}</div>
                         <div class="text-[9px] font-black uppercase ${badgeColor} px-2 py-1 rounded border tracking-widest">${item.priority}</div>
                     `;
                     mobileList.appendChild(el);
                 });
             }
 
-            const disabledList = state.disabledServices || [];
-            document.querySelectorAll('.doc-btn').forEach(btn => {
-                const docName = btn.getAttribute('data-doc');
-                if (disabledList.includes(docName)) {
-                    btn.disabled = true;
-                    btn.classList.add('opacity-30', 'cursor-not-allowed', 'bg-gray-200');
-                    btn.classList.remove('hover:border-[#FFD500]', 'hover:bg-[#FFD500]', 'hover:bg-[#FFDC2E]');
-                } else {
-                    btn.disabled = false;
-                    btn.classList.remove('opacity-30', 'cursor-not-allowed', 'bg-gray-200');
-                    if(docName === 'Ayuda / Cash Assistance') {
-                        btn.classList.add('hover:bg-[#FFD500]');
-                    } else {
-                        btn.classList.add('hover:border-[#FFD500]', 'hover:bg-[#FFD500]');
-                    }
-                }
-            });
-
             if (myAssignedTicket !== null) {
                 const servingCounter = state.counters.find(c => c.currentTicket === myAssignedTicket);
                 
                 if (servingCounter) {
-                    const formattedTicket = formatTicket(myAssignedTicket, myAssignedDoc);
+                    const formattedTicket = formatTicket(myAssignedTicket, myAssignedCat);
                     smsMessage.innerText = `Hello! Ticket #${formattedTicket} is now being served at Counter ${servingCounter.id}. Please proceed to the counter.`;
                     
                     smsToast.classList.remove('hidden');

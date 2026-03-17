@@ -20,20 +20,6 @@
                     </select>
 
                     <select id="admin-document" class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] outline-none bg-white font-bold text-xs">
-                        <optgroup label="Special Events">
-                            <option value="Ayuda / Cash Assistance">⭐ Ayuda / Cash Assistance</option>
-                        </optgroup>
-                        <optgroup label="Standard Documents">
-                            <option value="Barangay Clearance">Barangay Clearance</option>
-                            <option value="Barangay ID">Barangay ID</option>
-                            <option value="Building and Fencing Permit">Building and Fencing Permit</option>
-                            <option value="Business Clearance/Permit">Business Clearance/Permit</option>
-                            <option value="Certificate of Indigency">Certificate of Indigency</option>
-                            <option value="Certificate of Residency">Certificate of Residency</option>
-                            <option value="First Time Jobseeker">First Time Jobseeker</option>
-                            <option value="Fit to Work Certificate">Fit to Work Certificate</option>
-                            <option value="Solo Parent Certification">Solo Parent Certification</option>
-                        </optgroup>
                     </select>
 
                     <button id="btn-gen-walkin" class="bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-3 px-4 rounded-xl shadow-md transition-all uppercase tracking-widest mt-1 text-sm">
@@ -47,7 +33,24 @@
                     <span>2. MANAGE SERVICES</span>
                     <span class="text-[9px] bg-black text-[#FFD500] px-2 py-1 rounded">LIVE</span>
                 </h2>
-                <div class="flex flex-col gap-2 max-h-40 overflow-y-auto pr-2 custom-scrollbar" id="service-toggles"></div>
+                <div class="flex flex-col gap-2 max-h-40 overflow-y-auto pr-2 custom-scrollbar mb-4" id="service-toggles"></div>
+                
+                <div class="border-t border-gray-200 pt-4 mt-2">
+                    <h3 class="text-[10px] font-bold text-gray-400 mb-2 uppercase tracking-widest">Add Custom Service</h3>
+                    <div class="flex flex-col gap-2">
+                        <input type="text" id="new-service-name" placeholder="Service Name (e.g. Dog Vaccination)" class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] outline-none bg-white text-xs">
+                        <select id="new-service-cat" class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] outline-none bg-white font-bold text-xs">
+                            <option value="C">Certification / Clearance (Prefix: C)</option>
+                            <option value="P">Permit / License (Prefix: P)</option>
+                            <option value="I">ID / Registration (Prefix: I)</option>
+                            <option value="S">Special Event / Ayuda (Prefix: S)</option>
+                            <option value="M">Miscellaneous (Prefix: M)</option>
+                        </select>
+                        <button id="btn-add-service" class="bg-black hover:bg-gray-800 text-white font-black py-2 px-4 rounded-xl shadow-md transition-all uppercase tracking-widest text-[10px]">
+                            CREATE NEW SERVICE
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <div class="bg-gray-50 p-5 rounded-2xl border border-gray-100 shrink-0">
@@ -75,19 +78,6 @@
                     <input type="text" id="ticker-input" placeholder="Enter scrolling text..." class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] outline-none bg-white text-xs">
                     <button id="btn-update-ticker" class="bg-black hover:bg-gray-800 text-[#FFD500] font-black py-3 px-4 rounded-xl shadow-md transition-all uppercase tracking-widest mt-1 text-sm">
                         UPDATE TICKER
-                    </button>
-                </div>
-            </div>
-
-            <div class="bg-gray-50 p-5 rounded-2xl border border-gray-100 shrink-0">
-                <h2 class="text-sm font-bold text-gray-400 mb-3 uppercase tracking-widest">5. SYSTEM DATA & ANALYTICS</h2>
-                <div class="flex flex-col gap-3">
-                    <button id="btn-open-analytics" class="bg-black hover:bg-gray-800 text-[#FFD500] font-black py-3 px-4 rounded-xl shadow-md transition-all uppercase tracking-widest text-sm flex justify-between items-center">
-                        <span>OPEN DASHBOARD</span>
-                        <span>&nearr;</span>
-                    </button>
-                    <button id="btn-export-data" class="bg-white hover:bg-gray-50 text-gray-600 border-2 border-gray-200 font-bold py-3 px-4 rounded-xl transition-all uppercase tracking-widest text-xs">
-                        DOWNLOAD CSV REPORT
                     </button>
                 </div>
             </div>
@@ -156,34 +146,11 @@
     <script>
         const socket = io();
 
-        function formatTicket(num, doc) {
+        function formatTicket(num, cat) {
             if (!num) return "----";
-            let prefix = "TK";
-            if(doc === 'Ayuda / Cash Assistance') prefix = 'ACA';
-            else if(doc === 'Barangay Clearance') prefix = 'BC';
-            else if(doc === 'Barangay ID') prefix = 'BI';
-            else if(doc === 'Building and Fencing Permit') prefix = 'BFP';
-            else if(doc === 'Business Clearance/Permit') prefix = 'BCP';
-            else if(doc === 'Certificate of Indigency') prefix = 'CI';
-            else if(doc === 'Certificate of Residency') prefix = 'CR';
-            else if(doc === 'First Time Jobseeker') prefix = 'FTJ';
-            else if(doc === 'Fit to Work Certificate') prefix = 'FWC';
-            else if(doc === 'Solo Parent Certification') prefix = 'SPC';
-            return prefix + num.toString().padStart(3, '0');
+            const prefix = cat ? cat : "M";
+            return `${prefix}-${num.toString().padStart(3, '0')}`;
         }
-
-        const servicesList = [
-            "Ayuda / Cash Assistance",
-            "Barangay Clearance",
-            "Barangay ID",
-            "Building and Fencing Permit",
-            "Business Clearance/Permit",
-            "Certificate of Indigency",
-            "Certificate of Residency",
-            "First Time Jobseeker",
-            "Fit to Work Certificate",
-            "Solo Parent Certification"
-        ];
 
         const mediaTypeSelect = document.getElementById('media-type');
         const mediaUrlInput = document.getElementById('media-url');
@@ -203,18 +170,19 @@
             }
         });
 
-        document.getElementById('btn-export-data').addEventListener('click', () => {
-            window.open('/export', '_blank');
-        });
-
-        document.getElementById('btn-open-analytics').addEventListener('click', () => {
-            window.open('analytics.html', '_blank');
-        });
-
         document.getElementById('btn-gen-walkin').addEventListener('click', () => {
             const priority = document.getElementById('admin-priority').value;
             const documentType = document.getElementById('admin-document').value;
             socket.emit('generateTicket', { priority, document: documentType });
+        });
+
+        document.getElementById('btn-add-service').addEventListener('click', () => {
+            const name = document.getElementById('new-service-name').value.trim();
+            const cat = document.getElementById('new-service-cat').value;
+            if(name) {
+                socket.emit('addService', { name: name, category: cat });
+                document.getElementById('new-service-name').value = '';
+            }
         });
 
         document.getElementById('btn-call-1').addEventListener('click', () => {
@@ -235,42 +203,29 @@
 
         pushBtn.addEventListener('click', async () => {
             const type = mediaTypeSelect.value;
-            
             if (type === 'none') {
                 socket.emit('updateMedia', { type: 'none', url: '' });
                 return;
             }
-
             if (type === 'youtube') {
                 const url = mediaUrlInput.value;
                 if (!url) return alert('Enter a valid YouTube URL');
                 socket.emit('updateMedia', { type: 'youtube', url: url });
                 return;
             }
-
             if (type === 'upload') {
                 const file = mediaFileInput.files[0];
                 if (!file) return alert('Select a file to upload first.');
-
                 pushBtn.innerText = 'UPLOADING...';
                 pushBtn.classList.add('opacity-50', 'pointer-events-none');
-
                 const formData = new FormData();
                 formData.append('mediaFile', file);
-
                 try {
-                    const response = await fetch('/upload', {
-                        method: 'POST',
-                        body: formData
-                    });
-                    
+                    const response = await fetch('/upload', { method: 'POST', body: formData });
                     if (!response.ok) throw new Error('Upload failed');
-                    
                     const data = await response.json();
                     const detectedType = file.type.startsWith('video') ? 'video' : 'image';
-                    
                     socket.emit('updateMedia', { type: detectedType, url: data.url });
-                    
                     mediaFileInput.value = '';
                 } catch (error) {
                     alert('Error uploading file: ' + error.message);
@@ -287,27 +242,6 @@
             }
         });
 
-        function renderToggles(disabledList) {
-            const container = document.getElementById('service-toggles');
-            container.innerHTML = '';
-            servicesList.forEach(service => {
-                const isOff = disabledList.includes(service);
-                const colorClass = isOff ? 'bg-black' : 'bg-[#FFD500] border-2 border-black';
-                const textClass = isOff ? 'text-gray-400 line-through' : 'text-gray-900';
-                const knobClass = isOff ? 'bg-gray-600 left-0.5' : 'bg-black left-4';
-                
-                const el = document.createElement('div');
-                el.className = 'flex justify-between items-center p-2 bg-white rounded-lg border border-gray-100 shadow-sm';
-                el.innerHTML = `
-                    <span class="text-[10px] font-bold ${textClass} truncate pr-2 uppercase">${service}</span>
-                    <button class="shrink-0 w-8 h-4 rounded-full ${colorClass} transition-colors relative" onclick="socket.emit('toggleService', '${service}')">
-                        <div class="w-3 h-3 rounded-full absolute top-[1px] transition-all ${knobClass}"></div>
-                    </button>
-                `;
-                container.appendChild(el);
-            });
-        }
-
         function createTicketCard(item, isLive) {
             const badgeColor = item.priority === 'PWD / SENIOR' ? 'bg-black text-[#FFD500] border-gray-800' : 'bg-[#FFF9E2] text-gray-700 border-[#FFE761]';
             const dateColor = isLive ? 'text-green-600' : 'text-gray-500';
@@ -317,7 +251,7 @@
             el.innerHTML = `
                 <div class="flex justify-between items-start">
                     <div>
-                        <div class="font-black text-xl text-gray-900">${formatTicket(item.ticketNumber, item.document)}</div>
+                        <div class="font-black text-xl text-gray-900">${formatTicket(item.ticketNumber, item.category)}</div>
                         <div class="text-sm font-bold text-gray-800">${item.name}</div>
                         <div class="text-[10px] text-gray-400 font-medium">${item.contact}</div>
                         <div class="text-[10px] font-bold mt-1 ${dateColor}">${item.date}</div>
@@ -337,18 +271,44 @@
             const c1 = state.counters.find(c => c.id === 1);
             const c2 = state.counters.find(c => c.id === 2);
 
-            document.getElementById('c1-ticket').innerText = c1.currentTicket ? formatTicket(c1.currentTicket, c1.currentDocument) : "----";
+            document.getElementById('c1-ticket').innerText = c1.currentTicket ? formatTicket(c1.currentTicket, c1.currentCategory) : "----";
             document.getElementById('c1-name').innerText = c1.currentName ? `Name: ${c1.currentName}` : "Name: ---";
             document.getElementById('c1-doc').innerText = c1.currentDocument;
 
-            document.getElementById('c2-ticket').innerText = c2.currentTicket ? formatTicket(c2.currentTicket, c2.currentDocument) : "----";
+            document.getElementById('c2-ticket').innerText = c2.currentTicket ? formatTicket(c2.currentTicket, c2.currentCategory) : "----";
             document.getElementById('c2-name').innerText = c2.currentName ? `Name: ${c2.currentName}` : "Name: ---";
             document.getElementById('c2-doc').innerText = c2.currentDocument;
             
             document.getElementById('admin-waiting-count').innerText = state.waitingList.length;
             document.getElementById('ticker-input').placeholder = state.tickerText;
             
-            renderToggles(state.disabledServices || []);
+            const docSelect = document.getElementById('admin-document');
+            docSelect.innerHTML = '';
+            state.services.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s.name;
+                opt.innerText = s.name;
+                docSelect.appendChild(opt);
+            });
+
+            const toggleContainer = document.getElementById('service-toggles');
+            toggleContainer.innerHTML = '';
+            state.services.forEach(service => {
+                const isOff = state.disabledServices.includes(service.name);
+                const colorClass = isOff ? 'bg-black' : 'bg-[#FFD500] border-2 border-black';
+                const textClass = isOff ? 'text-gray-400 line-through' : 'text-gray-900';
+                const knobClass = isOff ? 'bg-gray-600 left-0.5' : 'bg-black left-4';
+                
+                const el = document.createElement('div');
+                el.className = 'flex justify-between items-center p-2 bg-white rounded-lg border border-gray-100 shadow-sm shrink-0';
+                el.innerHTML = `
+                    <span class="text-[10px] font-bold ${textClass} truncate pr-2 uppercase">${service.name}</span>
+                    <button class="shrink-0 w-8 h-4 rounded-full ${colorClass} transition-colors relative" onclick="socket.emit('toggleService', '${service.name}')">
+                        <div class="w-3 h-3 rounded-full absolute top-[1px] transition-all ${knobClass}"></div>
+                    </button>
+                `;
+                toggleContainer.appendChild(el);
+            });
 
             const listContainer = document.getElementById('admin-waiting-list');
             listContainer.innerHTML = '';

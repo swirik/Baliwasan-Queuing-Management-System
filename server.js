@@ -4,18 +4,10 @@ const { Server } = require('socket.io');
 const path = require('path');
 const multer = require('multer');
 const fs = require('fs');
-const sqlite3 = require('sqlite3').verbose();
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
-
-const db = new sqlite3.Database(path.join(__dirname, 'queue_data.db'));
-
-db.serialize(() => {
-    db.run("CREATE TABLE IF NOT EXISTS system_state (id INTEGER PRIMARY KEY, state_json TEXT)");
-    db.run("CREATE TABLE IF NOT EXISTS ticket_history (id INTEGER PRIMARY KEY AUTOINCREMENT, ticketNumber INTEGER, name TEXT, contact TEXT, priority TEXT, document TEXT, scheduledDate TEXT, created_at DATETIME DEFAULT CURRENT_TIMESTAMP)");
-});
 
 const mediaDir = path.join(__dirname, 'public', 'media');
 if (!fs.existsSync(mediaDir)) {
@@ -42,59 +34,36 @@ app.post('/upload', upload.single('mediaFile'), (req, res) => {
     res.json({ url: fileUrl });
 });
 
-app.get('/export', (req, res) => {
-    db.all("SELECT * FROM ticket_history ORDER BY id DESC", [], (err, rows) => {
-        if (err) {
-            return res.status(500).send("Database error");
-        }
-        let csv = "ID,Ticket Number,Name,Contact,Priority,Document,Scheduled Date,Timestamp\n";
-        rows.forEach(r => {
-            const safeName = r.name ? r.name.replace(/"/g, '""') : '';
-            const safeContact = r.contact ? r.contact.replace(/"/g, '""') : '';
-            const safeDoc = r.document ? r.document.replace(/"/g, '""') : '';
-            csv += `${r.id},${r.ticketNumber},"${safeName}","${safeContact}","${r.priority}","${safeDoc}","${r.scheduledDate}","${r.created_at}"\n`;
-        });
-        const dateStr = new Date().toISOString().split('T')[0];
-        res.header('Content-Type', 'text/csv');
-        res.attachment(`Baliwasan_Queue_Report_${dateStr}.csv`);
-        return res.send(csv);
-    });
-});
-
 let queueState = { 
     counters: [
-        { id: 1, currentTicket: null, currentPriority: '', currentDocument: 'SYSTEM STANDBY', currentName: '' },
-        { id: 2, currentTicket: null, currentPriority: '', currentDocument: 'SYSTEM STANDBY', currentName: '' }
+        { id: 1, currentTicket: null, currentPriority: '', currentDocument: 'SYSTEM STANDBY', currentName: '', currentCategory: '' },
+        { id: 2, currentTicket: null, currentPriority: '', currentDocument: 'SYSTEM STANDBY', currentName: '', currentCategory: '' }
     ],
     lastCalled: {
         ticket: null,
         counter: null,
-        document: 'SYSTEM STANDBY'
+        document: 'SYSTEM STANDBY',
+        category: ''
     },
     waitingList: [],
     appointments: [],
     ticketCounter: 0,
     media: { type: 'none', url: '' },
     tickerText: 'WELCOME TO BARANGAY BALIWASAN. PLEASE WAIT FOR YOUR NUMBER TO BE CALLED.',
-    disabledServices: []
+    disabledServices: [],
+    services: [
+        { name: "Ayuda / Cash Assistance", category: "S", isNew: false },
+        { name: "Barangay Clearance", category: "C", isNew: false },
+        { name: "Barangay ID", category: "I", isNew: false },
+        { name: "Building and Fencing Permit", category: "P", isNew: false },
+        { name: "Business Clearance/Permit", category: "P", isNew: false },
+        { name: "Certificate of Indigency", category: "C", isNew: false },
+        { name: "Certificate of Residency", category: "C", isNew: false },
+        { name: "First Time Jobseeker", category: "C", isNew: false },
+        { name: "Fit to Work Certificate", category: "C", isNew: false },
+        { name: "Solo Parent Certification", category: "C", isNew: false }
+    ]
 };
-
-db.get("SELECT state_json FROM system_state WHERE id = 1", (err, row) => {
-    if (row && row.state_json) {
-        try {
-            const parsed = JSON.parse(row.state_json);
-            queueState = { ...queueState, ...parsed };
-            if (!queueState.appointments) queueState.appointments = [];
-        } catch (e) {
-            console.error(e);
-        }
-    }
-});
-
-function saveState() {
-    const stateStr = JSON.stringify(queueState);
-    db.run("INSERT OR REPLACE INTO system_state (id, state_json) VALUES (1, ?)");
-}
 
 function sortQueue() {
     queueState.waitingList.sort((a, b) => {
@@ -114,44 +83,25 @@ function getTodayDate() {
     return (new Date(now - offset)).toISOString().split('T')[0];
 }
 
-function broadcastAnalytics() {
-    const today = getTodayDate();
-    db.all("SELECT * FROM ticket_history WHERE scheduledDate = ?", [today], (err, rows) => {
-        if (err) return;
-        const total = rows.length;
-        let pwdCount = 0;
-        const serviceCounts = {};
-        
-        rows.forEach(r => {
-            if (r.priority === 'PWD / SENIOR') pwdCount++;
-            serviceCounts[r.document] = (serviceCounts[r.document] || 0) + 1;
-        });
-
-        const sortedServices = Object.entries(serviceCounts)
-            .sort((a, b) => b[1] - a[1])
-            .slice(0, 4)
-            .map(item => ({ name: item[0], count: item[1] }));
-
-        io.emit('analyticsData', { total, pwdCount, topServices: sortedServices });
-    });
+function getServiceCategory(docName) {
+    const srv = queueState.services.find(s => s.name === docName);
+    return srv ? srv.category : 'M';
 }
 
 io.on('connection', (socket) => {
     socket.emit('queueUpdated', queueState);
-    broadcastAnalytics();
-
-    socket.on('getAnalytics', () => {
-        broadcastAnalytics();
-    });
 
     socket.on('joinQueue', (data) => {
         queueState.ticketCounter++;
+        const cat = getServiceCategory(data.document);
+        
         const newTicket = {
             ticketNumber: queueState.ticketCounter,
             name: data.name,
             contact: data.contact,
             priority: data.priority,
             document: data.document,
+            category: cat,
             date: data.date 
         };
 
@@ -163,20 +113,12 @@ io.on('connection', (socket) => {
             isToday = true;
             queueState.waitingList.push(newTicket);
             sortQueue();
-            
             const position = queueState.waitingList.findIndex(t => t.ticketNumber === newTicket.ticketNumber);
             ewt = (position + 1) * 12; 
         } else {
             queueState.appointments.push(newTicket);
         }
         
-        saveState();
-
-        db.run("INSERT INTO ticket_history (ticketNumber, name, contact, priority, document, scheduledDate) VALUES (?, ?, ?, ?, ?, ?)", 
-            [newTicket.ticketNumber, newTicket.name, newTicket.contact, newTicket.priority, newTicket.document, newTicket.date], () => {
-                broadcastAnalytics();
-            });
-
         io.emit('queueUpdated', queueState);
         socket.emit('ticketIssued', { ticket: newTicket, ewt: ewt, isToday: isToday });
     });
@@ -184,22 +126,18 @@ io.on('connection', (socket) => {
     socket.on('generateTicket', (data) => {
         queueState.ticketCounter++;
         const walkInDate = getTodayDate();
+        const cat = getServiceCategory(data.document);
+
         queueState.waitingList.push({
             ticketNumber: queueState.ticketCounter,
             name: 'Walk-in',
             contact: 'N/A',
             priority: data.priority,
             document: data.document,
+            category: cat,
             date: walkInDate
         });
         sortQueue();
-        saveState();
-
-        db.run("INSERT INTO ticket_history (ticketNumber, name, contact, priority, document, scheduledDate) VALUES (?, ?, ?, ?, ?, ?)", 
-            [queueState.ticketCounter, 'Walk-in', 'N/A', data.priority, data.document, walkInDate], () => {
-                broadcastAnalytics();
-            });
-
         io.emit('queueUpdated', queueState);
     });
 
@@ -212,32 +150,32 @@ io.on('connection', (socket) => {
                 queueState.counters[counterIndex].currentPriority = next.priority;
                 queueState.counters[counterIndex].currentDocument = next.document;
                 queueState.counters[counterIndex].currentName = next.name;
+                queueState.counters[counterIndex].currentCategory = next.category;
 
                 queueState.lastCalled = {
                     ticket: next.ticketNumber,
                     counter: data.counterId,
-                    document: next.document
+                    document: next.document,
+                    category: next.category
                 };
             } else {
                 queueState.counters[counterIndex].currentTicket = null;
                 queueState.counters[counterIndex].currentPriority = '';
                 queueState.counters[counterIndex].currentDocument = 'SYSTEM STANDBY';
                 queueState.counters[counterIndex].currentName = '';
+                queueState.counters[counterIndex].currentCategory = '';
             }
-            saveState();
             io.emit('queueUpdated', queueState);
         }
     });
 
     socket.on('updateMedia', (data) => {
         queueState.media = data;
-        saveState();
         io.emit('queueUpdated', queueState);
     });
 
     socket.on('updateTicker', (text) => {
         queueState.tickerText = text;
-        saveState();
         io.emit('queueUpdated', queueState);
     });
 
@@ -248,31 +186,29 @@ io.on('connection', (socket) => {
         } else {
             queueState.disabledServices.push(serviceName);
         }
-        saveState();
+        io.emit('queueUpdated', queueState);
+    });
+
+    socket.on('addService', (serviceData) => {
+        queueState.services.push({
+            name: serviceData.name,
+            category: serviceData.category,
+            isNew: true
+        });
         io.emit('queueUpdated', queueState);
     });
 
     socket.on('resetQueue', () => {
-        queueState = { 
-            counters: [
-                { id: 1, currentTicket: null, currentPriority: '', currentDocument: 'SYSTEM STANDBY', currentName: '' },
-                { id: 2, currentTicket: null, currentPriority: '', currentDocument: 'SYSTEM STANDBY', currentName: '' }
-            ],
-            lastCalled: {
-                ticket: null,
-                counter: null,
-                document: 'SYSTEM STANDBY'
-            },
-            waitingList: [],
-            appointments: [],
-            ticketCounter: 0,
-            media: queueState.media,
-            tickerText: queueState.tickerText,
-            disabledServices: queueState.disabledServices
-        };
-        saveState();
+        queueState.counters = [
+            { id: 1, currentTicket: null, currentPriority: '', currentDocument: 'SYSTEM STANDBY', currentName: '', currentCategory: '' },
+            { id: 2, currentTicket: null, currentPriority: '', currentDocument: 'SYSTEM STANDBY', currentName: '', currentCategory: '' }
+        ];
+        queueState.lastCalled = { ticket: null, counter: null, document: 'SYSTEM STANDBY', category: '' };
+        queueState.waitingList = [];
+        queueState.appointments = [];
+        queueState.ticketCounter = 0;
         io.emit('queueUpdated', queueState);
     });
 });
 
-server.listen(3000, '0.0.0.0');
+server.listen(process.env.PORT || 3000, '0.0.0.0');

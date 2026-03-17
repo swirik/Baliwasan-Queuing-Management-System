@@ -14,20 +14,10 @@ const chimeSound = new Audio('/media/chime.mp3');
 let currentMediaUrl = '';
 let currentlyServingTicket = null;
 
-function formatTicket(num, doc) {
+function formatTicket(num, cat) {
     if (!num) return "----";
-    let prefix = "TK";
-    if(doc === 'Ayuda / Cash Assistance') prefix = 'ACA';
-    else if(doc === 'Barangay Clearance') prefix = 'BC';
-    else if(doc === 'Barangay ID') prefix = 'BI';
-    else if(doc === 'Building and Fencing Permit') prefix = 'BFP';
-    else if(doc === 'Business Clearance/Permit') prefix = 'BCP';
-    else if(doc === 'Certificate of Indigency') prefix = 'CI';
-    else if(doc === 'Certificate of Residency') prefix = 'CR';
-    else if(doc === 'First Time Jobseeker') prefix = 'FTJ';
-    else if(doc === 'Fit to Work Certificate') prefix = 'FWC';
-    else if(doc === 'Solo Parent Certification') prefix = 'SPC';
-    return prefix + num.toString().padStart(3, '0');
+    const prefix = cat ? cat : "M";
+    return `${prefix}-${num.toString().padStart(3, '0')}`;
 }
 
 document.body.addEventListener('click', () => {
@@ -43,7 +33,7 @@ socket.on('queueUpdated', (state) => {
 
     servingRow.innerHTML = '';
     state.counters.forEach(c => {
-        const tNum = c.currentTicket ? formatTicket(c.currentTicket, c.currentDocument) : '----';
+        const tNum = c.currentTicket ? formatTicket(c.currentTicket, c.currentCategory) : '----';
         const doc = c.currentDocument !== 'SYSTEM STANDBY' ? c.currentDocument : 'Available';
         
         const el = document.createElement('div');
@@ -65,7 +55,7 @@ socket.on('queueUpdated', (state) => {
         if (state.lastCalled.ticket !== currentlyServingTicket) {
             currentlyServingTicket = state.lastCalled.ticket;
 
-            displayTicket.innerText = formatTicket(state.lastCalled.ticket, state.lastCalled.document);
+            displayTicket.innerText = formatTicket(state.lastCalled.ticket, state.lastCalled.category);
 
             displayTicket.classList.remove('is-blinking');
             void displayTicket.offsetWidth;
@@ -74,7 +64,7 @@ socket.on('queueUpdated', (state) => {
             chimeSound.currentTime = 0;
             chimeSound.play().catch(e => console.log(e));
 
-            const formattedTicket = formatTicket(state.lastCalled.ticket, state.lastCalled.document);
+            const formattedTicket = formatTicket(state.lastCalled.ticket, state.lastCalled.category);
             const spokenTicket = formattedTicket.split('').join(' ');
             
             const utterance = new SpeechSynthesisUtterance(`Ticket number, ${spokenTicket}, please proceed to counter ${state.lastCalled.counter}`);
@@ -83,7 +73,7 @@ socket.on('queueUpdated', (state) => {
             window.speechSynthesis.cancel();
             window.speechSynthesis.speak(utterance);
         } else {
-            displayTicket.innerText = formatTicket(state.lastCalled.ticket, state.lastCalled.document);
+            displayTicket.innerText = formatTicket(state.lastCalled.ticket, state.lastCalled.category);
         }
 
         displayCounter.innerText = `COUNTER ${state.lastCalled.counter}`;
@@ -104,7 +94,7 @@ socket.on('queueUpdated', (state) => {
             el.innerHTML = `
                 <div>
                     <span class="block text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Ticket</span>
-                    <span class="block text-2xl font-black text-gray-900">${formatTicket(item.ticketNumber, item.document)}</span>
+                    <span class="block text-2xl font-black text-gray-900">${formatTicket(item.ticketNumber, item.category)}</span>
                 </div>
                 <div class="text-right flex flex-col items-end gap-1 w-2/3">
                     <span class="block text-[9px] font-black uppercase ${badgeColor} px-2 py-0.5 rounded border">${item.priority}</span>
