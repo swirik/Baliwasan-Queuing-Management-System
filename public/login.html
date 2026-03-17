@@ -161,6 +161,28 @@
         </button>
     </div>
 
+    <div id="pending-approval-screen" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-md border-t-8 border-gray-900 text-center my-8 relative z-10">
+        <div class="text-center mb-6">
+            <h1 class="text-xl md:text-2xl font-black uppercase tracking-widest text-gray-900">Request Pending</h1>
+            <p class="text-gray-500 font-bold text-xs md:text-sm mt-2 uppercase tracking-wide">Awaiting Barangay Review</p>
+        </div>
+        
+        <p class="text-sm md:text-base text-gray-600 mb-8">Your transaction request has been sent to the barangay staff for review and scheduling.</p>
+        
+        <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 mb-8">
+            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Tracking ID</p>
+            <p id="pending-track-id" class="text-2xl font-black text-black tracking-widest">---</p>
+        </div>
+
+        <p class="text-xs md:text-sm text-gray-500 mb-8 font-medium leading-relaxed bg-[#FFF9E2] p-4 rounded-xl border border-[#FFE761]">
+            Please wait for an SMS confirmation or check back later to see your approved queue number.
+        </p>
+
+        <button onclick="window.location.reload()" class="w-full bg-black hover:bg-gray-800 text-[#FFD500] font-black py-4 px-4 rounded-xl shadow-lg text-base md:text-lg transition-all uppercase tracking-wide">
+            Done
+        </button>
+    </div>
+
     <div id="ticket-result" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-md border-2 border-[#FFD500] text-center my-8 relative z-10">
         <h2 class="text-lg md:text-xl font-bold text-gray-500 uppercase tracking-wider mb-2">Your Ticket Number</h2>
         <div id="my-ticket-number" class="text-6xl md:text-7xl font-black text-gray-900 mb-4 drop-shadow-sm">---</div>
@@ -179,6 +201,7 @@
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
+    <script src="bookingClient.js"></script>
     <script>
         const socket = io();
         
@@ -209,6 +232,45 @@
             return `${prefix}-${num.toString().padStart(3, '0')}`;
         }
 
+        const myBookingEngine = new BookingCalendar(socket, {
+            onLoadingDates: () => {
+                document.getElementById('user-date').disabled = true;
+            },
+            onDatesLoaded: (dates) => {
+                const dateInput = document.getElementById('user-date');
+                dateInput.disabled = false;
+                
+                dateInput.addEventListener('input', (e) => {
+                    if (!dates.includes(e.target.value)) {
+                        alert("This date is unavailable or fully booked for the selected service.");
+                        e.target.value = ''; 
+                    }
+                });
+            },
+            onRequestPending: (res) => {
+                document.getElementById('step-5').classList.add('hidden');
+                document.getElementById('pending-approval-screen').classList.remove('hidden');
+                document.getElementById('pending-track-id').innerText = res.id;
+                window.scrollTo(0, 0);
+            },
+            onAutoApproved: (res) => {
+                document.getElementById('step-5').classList.add('hidden');
+                document.getElementById('ticket-result').classList.remove('hidden');
+                
+                myAssignedTicket = res.ticket.ticketNumber;
+                myAssignedCat = res.ticket.category;
+                document.getElementById('my-ticket-number').innerText = formatTicket(myAssignedTicket, myAssignedCat);
+                
+                document.getElementById('ewt-container').classList.add('hidden');
+                document.getElementById('live-message').classList.add('hidden');
+                document.getElementById('appt-message').classList.remove('hidden');
+                window.scrollTo(0, 0);
+            },
+            onError: (msg) => {
+                alert(msg);
+            }
+        });
+
         const dateInput = document.getElementById('user-date');
         const now = new Date();
         const offset = now.getTimezoneOffset() * 60000;
@@ -232,6 +294,7 @@
                 btn.addEventListener('click', (e) => {
                     if (e.target.disabled) return;
                     pendingUser.document = e.target.getAttribute('data-doc');
+                    myBookingEngine.selectService(pendingUser.document);
                     step1.classList.add('hidden');
                     step2.classList.remove('hidden');
                     window.scrollTo(0, 0);
@@ -289,13 +352,7 @@
         });
 
         document.getElementById('btn-submit-queue').addEventListener('click', () => {
-            socket.emit('joinQueue', { 
-                name: pendingUser.name, 
-                contact: pendingUser.contact, 
-                priority: pendingUser.priority,
-                document: pendingUser.document,
-                date: pendingUser.date
-            });
+            myBookingEngine.submitRequest(pendingUser, pendingUser.date);
         });
 
         socket.on('ticketIssued', (response) => {

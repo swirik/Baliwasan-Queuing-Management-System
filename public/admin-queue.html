@@ -81,6 +81,16 @@
                     </button>
                 </div>
             </div>
+
+            <div class="bg-gray-50 p-5 rounded-2xl border border-gray-100 shrink-0">
+                <h2 class="text-sm font-bold text-gray-400 mb-3 uppercase tracking-widest">5. BOOKING SETTINGS</h2>
+                <div class="flex justify-between items-center p-3 bg-white rounded-xl border border-gray-200 shadow-sm">
+                    <span class="text-xs font-bold text-gray-700 uppercase tracking-wide">Auto-Approve Bookings</span>
+                    <button id="toggle-auto-approve" class="shrink-0 w-10 h-5 rounded-full bg-gray-400 transition-colors relative">
+                        <div id="knob-auto-approve" class="w-4 h-4 bg-white rounded-full absolute top-[2px] left-0.5 transition-all shadow-sm"></div>
+                    </button>
+                </div>
+            </div>
             
             <button id="btn-reset" class="text-black hover:bg-[#FFD500] font-bold py-2 px-4 rounded-xl transition-all w-full uppercase text-xs tracking-widest mt-auto border-2 border-transparent hover:border-black shrink-0">
                 RESET SYSTEM
@@ -112,22 +122,32 @@
         </div>
 
         <div class="w-1/3 flex flex-col gap-4 h-full">
-            <div class="flex flex-col bg-gray-50 rounded-3xl border border-gray-100 overflow-hidden h-1/2">
-                <div class="p-4 bg-gray-100 border-b border-gray-200 flex justify-between items-center shrink-0">
-                    <h2 class="text-sm font-bold text-gray-600 uppercase tracking-widest">LIVE QUEUE</h2>
-                    <span id="admin-waiting-count" class="bg-black text-[#FFD500] px-3 py-1 rounded-lg font-black text-sm shadow-sm">0</span>
+            <div class="flex flex-col bg-gray-50 rounded-3xl border border-gray-100 overflow-hidden h-1/3">
+                <div class="p-3 bg-gray-100 border-b border-gray-200 flex justify-between items-center shrink-0">
+                    <h2 class="text-xs font-bold text-gray-600 uppercase tracking-widest">LIVE QUEUE</h2>
+                    <span id="admin-waiting-count" class="bg-black text-[#FFD500] px-3 py-1 rounded-lg font-black text-xs shadow-sm">0</span>
                 </div>
-                <div id="admin-waiting-list" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
+                <div id="admin-waiting-list" class="flex-1 overflow-y-auto p-3 space-y-2 custom-scrollbar">
                     <div class="text-center py-10 text-gray-400 font-medium uppercase text-xs tracking-widest">No residents in queue</div>
                 </div>
             </div>
 
-            <div class="flex flex-col bg-gray-50 rounded-3xl border border-gray-100 overflow-hidden h-1/2">
-                <div class="p-4 bg-gray-100 border-b border-gray-200 flex justify-between items-center shrink-0">
-                    <h2 class="text-sm font-bold text-gray-600 uppercase tracking-widest">UPCOMING APPOINTMENTS</h2>
-                    <span id="admin-appointment-count" class="bg-gray-300 text-gray-800 px-3 py-1 rounded-lg font-black text-sm shadow-sm">0</span>
+            <div class="flex flex-col bg-gray-50 rounded-3xl border border-gray-100 overflow-hidden h-1/3">
+                <div class="p-3 bg-gray-100 border-b border-gray-200 flex justify-between items-center shrink-0">
+                    <h2 class="text-xs font-bold text-gray-600 uppercase tracking-widest">PENDING APPROVALS</h2>
+                    <span id="admin-pending-count" class="bg-red-500 text-white px-3 py-1 rounded-lg font-black text-xs shadow-sm">0</span>
                 </div>
-                <div id="admin-appointment-list" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
+                <div id="admin-pending-list" class="flex-1 overflow-y-auto p-3 space-y-2 custom-scrollbar">
+                    <div class="text-center py-10 text-gray-400 font-medium uppercase text-xs tracking-widest">No pending requests</div>
+                </div>
+            </div>
+
+            <div class="flex flex-col bg-gray-50 rounded-3xl border border-gray-100 overflow-hidden h-1/3">
+                <div class="p-3 bg-gray-100 border-b border-gray-200 flex justify-between items-center shrink-0">
+                    <h2 class="text-xs font-bold text-gray-600 uppercase tracking-widest">UPCOMING APPOINTMENTS</h2>
+                    <span id="admin-appointment-count" class="bg-gray-300 text-gray-800 px-3 py-1 rounded-lg font-black text-xs shadow-sm">0</span>
+                </div>
+                <div id="admin-appointment-list" class="flex-1 overflow-y-auto p-3 space-y-2 custom-scrollbar">
                     <div class="text-center py-10 text-gray-400 font-medium uppercase text-xs tracking-widest">No future appointments</div>
                 </div>
             </div>
@@ -145,6 +165,7 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
+        let currentAutoApproveState = false;
 
         function formatTicket(num, cat) {
             if (!num) return "----";
@@ -242,17 +263,73 @@
             }
         });
 
+        document.getElementById('toggle-auto-approve').addEventListener('click', () => {
+            currentAutoApproveState = !currentAutoApproveState;
+            socket.emit('updateBookingRules', { autoApprove: currentAutoApproveState });
+        });
+
+        window.approveRequest = function(id) {
+            socket.emit('adminReviewBooking', { id: id, approved: true, timeSlot: 'AUTO' });
+        }
+
+        window.rejectRequest = function(id) {
+            socket.emit('adminReviewBooking', { id: id, approved: false });
+        }
+
+        socket.on('bookingEngineUpdated', (engineState) => {
+            currentAutoApproveState = engineState.autoApprove;
+            const toggleBtn = document.getElementById('toggle-auto-approve');
+            const knob = document.getElementById('knob-auto-approve');
+            
+            if (currentAutoApproveState) {
+                toggleBtn.classList.replace('bg-gray-400', 'bg-green-500');
+                knob.classList.replace('left-0.5', 'left-[22px]');
+            } else {
+                toggleBtn.classList.replace('bg-green-500', 'bg-gray-400');
+                knob.classList.replace('left-[22px]', 'left-0.5');
+            }
+
+            const pendingList = document.getElementById('admin-pending-list');
+            document.getElementById('admin-pending-count').innerText = engineState.pendingRequests.length;
+            pendingList.innerHTML = '';
+
+            if (engineState.pendingRequests.length === 0) {
+                pendingList.innerHTML = '<div class="text-center py-10 text-gray-400 font-medium uppercase text-xs tracking-widest">No pending requests</div>';
+            } else {
+                engineState.pendingRequests.forEach(req => {
+                    const el = document.createElement('div');
+                    el.className = 'bg-white p-3 rounded-xl border border-gray-200 shadow-sm flex flex-col gap-2';
+                    el.innerHTML = `
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <div class="font-black text-sm text-gray-900">${req.name}</div>
+                                <div class="text-[10px] text-gray-400 font-medium">${req.contact}</div>
+                                <div class="text-[10px] font-bold text-blue-600 mt-1">${req.requestedDate}</div>
+                            </div>
+                            <div class="text-[9px] font-black uppercase bg-gray-100 text-gray-600 px-2 py-1 rounded border">${req.priority}</div>
+                        </div>
+                        <div class="text-[10px] font-bold bg-gray-50 text-gray-500 px-2 py-1 rounded border border-gray-100 uppercase truncate">${req.document}</div>
+                        <div class="flex gap-2 mt-1">
+                            <button class="flex-1 bg-red-100 hover:bg-red-200 text-red-700 text-[10px] font-black py-2 rounded uppercase transition-colors" onclick="rejectRequest('${req.id}')">Reject</button>
+                            <button class="flex-1 bg-green-500 hover:bg-green-600 text-white text-[10px] font-black py-2 rounded uppercase transition-colors" onclick="approveRequest('${req.id}')">Approve</button>
+                        </div>
+                    `;
+                    pendingList.appendChild(el);
+                });
+            }
+        });
+
         function createTicketCard(item, isLive) {
             const badgeColor = item.priority === 'PWD / SENIOR' ? 'bg-black text-[#FFD500] border-gray-800' : 'bg-[#FFF9E2] text-gray-700 border-[#FFE761]';
             const dateColor = isLive ? 'text-green-600' : 'text-gray-500';
             
             const el = document.createElement('div');
-            el.className = 'bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex flex-col gap-2';
+            el.className = 'bg-white p-3 rounded-2xl border border-gray-200 shadow-sm flex flex-col gap-2';
             el.innerHTML = `
                 <div class="flex justify-between items-start">
                     <div>
-                        <div class="font-black text-xl text-gray-900">${formatTicket(item.ticketNumber, item.category)}</div>
-                        <div class="text-sm font-bold text-gray-800">${item.name}</div>
+                        <div class="font-black text-lg text-gray-900">${formatTicket(item.ticketNumber, item.category)}</div>
+                        <div class="text-xs font-bold text-gray-800">${item.name}</div>
                         <div class="text-[10px] text-gray-400 font-medium">${item.contact}</div>
                         <div class="text-[10px] font-bold mt-1 ${dateColor}">${item.date}</div>
                     </div>
@@ -260,7 +337,7 @@
                         ${item.priority}
                     </div>
                 </div>
-                <div class="text-[11px] font-bold bg-gray-50 text-gray-500 px-3 py-2 rounded-xl border border-gray-100 mt-1 uppercase truncate">
+                <div class="text-[10px] font-bold bg-gray-50 text-gray-500 px-2 py-1 rounded-lg border border-gray-100 mt-1 uppercase truncate">
                     ${item.document}
                 </div>
             `;

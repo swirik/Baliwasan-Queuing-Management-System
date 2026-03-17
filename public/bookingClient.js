@@ -13,6 +13,10 @@ class BookingCalendar {
         this.socket.on('bookingSubmitted', (response) => {
             this.ui.onRequestPending(response);
         });
+        
+        this.socket.on('bookingApproved', (response) => {
+            this.ui.onAutoApproved(response);
+        });
     }
 
     selectService(serviceName) {

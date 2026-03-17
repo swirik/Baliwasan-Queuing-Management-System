@@ -36,109 +36,14 @@ app.post('/upload', upload.single('mediaFile'), (req, res) => {
 
 let bookingEngine = {
     globalOnlineBookingEnabled: true,
+    autoApprove: false,
     defaultMaxCapacity: 50,
     disabledDaysOfWeek: [0, 6], 
     blockedDates: [], 
     serviceRules: {},
     pendingRequests: [],
-    approvedAppointments: [],
     dailyLoad: {}
 };
-
-function initializeServiceRules() {
-    queueState.services.forEach(s => {
-        bookingEngine.serviceRules[s.name] = {
-            allowedDays: [1, 2, 3, 4, 5]
-        };
-    });
-}
-
-function getAvailableDates(serviceName, startDate, daysToGenerate) {
-    if (!bookingEngine.globalOnlineBookingEnabled) return [];
-
-    let availableDates = [];
-    let currentDate = new Date(startDate);
-    let rules = bookingEngine.serviceRules[serviceName];
-
-    if (!rules) return availableDates;
-
-    for (let i = 0; i < daysToGenerate; i++) {
-        let dateString = currentDate.toISOString().split('T')[0];
-        let dayOfWeek = currentDate.getDay();
-
-        let isBlockedDay = bookingEngine.disabledDaysOfWeek.includes(dayOfWeek);
-        let isBlockedDate = bookingEngine.blockedDates.includes(dateString);
-        let isServiceAllowed = rules.allowedDays.includes(dayOfWeek);
-        let currentLoad = bookingEngine.dailyLoad[dateString] || 0;
-        let isFull = currentLoad >= bookingEngine.defaultMaxCapacity;
-
-        if (!isBlockedDay && !isBlockedDate && isServiceAllowed && !isFull) {
-            availableDates.push(dateString);
-        }
-
-        currentDate.setDate(currentDate.getDate() + 1);
-    }
-    return availableDates;
-}
-
-io.on('connection', (socket) => {
-
-    socket.on('requestAvailableDates', (data) => {
-        const dates = getAvailableDates(data.serviceName, data.startDate, 30);
-        socket.emit('availableDatesResponse', dates);
-    });
-
-    socket.on('submitBookingRequest', (requestData) => {
-        const requestId = 'REQ-' + Date.now();
-        const newRequest = {
-            id: requestId,
-            name: requestData.name,
-            contact: requestData.contact,
-            priority: requestData.priority,
-            document: requestData.document,
-            requestedDate: requestData.date,
-            status: 'PENDING'
-        };
-        
-        bookingEngine.pendingRequests.push(newRequest);
-        io.emit('bookingEngineUpdated', bookingEngine);
-        socket.emit('bookingSubmitted', { id: requestId, status: 'PENDING' });
-    });
-
-    socket.on('adminReviewBooking', (reviewData) => {
-        const reqIndex = bookingEngine.pendingRequests.findIndex(r => r.id === reviewData.id);
-        if (reqIndex > -1) {
-            const request = bookingEngine.pendingRequests[reqIndex];
-            bookingEngine.pendingRequests.splice(reqIndex, 1);
-
-            if (reviewData.approved) {
-                queueState.ticketCounter++;
-                const cat = getServiceCategory(request.document);
-                
-                const finalAppointment = {
-                    ...request,
-                    ticketNumber: queueState.ticketCounter,
-                    category: cat,
-                    timeSlot: reviewData.timeSlot, 
-                    status: 'APPROVED'
-                };
-
-                queueState.appointments.push(finalAppointment);
-                
-                bookingEngine.dailyLoad[request.requestedDate] = (bookingEngine.dailyLoad[request.requestedDate] || 0) + 1;
-            }
-            
-            io.emit('bookingEngineUpdated', bookingEngine);
-            io.emit('queueUpdated', queueState);
-        }
-    });
-
-    socket.on('updateBookingRules', (newRules) => {
-        bookingEngine = { ...bookingEngine, ...newRules };
-        io.emit('bookingEngineUpdated', bookingEngine);
-    });
-});
-
 
 let queueState = { 
     counters: [
@@ -171,6 +76,15 @@ let queueState = {
     ]
 };
 
+function initializeServiceRules() {
+    queueState.services.forEach(s => {
+        bookingEngine.serviceRules[s.name] = {
+            allowedDays: [1, 2, 3, 4, 5]
+        };
+    });
+}
+initializeServiceRules();
+
 function sortQueue() {
     queueState.waitingList.sort((a, b) => {
         const priorityA = a.priority === 'PWD / SENIOR' ? 1 : 0;
@@ -194,8 +108,131 @@ function getServiceCategory(docName) {
     return srv ? srv.category : 'M';
 }
 
+function getAvailableDates(serviceName, startDate, daysToGenerate) {
+    if (!bookingEngine.globalOnlineBookingEnabled) return [];
+
+    let availableDates = [];
+    let currentDate = new Date(startDate);
+    let rules = bookingEngine.serviceRules[serviceName];
+
+    if (!rules) return availableDates;
+
+    for (let i = 0; i < daysToGenerate; i++) {
+        let dateString = currentDate.toISOString().split('T')[0];
+        let dayOfWeek = currentDate.getDay();
+
+        let isBlockedDay = bookingEngine.disabledDaysOfWeek.includes(dayOfWeek);
+        let isBlockedDate = bookingEngine.blockedDates.includes(dateString);
+        let isServiceAllowed = rules.allowedDays.includes(dayOfWeek);
+        let currentLoad = bookingEngine.dailyLoad[dateString] || 0;
+        let isFull = currentLoad >= bookingEngine.defaultMaxCapacity;
+
+        if (!isBlockedDay && !isBlockedDate && isServiceAllowed && !isFull) {
+            availableDates.push(dateString);
+        }
+
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+    return availableDates;
+}
+
 io.on('connection', (socket) => {
     socket.emit('queueUpdated', queueState);
+    socket.emit('bookingEngineUpdated', bookingEngine);
+
+    socket.on('requestAvailableDates', (data) => {
+        const dates = getAvailableDates(data.serviceName, data.startDate, 30);
+        socket.emit('availableDatesResponse', dates);
+    });
+
+    socket.on('submitBookingRequest', (requestData) => {
+        const requestId = 'REQ-' + Date.now();
+        const cat = getServiceCategory(requestData.document);
+        
+        const newRequest = {
+            id: requestId,
+            name: requestData.name,
+            contact: requestData.contact,
+            priority: requestData.priority,
+            document: requestData.document,
+            category: cat,
+            requestedDate: requestData.date,
+            date: requestData.date 
+        };
+
+        if (bookingEngine.autoApprove) {
+            queueState.ticketCounter++;
+            const finalAppointment = {
+                ...newRequest,
+                ticketNumber: queueState.ticketCounter,
+                timeSlot: 'AUTO-ASSIGNED',
+                status: 'APPROVED'
+            };
+            
+            const today = getTodayDate();
+            let ewt = 0;
+            let isToday = false;
+
+            if (newRequest.requestedDate === today) {
+                isToday = true;
+                queueState.waitingList.push(finalAppointment);
+                sortQueue();
+                const position = queueState.waitingList.findIndex(t => t.ticketNumber === finalAppointment.ticketNumber);
+                ewt = (position + 1) * 12;
+            } else {
+                queueState.appointments.push(finalAppointment);
+            }
+
+            bookingEngine.dailyLoad[newRequest.requestedDate] = (bookingEngine.dailyLoad[newRequest.requestedDate] || 0) + 1;
+            
+            io.emit('queueUpdated', queueState);
+            socket.emit('bookingApproved', { ticket: finalAppointment, isToday: isToday, ewt: ewt });
+        } else {
+            newRequest.status = 'PENDING';
+            bookingEngine.pendingRequests.push(newRequest);
+            io.emit('bookingEngineUpdated', bookingEngine);
+            socket.emit('bookingSubmitted', { id: requestId, status: 'PENDING' });
+        }
+    });
+
+    socket.on('adminReviewBooking', (reviewData) => {
+        const reqIndex = bookingEngine.pendingRequests.findIndex(r => r.id === reviewData.id);
+        if (reqIndex > -1) {
+            const request = bookingEngine.pendingRequests[reqIndex];
+            bookingEngine.pendingRequests.splice(reqIndex, 1);
+
+            if (reviewData.approved) {
+                queueState.ticketCounter++;
+                const cat = getServiceCategory(request.document);
+                
+                const finalAppointment = {
+                    ...request,
+                    ticketNumber: queueState.ticketCounter,
+                    category: cat,
+                    timeSlot: reviewData.timeSlot, 
+                    status: 'APPROVED',
+                    date: request.requestedDate
+                };
+
+                const today = getTodayDate();
+                if (request.requestedDate === today) {
+                    queueState.waitingList.push(finalAppointment);
+                    sortQueue();
+                } else {
+                    queueState.appointments.push(finalAppointment);
+                }
+
+                bookingEngine.dailyLoad[request.requestedDate] = (bookingEngine.dailyLoad[request.requestedDate] || 0) + 1;
+                io.emit('queueUpdated', queueState);
+            }
+            io.emit('bookingEngineUpdated', bookingEngine);
+        }
+    });
+
+    socket.on('updateBookingRules', (newRules) => {
+        bookingEngine = { ...bookingEngine, ...newRules };
+        io.emit('bookingEngineUpdated', bookingEngine);
+    });
 
     socket.on('joinQueue', (data) => {
         queueState.ticketCounter++;
