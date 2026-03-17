@@ -8,10 +8,27 @@ const displayTicket = document.getElementById('current-ticket');
 const displayCounter = document.getElementById('current-counter');
 const displayDoc = document.getElementById('current-doc');
 const tickerDisplay = document.getElementById('scrolling-ticker');
+const servingRow = document.getElementById('currently-serving-row');
 
 const chimeSound = new Audio('/media/chime.mp3');
 let currentMediaUrl = '';
 let currentlyServingTicket = null;
+
+function formatTicket(num, doc) {
+    if (!num) return "----";
+    let prefix = "TK";
+    if(doc === 'Ayuda / Cash Assistance') prefix = 'ACA';
+    else if(doc === 'Barangay Clearance') prefix = 'BC';
+    else if(doc === 'Barangay ID') prefix = 'BI';
+    else if(doc === 'Building and Fencing Permit') prefix = 'BFP';
+    else if(doc === 'Business Clearance/Permit') prefix = 'BCP';
+    else if(doc === 'Certificate of Indigency') prefix = 'CI';
+    else if(doc === 'Certificate of Residency') prefix = 'CR';
+    else if(doc === 'First Time Jobseeker') prefix = 'FTJ';
+    else if(doc === 'Fit to Work Certificate') prefix = 'FWC';
+    else if(doc === 'Solo Parent Certification') prefix = 'SPC';
+    return prefix + num.toString().padStart(3, '0');
+}
 
 document.body.addEventListener('click', () => {
     chimeSound.play().then(() => {
@@ -24,6 +41,20 @@ socket.on('queueUpdated', (state) => {
     
     tickerDisplay.innerText = state.tickerText || "WELCOME TO BARANGAY BALIWASAN";
 
+    servingRow.innerHTML = '';
+    state.counters.forEach(c => {
+        const tNum = c.currentTicket ? formatTicket(c.currentTicket, c.currentDocument) : '----';
+        const doc = c.currentDocument !== 'SYSTEM STANDBY' ? c.currentDocument : 'Available';
+        
+        const el = document.createElement('div');
+        el.className = 'flex flex-col items-center justify-center bg-[#FFF9E2] px-8 py-2 rounded-2xl border-2 border-[#FFD500] shadow-sm min-w-[250px]';
+        el.innerHTML = `
+            <span class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">COUNTER ${c.id} &bull; <span class="truncate max-w-[150px] inline-block align-bottom">${doc}</span></span>
+            <span class="text-3xl font-black text-gray-900 leading-none">${tNum}</span>
+        `;
+        servingRow.appendChild(el);
+    });
+
     if (!state.lastCalled || state.lastCalled.ticket === null) {
         displayTicket.innerText = "----";
         displayCounter.innerText = "--";
@@ -34,7 +65,7 @@ socket.on('queueUpdated', (state) => {
         if (state.lastCalled.ticket !== currentlyServingTicket) {
             currentlyServingTicket = state.lastCalled.ticket;
 
-            displayTicket.innerText = state.lastCalled.ticket.toString().padStart(4, '0');
+            displayTicket.innerText = formatTicket(state.lastCalled.ticket, state.lastCalled.document);
 
             displayTicket.classList.remove('is-blinking');
             void displayTicket.offsetWidth;
@@ -43,7 +74,7 @@ socket.on('queueUpdated', (state) => {
             chimeSound.currentTime = 0;
             chimeSound.play().catch(e => console.log(e));
 
-            const formattedTicket = state.lastCalled.ticket.toString().padStart(4, '0');
+            const formattedTicket = formatTicket(state.lastCalled.ticket, state.lastCalled.document);
             const spokenTicket = formattedTicket.split('').join(' ');
             
             const utterance = new SpeechSynthesisUtterance(`Ticket number, ${spokenTicket}, please proceed to counter ${state.lastCalled.counter}`);
@@ -52,7 +83,7 @@ socket.on('queueUpdated', (state) => {
             window.speechSynthesis.cancel();
             window.speechSynthesis.speak(utterance);
         } else {
-            displayTicket.innerText = state.lastCalled.ticket.toString().padStart(4, '0');
+            displayTicket.innerText = formatTicket(state.lastCalled.ticket, state.lastCalled.document);
         }
 
         displayCounter.innerText = `COUNTER ${state.lastCalled.counter}`;
@@ -73,7 +104,7 @@ socket.on('queueUpdated', (state) => {
             el.innerHTML = `
                 <div>
                     <span class="block text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Ticket</span>
-                    <span class="block text-2xl font-black text-gray-900">${item.ticketNumber.toString().padStart(4, '0')}</span>
+                    <span class="block text-2xl font-black text-gray-900">${formatTicket(item.ticketNumber, item.document)}</span>
                 </div>
                 <div class="text-right flex flex-col items-end gap-1 w-2/3">
                     <span class="block text-[9px] font-black uppercase ${badgeColor} px-2 py-0.5 rounded border">${item.priority}</span>
@@ -103,10 +134,8 @@ socket.on('queueUpdated', (state) => {
 
 function updateClock() {
     const now = new Date();
-    
     const dateOptions = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
     dateDisplay.innerText = now.toLocaleDateString('en-US', dateOptions);
-    
     timeDisplay.innerText = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 }
 

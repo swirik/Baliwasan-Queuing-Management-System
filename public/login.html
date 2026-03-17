@@ -220,6 +220,23 @@
 
         let pendingUser = { name: '', contact: '', priority: '', document: '', date: '' };
         let myAssignedTicket = null;
+        let myAssignedDoc = null;
+
+        function formatTicket(num, doc) {
+            if (!num) return "----";
+            let prefix = "TK";
+            if(doc === 'Ayuda / Cash Assistance') prefix = 'ACA';
+            else if(doc === 'Barangay Clearance') prefix = 'BC';
+            else if(doc === 'Barangay ID') prefix = 'BI';
+            else if(doc === 'Building and Fencing Permit') prefix = 'BFP';
+            else if(doc === 'Business Clearance/Permit') prefix = 'BCP';
+            else if(doc === 'Certificate of Indigency') prefix = 'CI';
+            else if(doc === 'Certificate of Residency') prefix = 'CR';
+            else if(doc === 'First Time Jobseeker') prefix = 'FTJ';
+            else if(doc === 'Fit to Work Certificate') prefix = 'FWC';
+            else if(doc === 'Solo Parent Certification') prefix = 'SPC';
+            return prefix + num.toString().padStart(3, '0');
+        }
 
         const dateInput = document.getElementById('user-date');
         const now = new Date();
@@ -314,7 +331,8 @@
             window.scrollTo(0, 0);
             
             myAssignedTicket = response.ticket.ticketNumber;
-            document.getElementById('my-ticket-number').innerText = myAssignedTicket.toString().padStart(4, '0');
+            myAssignedDoc = response.ticket.document;
+            document.getElementById('my-ticket-number').innerText = formatTicket(myAssignedTicket, myAssignedDoc);
 
             if (response.isToday) {
                 document.getElementById('ewt-display').innerText = `~${response.ewt} mins`;
@@ -330,7 +348,7 @@
 
         socket.on('queueUpdated', (state) => {
             
-            document.getElementById('mobile-serving-ticket').innerText = state.lastCalled && state.lastCalled.ticket ? state.lastCalled.ticket.toString().padStart(4, '0') : "----";
+            document.getElementById('mobile-serving-ticket').innerText = state.lastCalled && state.lastCalled.ticket ? formatTicket(state.lastCalled.ticket, state.lastCalled.document) : "----";
             document.getElementById('mobile-serving-counter').innerText = state.lastCalled && state.lastCalled.counter ? `COUNTER ${state.lastCalled.counter}` : "--";
             document.getElementById('mobile-serving-doc').innerText = state.lastCalled && state.lastCalled.document ? state.lastCalled.document : "SYSTEM STANDBY";
 
@@ -346,7 +364,7 @@
                     const el = document.createElement('div');
                     el.className = 'flex justify-between items-center p-4 border border-gray-100 rounded-2xl bg-gray-50 shadow-sm';
                     el.innerHTML = `
-                        <div class="font-black text-3xl text-gray-900">${item.ticketNumber.toString().padStart(4, '0')}</div>
+                        <div class="font-black text-3xl text-gray-900">${formatTicket(item.ticketNumber, item.document)}</div>
                         <div class="text-[9px] font-black uppercase ${badgeColor} px-2 py-1 rounded border tracking-widest">${item.priority}</div>
                     `;
                     mobileList.appendChild(el);
@@ -375,7 +393,7 @@
                 const servingCounter = state.counters.find(c => c.currentTicket === myAssignedTicket);
                 
                 if (servingCounter) {
-                    const formattedTicket = myAssignedTicket.toString().padStart(4, '0');
+                    const formattedTicket = formatTicket(myAssignedTicket, myAssignedDoc);
                     smsMessage.innerText = `Hello! Ticket #${formattedTicket} is now being served at Counter ${servingCounter.id}. Please proceed to the counter.`;
                     
                     smsToast.classList.remove('hidden');

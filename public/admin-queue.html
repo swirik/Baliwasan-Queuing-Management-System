@@ -86,6 +86,9 @@
                         <span>OPEN DASHBOARD</span>
                         <span>&nearr;</span>
                     </button>
+                    <button id="btn-export-data" class="bg-white hover:bg-gray-50 text-gray-600 border-2 border-gray-200 font-bold py-3 px-4 rounded-xl transition-all uppercase tracking-widest text-xs">
+                        DOWNLOAD CSV REPORT
+                    </button>
                 </div>
             </div>
             
@@ -153,6 +156,22 @@
     <script>
         const socket = io();
 
+        function formatTicket(num, doc) {
+            if (!num) return "----";
+            let prefix = "TK";
+            if(doc === 'Ayuda / Cash Assistance') prefix = 'ACA';
+            else if(doc === 'Barangay Clearance') prefix = 'BC';
+            else if(doc === 'Barangay ID') prefix = 'BI';
+            else if(doc === 'Building and Fencing Permit') prefix = 'BFP';
+            else if(doc === 'Business Clearance/Permit') prefix = 'BCP';
+            else if(doc === 'Certificate of Indigency') prefix = 'CI';
+            else if(doc === 'Certificate of Residency') prefix = 'CR';
+            else if(doc === 'First Time Jobseeker') prefix = 'FTJ';
+            else if(doc === 'Fit to Work Certificate') prefix = 'FWC';
+            else if(doc === 'Solo Parent Certification') prefix = 'SPC';
+            return prefix + num.toString().padStart(3, '0');
+        }
+
         const servicesList = [
             "Ayuda / Cash Assistance",
             "Barangay Clearance",
@@ -182,6 +201,10 @@
                 mediaFileInput.classList.add('hidden');
                 mediaUrlInput.classList.add('hidden');
             }
+        });
+
+        document.getElementById('btn-export-data').addEventListener('click', () => {
+            window.open('/export', '_blank');
         });
 
         document.getElementById('btn-open-analytics').addEventListener('click', () => {
@@ -294,7 +317,7 @@
             el.innerHTML = `
                 <div class="flex justify-between items-start">
                     <div>
-                        <div class="font-black text-xl text-gray-900">${item.ticketNumber.toString().padStart(4, '0')}</div>
+                        <div class="font-black text-xl text-gray-900">${formatTicket(item.ticketNumber, item.document)}</div>
                         <div class="text-sm font-bold text-gray-800">${item.name}</div>
                         <div class="text-[10px] text-gray-400 font-medium">${item.contact}</div>
                         <div class="text-[10px] font-bold mt-1 ${dateColor}">${item.date}</div>
@@ -314,11 +337,11 @@
             const c1 = state.counters.find(c => c.id === 1);
             const c2 = state.counters.find(c => c.id === 2);
 
-            document.getElementById('c1-ticket').innerText = c1.currentTicket ? c1.currentTicket.toString().padStart(4, '0') : "----";
+            document.getElementById('c1-ticket').innerText = c1.currentTicket ? formatTicket(c1.currentTicket, c1.currentDocument) : "----";
             document.getElementById('c1-name').innerText = c1.currentName ? `Name: ${c1.currentName}` : "Name: ---";
             document.getElementById('c1-doc').innerText = c1.currentDocument;
 
-            document.getElementById('c2-ticket').innerText = c2.currentTicket ? c2.currentTicket.toString().padStart(4, '0') : "----";
+            document.getElementById('c2-ticket').innerText = c2.currentTicket ? formatTicket(c2.currentTicket, c2.currentDocument) : "----";
             document.getElementById('c2-name').innerText = c2.currentName ? `Name: ${c2.currentName}` : "Name: ---";
             document.getElementById('c2-doc').innerText = c2.currentDocument;
             
