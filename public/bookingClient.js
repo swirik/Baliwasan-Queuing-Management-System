@@ -17,12 +17,15 @@ class BookingCalendar {
         this.socket.on('bookingApproved', (response) => {
             this.ui.onAutoApproved(response);
         });
+
+        this.socket.on('bookingResolved', (response) => {
+            this.ui.onBookingResolved(response);
+        });
     }
 
     selectService(serviceName) {
         this.selectedService = serviceName;
         const today = new Date().toISOString().split('T')[0];
-        
         this.ui.onLoadingDates();
         this.socket.emit('requestAvailableDates', { 
             serviceName: this.selectedService, 
@@ -39,7 +42,6 @@ class BookingCalendar {
             this.ui.onError("Invalid service or date selection.");
             return;
         }
-
         const requestPayload = {
             name: userData.name,
             contact: userData.contact,
@@ -47,7 +49,6 @@ class BookingCalendar {
             document: this.selectedService,
             date: dateString
         };
-
         this.socket.emit('submitBookingRequest', requestPayload);
     }
 }

@@ -4,10 +4,30 @@ const { Server } = require('socket.io');
 const path = require('path');
 const multer = require('multer');
 const fs = require('fs');
+const mongoose = require('mongoose');
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
+
+let useMongo = false;
+
+mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/baliwasan_queue', {
+    serverSelectionTimeoutMS: 5000
+}).then(() => {
+    console.log("MongoDB Connected");
+    useMongo = true;
+    loadState();
+}).catch(err => {
+    console.log("MongoDB connection failed. Running in ephemeral memory mode.");
+    useMongo = false;
+});
+
+const StateSchema = new mongoose.Schema({
+    key: { type: String, unique: true },
+    data: mongoose.Schema.Types.Mixed
+});
+const State = mongoose.model('State', StateSchema);
 
 const mediaDir = path.join(__dirname, 'public', 'media');
 if (!fs.existsSync(mediaDir)) {
@@ -58,7 +78,7 @@ let queueState = {
     },
     waitingList: [],
     appointments: [],
-    ticketCounter: 0,
+    dailyCounters: {},
     media: { type: 'none', url: '' },
     tickerText: 'WELCOME TO BARANGAY BALIWASAN. PLEASE WAIT FOR YOUR NUMBER TO BE CALLED.',
     disabledServices: [],
@@ -76,23 +96,50 @@ let queueState = {
     ]
 };
 
-function initializeServiceRules() {
+async function loadState() {
+    if (!useMongo) return;
+    try {
+        const dbQueue = await State.findOne({ key: 'queue' });
+        const dbBooking = await State.findOne({ key: 'booking' });
+        if (dbQueue) queueState = dbQueue.data;
+        if (dbBooking) bookingEngine = dbBooking.data;
+        
+        if (!queueState.dailyCounters) queueState.dailyCounters = {};
+        
+        queueState.services.forEach(s => {
+            if (!bookingEngine.serviceRules[s.name]) {
+                bookingEngine.serviceRules[s.name] = { allowedDays: [1, 2, 3, 4, 5] };
+            }
+        });
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+async function saveState() {
+    if (!useMongo) return;
+    try {
+        await State.findOneAndUpdate({ key: 'queue' }, { data: queueState }, { upsert: true });
+        await State.findOneAndUpdate({ key: 'booking' }, { data: bookingEngine }, { upsert: true });
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+if (!useMongo) {
+    if (!queueState.dailyCounters) queueState.dailyCounters = {};
     queueState.services.forEach(s => {
-        bookingEngine.serviceRules[s.name] = {
-            allowedDays: [1, 2, 3, 4, 5]
-        };
+        if (!bookingEngine.serviceRules[s.name]) {
+            bookingEngine.serviceRules[s.name] = { allowedDays: [1, 2, 3, 4, 5] };
+        }
     });
 }
-initializeServiceRules();
 
 function sortQueue() {
     queueState.waitingList.sort((a, b) => {
-        const priorityA = a.priority === 'PWD / SENIOR' ? 1 : 0;
-        const priorityB = b.priority === 'PWD / SENIOR' ? 1 : 0;
-        
-        if (priorityA !== priorityB) {
-            return priorityB - priorityA;
-        }
+        const priorityA = a.priority === 'PWD / Senior / Pregnant' ? 1 : 0;
+        const priorityB = b.priority === 'PWD / Senior / Pregnant' ? 1 : 0;
+        if (priorityA !== priorityB) return priorityB - priorityA;
         return a.ticketNumber - b.ticketNumber;
     });
 }
@@ -108,19 +155,25 @@ function getServiceCategory(docName) {
     return srv ? srv.category : 'M';
 }
 
+function getNextTicketNumber(dateString) {
+    if (!queueState.dailyCounters) queueState.dailyCounters = {};
+    if (!queueState.dailyCounters[dateString]) {
+        queueState.dailyCounters[dateString] = 0;
+    }
+    queueState.dailyCounters[dateString]++;
+    return queueState.dailyCounters[dateString];
+}
+
 function getAvailableDates(serviceName, startDate, daysToGenerate) {
     if (!bookingEngine.globalOnlineBookingEnabled) return [];
-
     let availableDates = [];
     let currentDate = new Date(startDate);
     let rules = bookingEngine.serviceRules[serviceName];
-
     if (!rules) return availableDates;
 
     for (let i = 0; i < daysToGenerate; i++) {
         let dateString = currentDate.toISOString().split('T')[0];
         let dayOfWeek = currentDate.getDay();
-
         let isBlockedDay = bookingEngine.disabledDaysOfWeek.includes(dayOfWeek);
         let isBlockedDate = bookingEngine.blockedDates.includes(dateString);
         let isServiceAllowed = rules.allowedDays.includes(dayOfWeek);
@@ -130,7 +183,6 @@ function getAvailableDates(serviceName, startDate, daysToGenerate) {
         if (!isBlockedDay && !isBlockedDate && isServiceAllowed && !isFull) {
             availableDates.push(dateString);
         }
-
         currentDate.setDate(currentDate.getDate() + 1);
     }
     return availableDates;
@@ -141,11 +193,16 @@ io.on('connection', (socket) => {
     socket.emit('bookingEngineUpdated', bookingEngine);
 
     socket.on('requestAvailableDates', (data) => {
-        const dates = getAvailableDates(data.serviceName, data.startDate, 30);
+        const dates = getAvailableDates(data.serviceName, data.startDate, 60);
         socket.emit('availableDatesResponse', dates);
     });
 
     socket.on('submitBookingRequest', (requestData) => {
+        if (!bookingEngine.globalOnlineBookingEnabled) {
+            socket.emit('bookingResolved', { id: 'N/A', approved: false, reason: 'Online booking is disabled' });
+            return;
+        }
+
         const requestId = 'REQ-' + Date.now();
         const cat = getServiceCategory(requestData.document);
         
@@ -161,10 +218,10 @@ io.on('connection', (socket) => {
         };
 
         if (bookingEngine.autoApprove) {
-            queueState.ticketCounter++;
+            const tNum = getNextTicketNumber(newRequest.requestedDate);
             const finalAppointment = {
                 ...newRequest,
-                ticketNumber: queueState.ticketCounter,
+                ticketNumber: tNum,
                 timeSlot: 'AUTO-ASSIGNED',
                 status: 'APPROVED'
             };
@@ -185,11 +242,13 @@ io.on('connection', (socket) => {
 
             bookingEngine.dailyLoad[newRequest.requestedDate] = (bookingEngine.dailyLoad[newRequest.requestedDate] || 0) + 1;
             
+            saveState();
             io.emit('queueUpdated', queueState);
-            socket.emit('bookingApproved', { ticket: finalAppointment, isToday: isToday, ewt: ewt });
+            socket.emit('bookingApproved', { ticket: finalAppointment, isToday: isToday, ewt: ewt, id: requestId });
         } else {
             newRequest.status = 'PENDING';
             bookingEngine.pendingRequests.push(newRequest);
+            saveState();
             io.emit('bookingEngineUpdated', bookingEngine);
             socket.emit('bookingSubmitted', { id: requestId, status: 'PENDING' });
         }
@@ -202,12 +261,11 @@ io.on('connection', (socket) => {
             bookingEngine.pendingRequests.splice(reqIndex, 1);
 
             if (reviewData.approved) {
-                queueState.ticketCounter++;
+                const tNum = getNextTicketNumber(request.requestedDate);
                 const cat = getServiceCategory(request.document);
-                
                 const finalAppointment = {
                     ...request,
-                    ticketNumber: queueState.ticketCounter,
+                    ticketNumber: tNum,
                     category: cat,
                     timeSlot: reviewData.timeSlot, 
                     status: 'APPROVED',
@@ -215,31 +273,51 @@ io.on('connection', (socket) => {
                 };
 
                 const today = getTodayDate();
+                let ewt = 0;
+                let isToday = false;
+
                 if (request.requestedDate === today) {
+                    isToday = true;
                     queueState.waitingList.push(finalAppointment);
                     sortQueue();
+                    const position = queueState.waitingList.findIndex(t => t.ticketNumber === finalAppointment.ticketNumber);
+                    ewt = (position + 1) * 12;
                 } else {
                     queueState.appointments.push(finalAppointment);
                 }
 
                 bookingEngine.dailyLoad[request.requestedDate] = (bookingEngine.dailyLoad[request.requestedDate] || 0) + 1;
                 io.emit('queueUpdated', queueState);
+                io.emit('bookingResolved', { id: reviewData.id, approved: true, ticket: finalAppointment, isToday: isToday, ewt: ewt });
+            } else {
+                io.emit('bookingResolved', { id: reviewData.id, approved: false });
             }
+            saveState();
             io.emit('bookingEngineUpdated', bookingEngine);
         }
     });
 
     socket.on('updateBookingRules', (newRules) => {
         bookingEngine = { ...bookingEngine, ...newRules };
+        saveState();
+        io.emit('bookingEngineUpdated', bookingEngine);
+        io.emit('queueUpdated', queueState);
+    });
+
+    socket.on('updateServiceRule', (ruleData) => {
+        if (!bookingEngine.serviceRules[ruleData.serviceName]) {
+            bookingEngine.serviceRules[ruleData.serviceName] = { allowedDays: [] };
+        }
+        bookingEngine.serviceRules[ruleData.serviceName].allowedDays = ruleData.allowedDays;
+        saveState();
         io.emit('bookingEngineUpdated', bookingEngine);
     });
 
     socket.on('joinQueue', (data) => {
-        queueState.ticketCounter++;
+        const tNum = getNextTicketNumber(data.date);
         const cat = getServiceCategory(data.document);
-        
         const newTicket = {
-            ticketNumber: queueState.ticketCounter,
+            ticketNumber: tNum,
             name: data.name,
             contact: data.contact,
             priority: data.priority,
@@ -262,17 +340,18 @@ io.on('connection', (socket) => {
             queueState.appointments.push(newTicket);
         }
         
+        saveState();
         io.emit('queueUpdated', queueState);
         socket.emit('ticketIssued', { ticket: newTicket, ewt: ewt, isToday: isToday });
     });
 
     socket.on('generateTicket', (data) => {
-        queueState.ticketCounter++;
         const walkInDate = getTodayDate();
+        const tNum = getNextTicketNumber(walkInDate);
         const cat = getServiceCategory(data.document);
 
         queueState.waitingList.push({
-            ticketNumber: queueState.ticketCounter,
+            ticketNumber: tNum,
             name: 'Walk-in',
             contact: 'N/A',
             priority: data.priority,
@@ -281,6 +360,7 @@ io.on('connection', (socket) => {
             date: walkInDate
         });
         sortQueue();
+        saveState();
         io.emit('queueUpdated', queueState);
     });
 
@@ -308,17 +388,20 @@ io.on('connection', (socket) => {
                 queueState.counters[counterIndex].currentName = '';
                 queueState.counters[counterIndex].currentCategory = '';
             }
+            saveState();
             io.emit('queueUpdated', queueState);
         }
     });
 
     socket.on('updateMedia', (data) => {
         queueState.media = data;
+        saveState();
         io.emit('queueUpdated', queueState);
     });
 
     socket.on('updateTicker', (text) => {
         queueState.tickerText = text;
+        saveState();
         io.emit('queueUpdated', queueState);
     });
 
@@ -329,6 +412,7 @@ io.on('connection', (socket) => {
         } else {
             queueState.disabledServices.push(serviceName);
         }
+        saveState();
         io.emit('queueUpdated', queueState);
     });
 
@@ -338,6 +422,8 @@ io.on('connection', (socket) => {
             category: serviceData.category,
             isNew: true
         });
+        bookingEngine.serviceRules[serviceData.name] = { allowedDays: [1, 2, 3, 4, 5] };
+        saveState();
         io.emit('queueUpdated', queueState);
     });
 
@@ -349,8 +435,11 @@ io.on('connection', (socket) => {
         queueState.lastCalled = { ticket: null, counter: null, document: 'SYSTEM STANDBY', category: '' };
         queueState.waitingList = [];
         queueState.appointments = [];
-        queueState.ticketCounter = 0;
+        queueState.dailyCounters = {};
+        bookingEngine.pendingRequests = [];
+        saveState();
         io.emit('queueUpdated', queueState);
+        io.emit('bookingEngineUpdated', bookingEngine);
     });
 });
 

@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resident Login - Barangay Baliwasan</title>
     <link href="output.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .flatpickr-calendar { font-family: inherit; border-radius: 1rem; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .flatpickr-day.selected { background: #FFD500 !important; border-color: #FFD500 !important; color: black !important; font-weight: 900; }
+    </style>
 </head>
 <body class="bg-[#FFF9E2] min-h-screen flex flex-col items-center justify-center font-sans text-gray-900 p-4 md:p-6 overflow-y-auto">
 
@@ -49,6 +54,14 @@
         </div>
     </div>
 
+    <div id="offline-screen" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-md border-t-8 border-red-600 text-center my-8 relative z-10">
+        <div class="text-center mb-6">
+            <h1 class="text-xl md:text-2xl font-black uppercase tracking-widest text-gray-900">SYSTEM OFFLINE</h1>
+            <p class="text-red-500 font-bold text-xs md:text-sm mt-2 uppercase tracking-wide">Online Booking Disabled</p>
+        </div>
+        <p class="text-sm md:text-base text-gray-600 mb-8">The barangay is currently not accepting online booking requests. Please try again later.</p>
+    </div>
+
     <div id="step-1" class="bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-4xl border-t-8 border-[#FFD500] my-8 relative z-10">
         <div class="flex items-center justify-between mb-8">
             <div class="flex-1 text-center px-2">
@@ -56,7 +69,6 @@
                 <p class="text-gray-500 text-xs md:text-sm mt-1">Select the service you need</p>
             </div>
         </div>
-
         <div id="dynamic-services-container" class="space-y-8">
             <div class="text-center py-10 text-gray-400 font-bold uppercase text-xs tracking-widest">Loading Services...</div>
         </div>
@@ -72,8 +84,11 @@
         </div>
         <form id="step-2-form" class="space-y-5 md:space-y-6">
             <div>
-                <label class="block text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">Select Date</label>
-                <input type="date" id="user-date" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] focus:ring-0 outline-none transition-colors bg-gray-50 text-sm md:text-base font-bold text-gray-800">
+                <label class="block text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wide mb-2 flex justify-between items-center">
+                    <span>Select Available Date</span>
+                    <button type="button" id="btn-select-today" class="hidden bg-black hover:bg-gray-800 text-[#FFD500] text-[9px] px-2 py-1 rounded shadow-sm uppercase font-black tracking-widest transition-colors">Select Today</button>
+                </label>
+                <input type="text" id="user-date" placeholder="Loading calendar..." disabled class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] focus:ring-0 outline-none transition-colors bg-gray-50 text-sm md:text-base font-bold text-gray-800 disabled:opacity-50">
             </div>
             <button type="submit" class="w-full bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-4 px-4 rounded-xl shadow-lg text-base md:text-lg transition-all uppercase tracking-wide mt-4 flex justify-between items-center">
                 <span>Continue</span>
@@ -82,7 +97,7 @@
         </form>
     </div>
 
-    <div id="step-3" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-md border-t-8 border-[#FFD500] transition-all my-8 relative z-10">
+    <div id="step-3" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-4xl border-t-8 border-[#FFD500] transition-all my-8 relative z-10">
         <div class="flex items-center justify-between mb-8">
             <button id="btn-back-to-2" class="text-gray-400 hover:text-black font-bold uppercase text-xs md:text-sm tracking-wide shrink-0">&larr; Back</button>
             <div class="flex-1 text-center px-2">
@@ -92,28 +107,41 @@
         </div>
 
         <form id="step-3-form" class="space-y-5 md:space-y-6">
-            <div>
-                <label class="block text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">Full Name</label>
-                <input type="text" id="user-name" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] focus:ring-0 outline-none transition-colors bg-gray-50 text-sm md:text-base">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+                <div>
+                    <label class="block text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">First Name</label>
+                    <input type="text" id="user-fname" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] focus:ring-0 outline-none transition-colors bg-gray-50 text-sm md:text-base">
+                </div>
+                <div>
+                    <label class="block text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">Middle Name <span class="text-[9px] text-gray-400 font-normal tracking-normal">(Optional)</span></label>
+                    <input type="text" id="user-mname" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] focus:ring-0 outline-none transition-colors bg-gray-50 text-sm md:text-base">
+                </div>
+                <div>
+                    <label class="block text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">Last Name</label>
+                    <input type="text" id="user-lname" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] focus:ring-0 outline-none transition-colors bg-gray-50 text-sm md:text-base">
+                </div>
             </div>
 
-            <div>
-                <label class="block text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">Contact Number</label>
-                <input type="tel" id="user-contact" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] focus:ring-0 outline-none transition-colors bg-gray-50 text-sm md:text-base">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                <div>
+                    <label class="block text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">Contact Number</label>
+                    <input type="tel" id="user-contact" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] focus:ring-0 outline-none transition-colors bg-gray-50 text-sm md:text-base">
+                </div>
+                <div>
+                    <label class="block text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">Queue Priority</label>
+                    <select id="user-priority" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] focus:ring-0 outline-none transition-colors bg-gray-50 text-sm md:text-base">
+                        <option value="REGULAR" selected>Regular</option>
+                        <option value="PWD / Senior / Pregnant">PWD / Senior / Pregnant</option>
+                    </select>
+                </div>
             </div>
 
-            <div>
-                <label class="block text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">Queue Priority</label>
-                <select id="user-priority" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] focus:ring-0 outline-none transition-colors bg-gray-50 text-sm md:text-base">
-                    <option value="REGULAR" selected>Regular</option>
-                    <option value="PWD / SENIOR">PWD / Senior Citizen</option>
-                </select>
+            <div class="flex justify-center w-full">
+                <button type="submit" class="w-full max-w-md bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-4 px-4 rounded-xl shadow-lg text-base md:text-lg transition-all uppercase tracking-wide mt-4 flex justify-between items-center">
+                    <span>Review</span>
+                    <span>&rarr;</span>
+                </button>
             </div>
-
-            <button type="submit" class="w-full bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-4 px-4 rounded-xl shadow-lg text-base md:text-lg transition-all uppercase tracking-wide mt-4 flex justify-between items-center">
-                <span>Review</span>
-                <span>&rarr;</span>
-            </button>
         </form>
     </div>
 
@@ -166,26 +194,31 @@
             <h1 class="text-xl md:text-2xl font-black uppercase tracking-widest text-gray-900">Request Pending</h1>
             <p class="text-gray-500 font-bold text-xs md:text-sm mt-2 uppercase tracking-wide">Awaiting Barangay Review</p>
         </div>
-        
         <p class="text-sm md:text-base text-gray-600 mb-8">Your transaction request has been sent to the barangay staff for review and scheduling.</p>
-        
         <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 mb-8">
             <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Tracking ID</p>
             <p id="pending-track-id" class="text-2xl font-black text-black tracking-widest">---</p>
         </div>
-
         <p class="text-xs md:text-sm text-gray-500 mb-8 font-medium leading-relaxed bg-[#FFF9E2] p-4 rounded-xl border border-[#FFE761]">
-            Please wait for an SMS confirmation or check back later to see your approved queue number.
+            Please wait on this screen or check back later to see your approved queue number.
         </p>
+    </div>
 
-        <button onclick="window.location.reload()" class="w-full bg-black hover:bg-gray-800 text-[#FFD500] font-black py-4 px-4 rounded-xl shadow-lg text-base md:text-lg transition-all uppercase tracking-wide">
-            Done
+    <div id="rejected-screen" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-md border-t-8 border-red-600 text-center my-8 relative z-10">
+        <div class="text-center mb-6">
+            <h1 class="text-xl md:text-2xl font-black uppercase tracking-widest text-red-600">Request Declined</h1>
+            <p class="text-gray-500 font-bold text-xs md:text-sm mt-2 uppercase tracking-wide">Action Required</p>
+        </div>
+        <p class="text-sm md:text-base text-gray-600 mb-8" id="rejected-reason">We are sorry, but your booking request could not be approved at this time. Please visit the barangay hall in person for further assistance.</p>
+        <button onclick="window.location.reload()" class="w-full bg-black hover:bg-gray-800 text-white font-black py-4 px-4 rounded-xl shadow-lg text-base md:text-lg transition-all uppercase tracking-wide">
+            Start Over
         </button>
     </div>
 
     <div id="ticket-result" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-md border-2 border-[#FFD500] text-center my-8 relative z-10">
         <h2 class="text-lg md:text-xl font-bold text-gray-500 uppercase tracking-wider mb-2">Your Ticket Number</h2>
-        <div id="my-ticket-number" class="text-6xl md:text-7xl font-black text-gray-900 mb-4 drop-shadow-sm">---</div>
+        <div id="my-ticket-number" class="text-6xl md:text-7xl font-black text-gray-900 mb-2 drop-shadow-sm">---</div>
+        <div id="my-time-slot" class="text-sm font-black text-white bg-black px-4 py-1 rounded-md inline-block mb-6 tracking-widest uppercase">---</div>
         
         <div id="ewt-container" class="bg-gray-50 border border-gray-200 rounded-xl p-4 mb-6">
             <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Estimated Wait Time</p>
@@ -201,6 +234,7 @@
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="bookingClient.js"></script>
     <script>
         const socket = io();
@@ -210,13 +244,12 @@
         const step3 = document.getElementById('step-3');
         const step4 = document.getElementById('step-4');
         const step5 = document.getElementById('step-5');
+        const offlineScreen = document.getElementById('offline-screen');
         const ticketResult = document.getElementById('ticket-result');
         const mobileQueueScreen = document.getElementById('mobile-queue-screen');
         const btnShowQueue = document.getElementById('btn-show-queue');
-        
         const smsToast = document.getElementById('sms-toast');
         const smsMessage = document.getElementById('sms-message');
-        
         const confirmDocName = document.getElementById('confirm-doc-name');
         const confirmDate = document.getElementById('confirm-date');
         const confirmPriority = document.getElementById('confirm-priority');
@@ -225,6 +258,12 @@
         let pendingUser = { name: '', contact: '', priority: '', document: '', date: '' };
         let myAssignedTicket = null;
         let myAssignedCat = null;
+        let currentTrackId = null;
+        let fpInstance = null;
+        
+        const now = new Date();
+        const offset = now.getTimezoneOffset() * 60000;
+        const localISOTime = (new Date(now - offset)).toISOString().split('T')[0];
 
         function formatTicket(num, cat) {
             if (!num) return "----";
@@ -234,50 +273,84 @@
 
         const myBookingEngine = new BookingCalendar(socket, {
             onLoadingDates: () => {
+                document.getElementById('user-date').placeholder = "Fetching available dates...";
                 document.getElementById('user-date').disabled = true;
             },
             onDatesLoaded: (dates) => {
                 const dateInput = document.getElementById('user-date');
-                dateInput.disabled = false;
+                const btnToday = document.getElementById('btn-select-today');
                 
-                dateInput.addEventListener('input', (e) => {
-                    if (!dates.includes(e.target.value)) {
-                        alert("This date is unavailable or fully booked for the selected service.");
-                        e.target.value = ''; 
-                    }
+                dateInput.disabled = false;
+                dateInput.placeholder = "Select Date";
+                
+                if (fpInstance) fpInstance.destroy();
+                
+                fpInstance = flatpickr(dateInput, {
+                    minDate: "today",
+                    enable: dates,
+                    dateFormat: "Y-m-d",
+                    disableMobile: "true"
                 });
+
+                if (dates.includes(localISOTime)) {
+                    btnToday.classList.remove('hidden');
+                    btnToday.onclick = () => {
+                        fpInstance.setDate(localISOTime, true);
+                    };
+                } else {
+                    btnToday.classList.add('hidden');
+                }
             },
             onRequestPending: (res) => {
                 document.getElementById('step-5').classList.add('hidden');
                 document.getElementById('pending-approval-screen').classList.remove('hidden');
-                document.getElementById('pending-track-id').innerText = res.id;
+                currentTrackId = res.id;
+                document.getElementById('pending-track-id').innerText = currentTrackId;
                 window.scrollTo(0, 0);
             },
             onAutoApproved: (res) => {
+                showTicket(res);
+            },
+            onBookingResolved: (res) => {
+                if (res.id !== currentTrackId && res.id !== 'N/A') return;
+                document.getElementById('pending-approval-screen').classList.add('hidden');
                 document.getElementById('step-5').classList.add('hidden');
-                document.getElementById('ticket-result').classList.remove('hidden');
-                
-                myAssignedTicket = res.ticket.ticketNumber;
-                myAssignedCat = res.ticket.category;
-                document.getElementById('my-ticket-number').innerText = formatTicket(myAssignedTicket, myAssignedCat);
-                
-                document.getElementById('ewt-container').classList.add('hidden');
-                document.getElementById('live-message').classList.add('hidden');
-                document.getElementById('appt-message').classList.remove('hidden');
-                window.scrollTo(0, 0);
+                if (res.approved) {
+                    showTicket(res);
+                } else {
+                    if (res.reason) {
+                        document.getElementById('rejected-reason').innerText = res.reason;
+                    }
+                    document.getElementById('rejected-screen').classList.remove('hidden');
+                    window.scrollTo(0, 0);
+                }
             },
             onError: (msg) => {
                 alert(msg);
             }
         });
 
-        const dateInput = document.getElementById('user-date');
-        const now = new Date();
-        const offset = now.getTimezoneOffset() * 60000;
-        const localISOTime = (new Date(now - offset)).toISOString().split('T')[0];
-        
-        dateInput.value = localISOTime;
-        dateInput.min = localISOTime;
+        function showTicket(res) {
+            document.getElementById('step-5').classList.add('hidden');
+            document.getElementById('ticket-result').classList.remove('hidden');
+            
+            myAssignedTicket = res.ticket.ticketNumber;
+            myAssignedCat = res.ticket.category;
+            document.getElementById('my-ticket-number').innerText = formatTicket(myAssignedTicket, myAssignedCat);
+            document.getElementById('my-time-slot').innerText = res.ticket.timeSlot;
+            
+            if (res.isToday) {
+                document.getElementById('ewt-display').innerText = `~${res.ewt} mins`;
+                document.getElementById('ewt-container').classList.remove('hidden');
+                document.getElementById('live-message').classList.remove('hidden');
+                document.getElementById('appt-message').classList.add('hidden');
+            } else {
+                document.getElementById('ewt-container').classList.add('hidden');
+                document.getElementById('live-message').classList.add('hidden');
+                document.getElementById('appt-message').classList.remove('hidden');
+            }
+            window.scrollTo(0, 0);
+        }
 
         btnShowQueue.addEventListener('click', () => {
             mobileQueueScreen.classList.remove('hidden');
@@ -309,6 +382,7 @@
 
         document.getElementById('step-2-form').addEventListener('submit', (e) => {
             e.preventDefault();
+            if(!document.getElementById('user-date').value) return alert("Select a date first.");
             pendingUser.date = document.getElementById('user-date').value;
             step2.classList.add('hidden');
             step3.classList.remove('hidden');
@@ -322,7 +396,11 @@
 
         document.getElementById('step-3-form').addEventListener('submit', (e) => {
             e.preventDefault();
-            pendingUser.name = document.getElementById('user-name').value;
+            const fname = document.getElementById('user-fname').value.trim();
+            const mname = document.getElementById('user-mname').value.trim();
+            const lname = document.getElementById('user-lname').value.trim();
+            
+            pendingUser.name = fname + (mname ? ' ' + mname : '') + ' ' + lname;
             pendingUser.contact = document.getElementById('user-contact').value;
             pendingUser.priority = document.getElementById('user-priority').value;
             
@@ -356,30 +434,23 @@
         });
 
         socket.on('ticketIssued', (response) => {
-            step5.classList.add('hidden');
-            ticketResult.classList.remove('hidden');
-            window.scrollTo(0, 0);
-            
-            myAssignedTicket = response.ticket.ticketNumber;
-            myAssignedCat = response.ticket.category;
-            document.getElementById('my-ticket-number').innerText = formatTicket(myAssignedTicket, myAssignedCat);
+            showTicket(response);
+        });
 
-            if (response.isToday) {
-                document.getElementById('ewt-display').innerText = `~${response.ewt} mins`;
-                document.getElementById('ewt-container').classList.remove('hidden');
-                document.getElementById('live-message').classList.remove('hidden');
-                document.getElementById('appt-message').classList.add('hidden');
+        socket.on('bookingEngineUpdated', (engineState) => {
+            if (!engineState.globalOnlineBookingEnabled) {
+                step1.classList.add('hidden');
+                offlineScreen.classList.remove('hidden');
             } else {
-                document.getElementById('ewt-container').classList.add('hidden');
-                document.getElementById('live-message').classList.add('hidden');
-                document.getElementById('appt-message').classList.remove('hidden');
+                if(step1.classList.contains('hidden') && offlineScreen.classList.contains('hidden') === false) {
+                    offlineScreen.classList.add('hidden');
+                    step1.classList.remove('hidden');
+                }
             }
         });
 
         socket.on('queueUpdated', (state) => {
-            
             dynamicServicesContainer.innerHTML = '';
-            
             const specialServices = state.services.filter(s => s.category === 'S');
             if(specialServices.length > 0) {
                 const specialHTML = specialServices.map(s => {
@@ -392,7 +463,6 @@
                         </button>
                     `;
                 }).join('');
-                
                 dynamicServicesContainer.innerHTML += `
                     <div>
                         <h3 class="text-xs md:text-sm font-bold text-gray-400 uppercase tracking-widest mb-3 text-center md:text-left">Special Events</h3>
@@ -413,7 +483,6 @@
                         </button>
                     `;
                 }).join('');
-
                 dynamicServicesContainer.innerHTML += `
                     <div>
                         <h3 class="text-xs md:text-sm font-bold text-gray-400 uppercase tracking-widest mb-3 text-center md:text-left">Standard Documents</h3>
@@ -421,14 +490,13 @@
                     </div>
                 `;
             }
-            
             setupDocButtons();
 
             document.getElementById('mobile-serving-ticket').innerText = state.lastCalled && state.lastCalled.ticket ? formatTicket(state.lastCalled.ticket, state.lastCalled.category) : "----";
             document.getElementById('mobile-serving-counter').innerText = state.lastCalled && state.lastCalled.counter ? `COUNTER ${state.lastCalled.counter}` : "--";
             document.getElementById('mobile-serving-doc').innerText = state.lastCalled && state.lastCalled.document ? state.lastCalled.document : "SYSTEM STANDBY";
-
             document.getElementById('mobile-waiting-count').innerText = state.waitingList.length;
+            
             const mobileList = document.getElementById('mobile-waiting-list');
             mobileList.innerHTML = '';
 
@@ -436,7 +504,7 @@
                 mobileList.innerHTML = '<div class="text-center py-10 text-gray-300 font-bold uppercase text-xs tracking-wider">Queue is empty</div>';
             } else {
                 state.waitingList.forEach(item => {
-                    const badgeColor = item.priority === 'PWD / SENIOR' ? 'bg-black text-[#FFD500] border-gray-800' : 'bg-white text-gray-600 border-gray-200';
+                    const badgeColor = item.priority === 'PWD / Senior / Pregnant' ? 'bg-black text-[#FFD500] border-gray-800' : 'bg-white text-gray-600 border-gray-200';
                     const el = document.createElement('div');
                     el.className = 'flex justify-between items-center p-4 border border-gray-100 rounded-2xl bg-gray-50 shadow-sm';
                     el.innerHTML = `
@@ -449,26 +517,19 @@
 
             if (myAssignedTicket !== null) {
                 const servingCounter = state.counters.find(c => c.currentTicket === myAssignedTicket);
-                
                 if (servingCounter) {
                     const formattedTicket = formatTicket(myAssignedTicket, myAssignedCat);
                     smsMessage.innerText = `Hello! Ticket #${formattedTicket} is now being served at Counter ${servingCounter.id}. Please proceed to the counter.`;
-                    
                     smsToast.classList.remove('hidden');
-                    
                     setTimeout(() => {
                         smsToast.classList.remove('-translate-y-[150%]');
                         smsToast.classList.add('translate-y-0');
                     }, 50);
-
                     setTimeout(() => {
                         smsToast.classList.remove('translate-y-0');
                         smsToast.classList.add('-translate-y-[150%]');
-                        setTimeout(() => {
-                            smsToast.classList.add('hidden');
-                        }, 500);
+                        setTimeout(() => { smsToast.classList.add('hidden'); }, 500);
                     }, 6000);
-
                     myAssignedTicket = null;
                 }
             }

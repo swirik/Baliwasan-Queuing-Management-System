@@ -12,11 +12,53 @@
             <h1 class="text-2xl font-black uppercase tracking-wider shrink-0">ADMIN SIDE</h1>
             
             <div class="bg-gray-50 p-5 rounded-2xl border border-gray-100 shrink-0">
-                <h2 class="text-sm font-bold text-gray-400 mb-3 uppercase tracking-widest">1. ISSUE WALK-IN TICKET</h2>
+                <h2 class="text-sm font-bold text-gray-400 mb-3 uppercase tracking-widest">1. CALENDAR & BOOKING RULES</h2>
+                <div class="flex flex-col gap-4">
+                    <div class="flex justify-between items-center p-3 bg-red-50 rounded-xl border border-red-200 shadow-sm">
+                        <span class="text-xs font-black text-red-700 uppercase tracking-wide">Enable Online Booking</span>
+                        <button id="toggle-global-booking" class="shrink-0 w-10 h-5 rounded-full bg-gray-400 transition-colors relative">
+                            <div id="knob-global-booking" class="w-4 h-4 bg-white rounded-full absolute top-[2px] left-0.5 transition-all shadow-sm"></div>
+                        </button>
+                    </div>
+
+                    <div class="flex justify-between items-center p-3 bg-white rounded-xl border border-gray-200 shadow-sm">
+                        <span class="text-xs font-bold text-gray-700 uppercase tracking-wide">Auto-Approve Bookings</span>
+                        <button id="toggle-auto-approve" class="shrink-0 w-10 h-5 rounded-full bg-gray-400 transition-colors relative">
+                            <div id="knob-auto-approve" class="w-4 h-4 bg-white rounded-full absolute top-[2px] left-0.5 transition-all shadow-sm"></div>
+                        </button>
+                    </div>
+
+                    <div class="flex gap-2 items-end">
+                        <div class="flex-1">
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Max Daily Capacity</label>
+                            <input type="number" id="admin-capacity" class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] outline-none bg-white text-xs font-bold">
+                        </div>
+                        <button id="btn-update-capacity" class="bg-black hover:bg-gray-800 text-white font-black py-2 px-4 rounded-xl shadow-md transition-all uppercase tracking-widest text-[10px] h-[36px]">SAVE</button>
+                    </div>
+
+                    <div class="border-t border-gray-200 pt-3">
+                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Block Specific Date (Holidays)</label>
+                        <div class="flex gap-2">
+                            <input type="date" id="admin-block-date" class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] outline-none bg-white text-xs font-bold">
+                            <button id="btn-add-block" class="bg-red-500 hover:bg-red-600 text-white font-black py-2 px-4 rounded-xl shadow-md transition-all uppercase tracking-widest text-[10px]">BLOCK</button>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-gray-200 pt-3">
+                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Service Allowed Days Matrix</label>
+                        <select id="matrix-service-select" class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] outline-none bg-white text-xs font-bold mb-2"></select>
+                        <div class="grid grid-cols-7 gap-1 text-center" id="matrix-days-container"></div>
+                        <button id="btn-save-matrix" class="w-full mt-2 bg-black hover:bg-gray-800 text-[#FFD500] font-black py-2 rounded-xl shadow-md transition-all uppercase tracking-widest text-[10px]">SAVE SERVICE RULES</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 p-5 rounded-2xl border border-gray-100 shrink-0">
+                <h2 class="text-sm font-bold text-gray-400 mb-3 uppercase tracking-widest">2. ISSUE WALK-IN TICKET</h2>
                 <div class="flex flex-col gap-2">
                     <select id="admin-priority" class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] outline-none bg-white font-bold text-xs">
                         <option value="REGULAR">Regular</option>
-                        <option value="PWD / SENIOR">PWD / Senior Citizen</option>
+                        <option value="PWD / Senior / Pregnant">PWD / Senior / Pregnant</option>
                     </select>
 
                     <select id="admin-document" class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] outline-none bg-white font-bold text-xs">
@@ -30,7 +72,7 @@
 
             <div class="bg-gray-50 p-5 rounded-2xl border border-gray-100 shrink-0">
                 <h2 class="text-sm font-bold text-gray-400 mb-3 uppercase tracking-widest flex justify-between items-center">
-                    <span>2. MANAGE SERVICES</span>
+                    <span>3. MANAGE SERVICES</span>
                     <span class="text-[9px] bg-black text-[#FFD500] px-2 py-1 rounded">LIVE</span>
                 </h2>
                 <div class="flex flex-col gap-2 max-h-40 overflow-y-auto pr-2 custom-scrollbar mb-4" id="service-toggles"></div>
@@ -54,7 +96,7 @@
             </div>
 
             <div class="bg-gray-50 p-5 rounded-2xl border border-gray-100 shrink-0">
-                <h2 class="text-sm font-bold text-gray-400 mb-3 uppercase tracking-widest">3. DISPLAY MEDIA</h2>
+                <h2 class="text-sm font-bold text-gray-400 mb-3 uppercase tracking-widest">4. DISPLAY MEDIA</h2>
                 <div class="flex flex-col gap-2">
                     <select id="media-type" class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] outline-none bg-white font-bold text-xs">
                         <option value="none">None (Blank)</option>
@@ -73,7 +115,7 @@
             </div>
 
             <div class="bg-gray-50 p-5 rounded-2xl border border-gray-100 shrink-0">
-                <h2 class="text-sm font-bold text-gray-400 mb-3 uppercase tracking-widest">4. ANNOUNCEMENT TICKER</h2>
+                <h2 class="text-sm font-bold text-gray-400 mb-3 uppercase tracking-widest">5. ANNOUNCEMENT TICKER</h2>
                 <div class="flex flex-col gap-2">
                     <input type="text" id="ticker-input" placeholder="Enter scrolling text..." class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] outline-none bg-white text-xs">
                     <button id="btn-update-ticker" class="bg-black hover:bg-gray-800 text-[#FFD500] font-black py-3 px-4 rounded-xl shadow-md transition-all uppercase tracking-widest mt-1 text-sm">
@@ -83,11 +125,14 @@
             </div>
 
             <div class="bg-gray-50 p-5 rounded-2xl border border-gray-100 shrink-0">
-                <h2 class="text-sm font-bold text-gray-400 mb-3 uppercase tracking-widest">5. BOOKING SETTINGS</h2>
-                <div class="flex justify-between items-center p-3 bg-white rounded-xl border border-gray-200 shadow-sm">
-                    <span class="text-xs font-bold text-gray-700 uppercase tracking-wide">Auto-Approve Bookings</span>
-                    <button id="toggle-auto-approve" class="shrink-0 w-10 h-5 rounded-full bg-gray-400 transition-colors relative">
-                        <div id="knob-auto-approve" class="w-4 h-4 bg-white rounded-full absolute top-[2px] left-0.5 transition-all shadow-sm"></div>
+                <h2 class="text-sm font-bold text-gray-400 mb-3 uppercase tracking-widest">6. SYSTEM DATA & ANALYTICS</h2>
+                <div class="flex flex-col gap-3">
+                    <button id="btn-open-analytics" class="bg-black hover:bg-gray-800 text-[#FFD500] font-black py-3 px-4 rounded-xl shadow-md transition-all uppercase tracking-widest text-sm flex justify-between items-center">
+                        <span>OPEN DASHBOARD</span>
+                        <span>&nearr;</span>
+                    </button>
+                    <button id="btn-export-data" class="bg-white hover:bg-gray-50 text-gray-600 border-2 border-gray-200 font-bold py-3 px-4 rounded-xl transition-all uppercase tracking-widest text-xs">
+                        DOWNLOAD CSV REPORT
                     </button>
                 </div>
             </div>
@@ -166,6 +211,9 @@
     <script>
         const socket = io();
         let currentAutoApproveState = false;
+        let globalBookingEnabled = true;
+        let blockedDatesList = [];
+        let engineRulesData = {};
 
         function formatTicket(num, cat) {
             if (!num) return "----";
@@ -268,25 +316,102 @@
             socket.emit('updateBookingRules', { autoApprove: currentAutoApproveState });
         });
 
+        document.getElementById('toggle-global-booking').addEventListener('click', () => {
+            globalBookingEnabled = !globalBookingEnabled;
+            socket.emit('updateBookingRules', { globalOnlineBookingEnabled: globalBookingEnabled });
+        });
+
+        document.getElementById('btn-update-capacity').addEventListener('click', () => {
+            const cap = parseInt(document.getElementById('admin-capacity').value);
+            if(cap > 0) {
+                socket.emit('updateBookingRules', { defaultMaxCapacity: cap });
+            }
+        });
+
+        document.getElementById('btn-add-block').addEventListener('click', () => {
+            const bDate = document.getElementById('admin-block-date').value;
+            if(bDate && !blockedDatesList.includes(bDate)) {
+                blockedDatesList.push(bDate);
+                socket.emit('updateBookingRules', { blockedDates: blockedDatesList });
+                document.getElementById('admin-block-date').value = '';
+            }
+        });
+
+        document.getElementById('matrix-service-select').addEventListener('change', (e) => {
+            renderMatrixDays(e.target.value);
+        });
+
+        document.getElementById('btn-save-matrix').addEventListener('click', () => {
+            const srv = document.getElementById('matrix-service-select').value;
+            if(!srv) return;
+            const checkboxes = document.querySelectorAll('.matrix-day-chk');
+            let allowed = [];
+            checkboxes.forEach(chk => {
+                if(chk.checked) allowed.push(parseInt(chk.value));
+            });
+            socket.emit('updateServiceRule', { serviceName: srv, allowedDays: allowed });
+            alert("Rules updated for " + srv);
+        });
+
+        document.getElementById('btn-export-data').addEventListener('click', () => {
+            window.open('/export', '_blank');
+        });
+
+        document.getElementById('btn-open-analytics').addEventListener('click', () => {
+            window.open('analytics.html', '_blank');
+        });
+
         window.approveRequest = function(id) {
-            socket.emit('adminReviewBooking', { id: id, approved: true, timeSlot: 'AUTO' });
+            const slot = document.getElementById('slot-' + id).value;
+            socket.emit('adminReviewBooking', { id: id, approved: true, timeSlot: slot });
         }
 
         window.rejectRequest = function(id) {
             socket.emit('adminReviewBooking', { id: id, approved: false });
         }
 
-        socket.on('bookingEngineUpdated', (engineState) => {
-            currentAutoApproveState = engineState.autoApprove;
-            const toggleBtn = document.getElementById('toggle-auto-approve');
-            const knob = document.getElementById('knob-auto-approve');
+        function renderMatrixDays(serviceName) {
+            const container = document.getElementById('matrix-days-container');
+            container.innerHTML = '';
+            const days = [{d:1, n:'Mon'}, {d:2, n:'Tue'}, {d:3, n:'Wed'}, {d:4, n:'Thu'}, {d:5, n:'Fri'}, {d:6, n:'Sat'}, {d:0, n:'Sun'}];
+            const rules = engineRulesData[serviceName] ? engineRulesData[serviceName].allowedDays : [1,2,3,4,5];
             
+            days.forEach(day => {
+                const isChecked = rules.includes(day.d) ? 'checked' : '';
+                container.innerHTML += `
+                    <label class="flex flex-col items-center bg-gray-50 p-1 rounded border border-gray-200 cursor-pointer hover:bg-gray-100">
+                        <span class="text-[9px] font-bold text-gray-600 uppercase">${day.n}</span>
+                        <input type="checkbox" value="${day.d}" class="matrix-day-chk accent-[#FFD500]" ${isChecked}>
+                    </label>
+                `;
+            });
+        }
+
+        socket.on('bookingEngineUpdated', (engineState) => {
+            engineRulesData = engineState.serviceRules;
+            currentAutoApproveState = engineState.autoApprove;
+            globalBookingEnabled = engineState.globalOnlineBookingEnabled;
+            blockedDatesList = engineState.blockedDates;
+            document.getElementById('admin-capacity').value = engineState.defaultMaxCapacity;
+
+            const toggleAutoBtn = document.getElementById('toggle-auto-approve');
+            const knobAuto = document.getElementById('knob-auto-approve');
             if (currentAutoApproveState) {
-                toggleBtn.classList.replace('bg-gray-400', 'bg-green-500');
-                knob.classList.replace('left-0.5', 'left-[22px]');
+                toggleAutoBtn.classList.replace('bg-gray-400', 'bg-green-500');
+                knobAuto.classList.replace('left-0.5', 'left-[22px]');
             } else {
-                toggleBtn.classList.replace('bg-green-500', 'bg-gray-400');
-                knob.classList.replace('left-[22px]', 'left-0.5');
+                toggleAutoBtn.classList.replace('bg-green-500', 'bg-gray-400');
+                knobAuto.classList.replace('left-[22px]', 'left-0.5');
+            }
+
+            const toggleGlobalBtn = document.getElementById('toggle-global-booking');
+            const knobGlobal = document.getElementById('knob-global-booking');
+            if (globalBookingEnabled) {
+                toggleGlobalBtn.classList.replace('bg-gray-400', 'bg-green-500');
+                knobGlobal.classList.replace('left-0.5', 'left-[22px]');
+            } else {
+                toggleGlobalBtn.classList.replace('bg-green-500', 'bg-gray-400');
+                knobGlobal.classList.replace('left-[22px]', 'left-0.5');
             }
 
             const pendingList = document.getElementById('admin-pending-list');
@@ -309,9 +434,13 @@
                             <div class="text-[9px] font-black uppercase bg-gray-100 text-gray-600 px-2 py-1 rounded border">${req.priority}</div>
                         </div>
                         <div class="text-[10px] font-bold bg-gray-50 text-gray-500 px-2 py-1 rounded border border-gray-100 uppercase truncate">${req.document}</div>
-                        <div class="flex gap-2 mt-1">
-                            <button class="flex-1 bg-red-100 hover:bg-red-200 text-red-700 text-[10px] font-black py-2 rounded uppercase transition-colors" onclick="rejectRequest('${req.id}')">Reject</button>
-                            <button class="flex-1 bg-green-500 hover:bg-green-600 text-white text-[10px] font-black py-2 rounded uppercase transition-colors" onclick="approveRequest('${req.id}')">Approve</button>
+                        <div class="flex gap-2 items-center mt-1">
+                            <select id="slot-${req.id}" class="text-[10px] border border-gray-200 rounded p-1 font-bold">
+                                <option value="MORNING">Morning</option>
+                                <option value="AFTERNOON">Afternoon</option>
+                            </select>
+                            <button class="flex-1 bg-red-100 hover:bg-red-200 text-red-700 text-[10px] font-black py-1.5 rounded uppercase transition-colors" onclick="rejectRequest('${req.id}')">Reject</button>
+                            <button class="flex-1 bg-green-500 hover:bg-green-600 text-white text-[10px] font-black py-1.5 rounded uppercase transition-colors" onclick="approveRequest('${req.id}')">Approve</button>
                         </div>
                     `;
                     pendingList.appendChild(el);
@@ -320,7 +449,7 @@
         });
 
         function createTicketCard(item, isLive) {
-            const badgeColor = item.priority === 'PWD / SENIOR' ? 'bg-black text-[#FFD500] border-gray-800' : 'bg-[#FFF9E2] text-gray-700 border-[#FFE761]';
+            const badgeColor = item.priority === 'PWD / Senior / Pregnant' ? 'bg-black text-[#FFD500] border-gray-800' : 'bg-[#FFF9E2] text-gray-700 border-[#FFE761]';
             const dateColor = isLive ? 'text-green-600' : 'text-gray-500';
             
             const el = document.createElement('div');
@@ -331,7 +460,7 @@
                         <div class="font-black text-lg text-gray-900">${formatTicket(item.ticketNumber, item.category)}</div>
                         <div class="text-xs font-bold text-gray-800">${item.name}</div>
                         <div class="text-[10px] text-gray-400 font-medium">${item.contact}</div>
-                        <div class="text-[10px] font-bold mt-1 ${dateColor}">${item.date}</div>
+                        <div class="text-[10px] font-bold mt-1 ${dateColor}">${item.date} ${item.timeSlot && !isLive ? '· ' + item.timeSlot : ''}</div>
                     </div>
                     <div class="text-[9px] font-black uppercase ${badgeColor} px-2 py-1 rounded-md border tracking-tighter">
                         ${item.priority}
@@ -360,13 +489,30 @@
             document.getElementById('ticker-input').placeholder = state.tickerText;
             
             const docSelect = document.getElementById('admin-document');
+            const matrixSelect = document.getElementById('matrix-service-select');
+            
+            const currentMatrixVal = matrixSelect.value;
+            
             docSelect.innerHTML = '';
+            matrixSelect.innerHTML = '';
+            
             state.services.forEach(s => {
-                const opt = document.createElement('option');
-                opt.value = s.name;
-                opt.innerText = s.name;
-                docSelect.appendChild(opt);
+                const opt1 = document.createElement('option');
+                opt1.value = s.name;
+                opt1.innerText = s.name;
+                docSelect.appendChild(opt1);
+
+                const opt2 = document.createElement('option');
+                opt2.value = s.name;
+                opt2.innerText = s.name;
+                matrixSelect.appendChild(opt2);
             });
+
+            if(currentMatrixVal && state.services.find(s => s.name === currentMatrixVal)) {
+                matrixSelect.value = currentMatrixVal;
+            } else if (state.services.length > 0) {
+                renderMatrixDays(state.services[0].name);
+            }
 
             const toggleContainer = document.getElementById('service-toggles');
             toggleContainer.innerHTML = '';

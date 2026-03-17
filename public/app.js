@@ -87,7 +87,7 @@ socket.on('queueUpdated', (state) => {
     } else {
         waitingListContainer.innerHTML = '';
         state.waitingList.forEach((item) => {
-            const badgeColor = item.priority === 'PWD / SENIOR' ? 'bg-black text-[#FFD500] border-gray-800' : 'bg-[#FFF394] text-black border-[#FFE761]';
+            const badgeColor = item.priority === 'PWD / Senior / Pregnant' ? 'bg-black text-[#FFD500] border-gray-800' : 'bg-[#FFF394] text-black border-[#FFE761]';
             
             const el = document.createElement('div');
             el.className = 'bg-white border-l-8 border-[#FFD500] rounded-xl p-3 shadow-sm flex justify-between items-center';

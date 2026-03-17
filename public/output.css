@@ -971,6 +971,10 @@ video {
   height: 33.333333%;
 }
 
+.h-\[36px\] {
+  height: 36px;
+}
+
 .max-h-40 {
   max-height: 10rem;
 }
@@ -1211,6 +1215,10 @@ video {
 
 .grid-cols-4 {
   grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.grid-cols-7 {
+  grid-template-columns: repeat(7, minmax(0, 1fr));
 }
 
 .flex-col {
@@ -1543,6 +1551,11 @@ video {
 
 .border-yellow-400\/30 {
   border-color: rgb(250 204 21 / 0.3);
+}
+
+.border-red-600 {
+  --tw-border-opacity: 1;
+  border-color: rgb(220 38 38 / var(--tw-border-opacity, 1));
 }
 
 .bg-\[\#071c4d\] {
@@ -2055,6 +2068,10 @@ video {
   padding-top: 136px;
 }
 
+.pt-3 {
+  padding-top: 0.75rem;
+}
+
 .text-left {
   text-align: left;
 }
@@ -2170,6 +2187,10 @@ video {
   font-weight: 600;
 }
 
+.font-normal {
+  font-weight: 400;
+}
+
 .uppercase {
   text-transform: uppercase;
 }
@@ -2204,6 +2225,10 @@ video {
 
 .tracking-widest {
   letter-spacing: 0.1em;
+}
+
+.tracking-normal {
+  letter-spacing: 0em;
 }
 
 .text-\[\#071c4d\] {
@@ -2395,6 +2420,10 @@ video {
 
 .line-through {
   text-decoration-line: line-through;
+}
+
+.accent-\[\#FFD500\] {
+  accent-color: #FFD500;
 }
 
 .opacity-0 {
@@ -2875,6 +2904,10 @@ video {
 .focus\:ring-yellow-600:focus {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(202 138 4 / var(--tw-ring-opacity, 1));
+}
+
+.disabled\:opacity-50:disabled {
+  opacity: 0.5;
 }
 
 .group:hover .group-hover\:flex {
