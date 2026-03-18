@@ -247,10 +247,6 @@
 
         <p id="appt-message" class="hidden text-sm md:text-base text-gray-600 mb-8 font-medium leading-relaxed">Please save this ticket. Present this number upon arrival on your scheduled date.</p>
         <p id="live-message" class="text-sm md:text-base text-gray-600 mb-8 font-medium leading-relaxed">Please wait. Monitor the Live Queue to track your position.</p>
-
-        <button id="btn-ticket-done" class="w-full bg-black hover:bg-gray-800 text-[#FFD500] font-black py-4 px-4 rounded-xl shadow-lg transition-all uppercase tracking-wide">
-            DONE
-        </button>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
@@ -455,8 +451,6 @@
                 document.getElementById('appt-message').classList.remove('hidden');
                 document.getElementById('afternoon-notice').classList.add('hidden');
             }
-
-            document.getElementById('btn-ticket-done').onclick = () => showMyTicketsDashboard();
             window.scrollTo(0, 0);
         }
 
