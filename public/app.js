@@ -12,6 +12,7 @@ const servingRow = document.getElementById('currently-serving-row');
 
 const chimeSound = new Audio('/media/chime.mp3');
 let currentMediaUrl = '';
+let currentMediaMuted = null;
 let currentlyServingTicket = null;
 
 // Async Queue State
@@ -175,19 +176,22 @@ socket.on('queueUpdated', (state) => {
         });
     }
 
-    if (state.media && state.media.url !== currentMediaUrl) {
+    // Process media updates, including dynamic mute toggling
+    if (state.media && (state.media.url !== currentMediaUrl || state.media.muted !== currentMediaMuted)) {
         currentMediaUrl = state.media.url;
+        currentMediaMuted = state.media.muted;
         
+        const muteAttr = state.media.muted ? 'muted' : '';
+        const ytMute = state.media.muted ? '1' : '0';
+
         if (state.media.type === 'image') {
             mediaContainer.innerHTML = `<img src="${state.media.url}" class="w-full h-full object-cover">`;
         } else if (state.media.type === 'video') {
-            // Removed 'muted' attribute to allow sound
-            mediaContainer.innerHTML = `<video src="${state.media.url}" class="w-full h-full object-cover" autoplay loop></video>`;
+            mediaContainer.innerHTML = `<video src="${state.media.url}" class="w-full h-full object-cover" autoplay loop ${muteAttr}></video>`;
         } else if (state.media.type === 'youtube') {
             const videoIdMatch = state.media.url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?]+)/);
             const videoId = videoIdMatch ? videoIdMatch[1] : '';
-            // Removed '&mute=1' and added 'allow="autoplay"' to iframe
-            mediaContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}" class="w-full h-full pointer-events-none" frameborder="0" allow="autoplay; encrypted-media"></iframe>`;
+            mediaContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=${ytMute}&loop=1&playlist=${videoId}" class="w-full h-full pointer-events-none" frameborder="0" allow="autoplay; encrypted-media"></iframe>`;
         } else {
             mediaContainer.innerHTML = `<div class="w-full h-full bg-gray-900 flex items-center justify-center text-[#FFD500] font-black text-4xl uppercase opacity-20">Standby Media</div>`;
         }
