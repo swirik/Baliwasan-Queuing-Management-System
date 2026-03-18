@@ -6,7 +6,6 @@ const multer = require('multer');
 const fs = require('fs');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
-const basicAuth = require('express-basic-auth');
 
 const app = express();
 const server = http.createServer(app);
@@ -156,7 +155,7 @@ let queueState = {
         { name: "Ayuda / Cash Assistance", category: "S", isNew: false },
         { name: "Barangay Clearance", category: "C", isNew: false },
         { name: "Barangay ID", category: "I", isNew: false },
-        { name: "Building and Fencing Permit", type: "P", isNew: false },
+        { name: "Building and Fencing Permit", category: "P", isNew: false },
         { name: "Business Clearance/Permit", category: "P", isNew: false },
         { name: "Certificate of Indigency", category: "C", isNew: false },
         { name: "Certificate of Residency", category: "C", isNew: false },
@@ -205,6 +204,10 @@ if (!useMongo) {
     });
 }
 
+function getPhDateObj() {
+    return new Date(new Date().getTime() + (8 * 60 * 60 * 1000));
+}
+
 function sortQueue() {
     queueState.waitingList.sort((a, b) => {
         const priorityA = a.priority === 'PWD / Senior / Pregnant' ? 1 : 0;
@@ -215,34 +218,27 @@ function sortQueue() {
 }
 
 function getTodayDate() {
-    const now = new Date();
-    const offset = now.getTimezoneOffset() * 60000;
-    return (new Date(now - offset)).toISOString().split('T')[0];
+    return getPhDateObj().toISOString().split('T')[0];
 }
 
 function isSystemClosed() {
-    const now = new Date();
-    const offset = now.getTimezoneOffset() * 60000;
-    const localNow = new Date(now - offset);
-    return localNow.getUTCHours() >= 17;
+    return getPhDateObj().getUTCHours() >= 17;
 }
 
 function generateAutoTime(position, isOnline = false) {
-    const now = new Date();
-    const offset = now.getTimezoneOffset() * 60000;
-    let localNow = new Date(now - offset);
+    let phNow = getPhDateObj();
 
     if (isOnline) {
-        let tenAM = new Date(now - offset);
+        let tenAM = getPhDateObj();
         tenAM.setUTCHours(10, 0, 0, 0);
-        if (localNow < tenAM) {
-            localNow = tenAM;
+        if (phNow < tenAM) {
+            phNow = tenAM;
         }
     }
 
-    localNow.setUTCMinutes(localNow.getUTCMinutes() + (position * 12));
-    let hours = localNow.getUTCHours();
-    let mins = localNow.getUTCMinutes();
+    phNow.setUTCMinutes(phNow.getUTCMinutes() + (position * 12));
+    let hours = phNow.getUTCHours();
+    let mins = phNow.getUTCMinutes();
     
     if (hours >= 17) {
         return "5:00 PM";
@@ -389,7 +385,7 @@ io.on('connection', (socket) => {
 
         if (bookingEngine.autoApprove) {
             const tNum = getNextTicketNumber(newRequest.requestedDate);
-            const nowHour = new Date().getHours();
+            const nowHour = getPhDateObj().getUTCHours();
             const autoSlot = nowHour < 12 ? 'MORNING' : 'AFTERNOON';
 
             const finalAppointment = {
@@ -452,6 +448,7 @@ io.on('connection', (socket) => {
                         let ampm = h >= 12 ? 'PM' : 'AM';
                         h = h % 12;
                         h = h ? h : 12;
+                        m = m.toString().padStart(2, '0');
                         dTime = `${h}:${m} ${ampm}`;
                     }
                 }
@@ -517,7 +514,7 @@ io.on('connection', (socket) => {
 
         const tNum = getNextTicketNumber(data.date);
         const cat = getServiceCategory(data.document);
-        const nowHour = new Date().getHours();
+        const nowHour = getPhDateObj().getUTCHours();
         const autoSlot = nowHour < 12 ? 'MORNING' : 'AFTERNOON';
 
         const newTicket = {
@@ -561,7 +558,7 @@ io.on('connection', (socket) => {
         const walkInDate = getTodayDate();
         const tNum = getNextTicketNumber(walkInDate);
         const cat = getServiceCategory(data.document);
-        const nowHour = new Date().getHours();
+        const nowHour = getPhDateObj().getUTCHours();
         const autoSlot = nowHour < 12 ? 'MORNING' : 'AFTERNOON';
 
         const newTicket = {
@@ -597,7 +594,7 @@ io.on('connection', (socket) => {
                         priority: next.priority,
                         date: getTodayDate()
                     });
-                    logEntry.save().catch(err => console.log("Analytics save error:", err));
+                    logEntry.save().catch(err => console.log(err));
                 }
 
                 queueState.counters[counterIndex].currentTicket = next.ticketNumber;
@@ -676,10 +673,8 @@ io.on('connection', (socket) => {
 
 setInterval(() => {
     if (!useMongo) return;
-    const now = new Date();
-    const offset = now.getTimezoneOffset() * 60000;
-    const localNow = new Date(now - offset);
-    const currentAbsolute = localNow.getUTCHours() * 60 + localNow.getUTCMinutes();
+    const phNow = getPhDateObj();
+    const currentAbsolute = phNow.getUTCHours() * 60 + phNow.getUTCMinutes();
 
     let changed = false;
     const today = getTodayDate();

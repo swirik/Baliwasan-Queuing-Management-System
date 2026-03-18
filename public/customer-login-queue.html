@@ -75,7 +75,7 @@
         <h2 class="text-2xl md:text-3xl font-black uppercase tracking-widest text-[#071c4d] mb-6 text-center">My Tickets</h2>
         
         <div id="tickets-container" class="space-y-4 max-h-[50vh] overflow-y-auto custom-scrollbar pr-2 mb-8">
-            </div>
+        </div>
 
         <div class="flex flex-col gap-3">
             <button onclick="goToStep1()" class="w-full bg-[#FFD500] hover:bg-[#FFDC2E] hover:-translate-y-1 text-[#071c4d] font-black py-4 px-4 rounded-xl shadow-lg transition-all uppercase tracking-wide text-sm flex justify-center items-center gap-2">
@@ -105,7 +105,8 @@
                 <div class="text-[10px] font-black text-[#071c4d] uppercase tracking-widest mb-1 opacity-70">Step 1 of 5</div>
                 <h1 class="text-xl md:text-2xl font-black uppercase tracking-widest text-gray-900">Select Service</h1>
             </div>
-            <div class="w-16"></div> </div>
+            <div class="w-16"></div>
+        </div>
         
         <div id="dynamic-services-container" class="space-y-8">
             <div class="flex justify-center py-12">
@@ -364,9 +365,8 @@
         let fpInstance = null;
         let swRegistration = null;
         
-        const now = new Date();
-        const offset = now.getTimezoneOffset() * 60000;
-        const localISOTime = (new Date(now - offset)).toISOString().split('T')[0];
+        const phTime = new Date(new Date().getTime() + (8 * 60 * 60 * 1000));
+        const localISOTime = phTime.toISOString().split('T')[0];
         
         if ('serviceWorker' in navigator && 'Notification' in window) {
             navigator.serviceWorker.register('/sw.js').then(reg => {
@@ -574,7 +574,8 @@
                 document.getElementById('live-message').classList.remove('hidden');
                 document.getElementById('appt-message').classList.add('hidden');
 
-                const currentHour = new Date().getHours();
+                const phNow = new Date(new Date().getTime() + (8 * 60 * 60 * 1000));
+                const currentHour = phNow.getUTCHours();
                 if (res.ticket.timeSlot === 'AFTERNOON' && currentHour < 12) {
                     document.getElementById('afternoon-notice').classList.remove('hidden');
                 } else {
@@ -750,7 +751,6 @@
             }
             setupDocButtons();
 
-            // Mobile Queue Screen logic
             document.getElementById('mobile-serving-ticket').innerText = state.lastCalled && state.lastCalled.ticket ? formatTicket(state.lastCalled.ticket, state.lastCalled.category) : "----";
             document.getElementById('mobile-serving-counter').innerText = state.lastCalled && state.lastCalled.counter ? `COUNTER ${state.lastCalled.counter}` : "--";
             document.getElementById('mobile-serving-doc').innerText = state.lastCalled && state.lastCalled.document ? state.lastCalled.document : "SYSTEM STANDBY";
@@ -776,15 +776,29 @@
 
             if (mySavedTickets.length > 0) {
                 let needsSave = false;
-                mySavedTickets.forEach((t) => {
-                    if (t.notifiedVoided) return;
+                let activeTickets = [];
 
-                    const inWaitingList = state.waitingList.findIndex(x => x.ticketNumber === t.res.ticket.ticketNumber && x.category === t.res.ticket.category);
-                    const servingCounter = state.counters.find(c => c.currentTicket === t.res.ticket.ticketNumber && c.currentCategory === t.res.ticket.category);
+                mySavedTickets.forEach((t) => {
+                    const tick = t.res.ticket;
+                    const inWaitingList = state.waitingList.findIndex(x => x.ticketNumber === tick.ticketNumber && x.category === tick.category);
+                    const servingCounter = state.counters.find(c => c.currentTicket === tick.ticketNumber && c.currentCategory === tick.category);
+                    const isToday = tick.date === localISOTime;
+
+                    if (isToday && inWaitingList === -1 && !servingCounter) {
+                        needsSave = true;
+                        if (t.notified) {
+                            const formattedTicket = formatTicket(tick.ticketNumber, tick.category);
+                            smsMessage.innerText = `Ticket #${formattedTicket} has been completed. Thank you!`;
+                            smsToast.classList.remove('hidden');
+                            setTimeout(() => { smsToast.classList.remove('-translate-y-[150%]'); smsToast.classList.add('translate-y-0'); }, 50);
+                            setTimeout(() => { smsToast.classList.remove('translate-y-0'); smsToast.classList.add('-translate-y-[150%]'); setTimeout(() => { smsToast.classList.add('hidden'); }, 500); }, 6000);
+                        }
+                        return; 
+                    }
 
                     if (servingCounter) {
                         if (!t.notified) {
-                            const formattedTicket = formatTicket(t.res.ticket.ticketNumber, t.res.ticket.category);
+                            const formattedTicket = formatTicket(tick.ticketNumber, tick.category);
                             
                             if (swRegistration && Notification.permission === 'granted') {
                                 swRegistration.showNotification('It is your turn!', {
@@ -811,7 +825,7 @@
                     } else if (inWaitingList !== -1) {
                         if (inWaitingList > 0 && inWaitingList <= 3) {
                             if (!t.notifiedApproaching) {
-                                const formattedTicket = formatTicket(t.res.ticket.ticketNumber, t.res.ticket.category);
+                                const formattedTicket = formatTicket(tick.ticketNumber, tick.category);
                                 if (swRegistration && Notification.permission === 'granted') {
                                     swRegistration.showNotification('Get Ready!', {
                                         body: `Ticket #${formattedTicket} is almost up. There are ${inWaitingList} people ahead of you.`,
@@ -823,23 +837,26 @@
                                 needsSave = true;
                             }
                         }
+                    }
+
+                    activeTickets.push(t);
+                });
+
+                if (mySavedTickets.length !== activeTickets.length || needsSave) {
+                    mySavedTickets = activeTickets;
+                    localStorage.setItem('baliwasanTicketsArray', JSON.stringify(mySavedTickets));
+                    
+                    if (mySavedTickets.length === 0) {
+                        btnShowMyTicket.classList.add('hidden');
+                        if (!document.getElementById('my-tickets-screen').classList.contains('hidden') || 
+                            !document.getElementById('ticket-result').classList.contains('hidden')) {
+                            goToStep1();
+                        }
                     } else {
-                        if (!t.notified && !t.notifiedVoided) {
-                            const formattedTicket = formatTicket(t.res.ticket.ticketNumber, t.res.ticket.category);
-                            if (swRegistration && Notification.permission === 'granted') {
-                                swRegistration.showNotification('Ticket Voided', {
-                                    body: `Ticket #${formattedTicket} was voided because you missed your expected time.`,
-                                    icon: '/resources/logo.png',
-                                    vibrate: [500, 200, 500]
-                                });
-                            }
-                            t.notifiedVoided = true;
-                            needsSave = true;
+                        if (!document.getElementById('my-tickets-screen').classList.contains('hidden')) {
+                            showMyTicketsDashboard();
                         }
                     }
-                });
-                if (needsSave) {
-                    localStorage.setItem('baliwasanTicketsArray', JSON.stringify(mySavedTickets));
                 }
             }
         });
