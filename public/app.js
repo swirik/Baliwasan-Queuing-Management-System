@@ -14,12 +14,17 @@ const chimeSound = new Audio('/media/chime.mp3');
 let currentMediaUrl = '';
 let currentlyServingTicket = null;
 
+// Async Queue State
+let isAnnouncing = false;
+let announcementQueue = [];
+
 function formatTicket(num, cat) {
     if (!num) return "----";
     const prefix = cat ? cat : "M";
     return `${prefix}-${num.toString().padStart(3, '0')}`;
 }
 
+// Initial interaction to unlock browser autoplay audio policies
 document.body.addEventListener('click', () => {
     chimeSound.play().then(() => {
         chimeSound.pause();
@@ -27,13 +32,79 @@ document.body.addEventListener('click', () => {
     }).catch(err => console.log(err));
 }, { once: true });
 
+// --- ASYNC AUDIO ENGINE ---
+
+function queueAnnouncement(ticketData) {
+    announcementQueue.push(ticketData);
+    processAnnouncementQueue();
+}
+
+async function processAnnouncementQueue() {
+    if (isAnnouncing || announcementQueue.length === 0) return;
+    isAnnouncing = true;
+
+    const currentAnnouncement = announcementQueue.shift();
+
+    try {
+        await playChime();
+        await playSpeech(currentAnnouncement);
+    } catch (error) {
+        console.error("Announcement error skipped:", error);
+    }
+
+    isAnnouncing = false;
+    processAnnouncementQueue(); // Trigger next in queue if any
+}
+
+function playChime() {
+    return new Promise((resolve) => {
+        chimeSound.currentTime = 0;
+        chimeSound.onended = resolve;
+        chimeSound.onerror = resolve; // Prevent queue freeze if audio file fails
+        chimeSound.play().catch(() => resolve()); // Resolve instantly if browser blocks autoplay
+    });
+}
+
+function playSpeech(ticketData) {
+    return new Promise((resolve) => {
+        if (!('speechSynthesis' in window)) {
+            return resolve();
+        }
+        
+        window.speechSynthesis.cancel(); // Clear any hung previous speech
+        
+        const utterance = new SpeechSynthesisUtterance(`Ticket number, ${ticketData.spokenTicket}, please proceed to counter ${ticketData.counter}`);
+        utterance.rate = 0.85;
+
+        // Fail-safe: If speech hangs, forcefully resolve after 10 seconds to keep queue moving
+        const fallbackTimer = setTimeout(() => {
+            window.speechSynthesis.cancel();
+            resolve();
+        }, 10000);
+
+        utterance.onend = () => {
+            clearTimeout(fallbackTimer);
+            resolve();
+        };
+        
+        utterance.onerror = () => {
+            clearTimeout(fallbackTimer);
+            resolve();
+        };
+
+        window.speechSynthesis.speak(utterance);
+    });
+}
+
+// --- SOCKET UPDATES ---
+
 socket.on('queueUpdated', (state) => {
     
     tickerDisplay.innerText = state.tickerText || "WELCOME TO BARANGAY BALIWASAN";
 
     servingRow.innerHTML = '';
     state.counters.forEach(c => {
-        if(!c.isActive) return; // Skip offline counters
+        if(!c.isActive) return;
         
         const tNum = c.currentTicket ? formatTicket(c.currentTicket, c.currentCategory) : '----';
         const doc = c.currentDocument !== 'SYSTEM STANDBY' ? c.currentDocument : 'Available';
@@ -57,23 +128,21 @@ socket.on('queueUpdated', (state) => {
         if (state.lastCalled.ticket !== currentlyServingTicket) {
             currentlyServingTicket = state.lastCalled.ticket;
 
+            // Update UI
             displayTicket.innerText = formatTicket(state.lastCalled.ticket, state.lastCalled.category);
-
             displayTicket.classList.remove('is-blinking');
-            void displayTicket.offsetWidth;
+            void displayTicket.offsetWidth; // Trigger reflow
             displayTicket.classList.add('is-blinking');
 
-            chimeSound.currentTime = 0;
-            chimeSound.play().catch(e => console.log(e));
-
+            // Queue Audio Announcement
             const formattedTicket = formatTicket(state.lastCalled.ticket, state.lastCalled.category);
             const spokenTicket = formattedTicket.split('').join(' ');
             
-            const utterance = new SpeechSynthesisUtterance(`Ticket number, ${spokenTicket}, please proceed to counter ${state.lastCalled.counter}`);
-            utterance.rate = 0.85;
-            
-            window.speechSynthesis.cancel();
-            window.speechSynthesis.speak(utterance);
+            queueAnnouncement({ 
+                spokenTicket: spokenTicket, 
+                counter: state.lastCalled.counter 
+            });
+
         } else {
             displayTicket.innerText = formatTicket(state.lastCalled.ticket, state.lastCalled.category);
         }
@@ -112,11 +181,13 @@ socket.on('queueUpdated', (state) => {
         if (state.media.type === 'image') {
             mediaContainer.innerHTML = `<img src="${state.media.url}" class="w-full h-full object-cover">`;
         } else if (state.media.type === 'video') {
-            mediaContainer.innerHTML = `<video src="${state.media.url}" class="w-full h-full object-cover" autoplay loop muted></video>`;
+            // Removed 'muted' attribute to allow sound
+            mediaContainer.innerHTML = `<video src="${state.media.url}" class="w-full h-full object-cover" autoplay loop></video>`;
         } else if (state.media.type === 'youtube') {
             const videoIdMatch = state.media.url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?]+)/);
             const videoId = videoIdMatch ? videoIdMatch[1] : '';
-            mediaContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}" class="w-full h-full pointer-events-none" frameborder="0" allow="autoplay; fullscreen"></iframe>`;
+            // Removed '&mute=1' and added 'allow="autoplay"' to iframe
+            mediaContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}" class="w-full h-full pointer-events-none" frameborder="0" allow="autoplay; encrypted-media"></iframe>`;
         } else {
             mediaContainer.innerHTML = `<div class="w-full h-full bg-gray-900 flex items-center justify-center text-[#FFD500] font-black text-4xl uppercase opacity-20">Standby Media</div>`;
         }
