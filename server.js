@@ -289,6 +289,10 @@ io.on('connection', (socket) => {
                     if (parts.length === 2) {
                         let h = parseInt(parts[0]);
                         let m = parts[1];
+                        
+                        if (reviewData.timeSlot === 'MORNING' && h >= 12) h -= 12;
+                        if (reviewData.timeSlot === 'AFTERNOON' && h < 12) h += 12;
+                        
                         let ampm = h >= 12 ? 'PM' : 'AM';
                         h = h % 12;
                         h = h ? h : 12;
