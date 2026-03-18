@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barangay Baliwasan | Official Portal</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="output.css" rel="stylesheet">
     <style>
         html {
             scroll-behavior: smooth;
@@ -26,24 +26,32 @@
         .hover-scale:hover {
             transform: scale(1.05);
         }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 </head>
 
 <body class="bg-gray-50 font-sans text-gray-900">
     <header class="bg-white border-b-2 border-yellow-400 flex flex-col w-full fixed top-0 z-50 shadow-md">
-        <div class="flex justify-between items-center px-6 py-3">
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-full bg-cover bg-center border-2 border-yellow-400 shadow-sm" style="background-image: url('resources/logo.png');">
+        <div class="flex flex-col md:flex-row justify-between items-center px-4 md:px-6 py-3 gap-3 md:gap-0 w-full overflow-hidden">
+            <div class="flex items-center gap-3 w-full md:w-auto justify-center md:justify-start shrink-0">
+                <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-cover bg-center border-2 border-yellow-400 shadow-sm" style="background-image: url('resources/logo.png');">
                 </div>
-                <h1 class="text-xl md:text-2xl font-bold text-black tracking-wide uppercase">ONE BALIWASAN</h1>
+                <h1 class="text-lg md:text-2xl font-bold text-black tracking-wide uppercase">ONE BALIWASAN</h1>
             </div>
-            <nav class="flex gap-2 flex-wrap justify-end">
-                <a href="homepage.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">HOME</a>
-                <a href="our-barangay.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">OUR BARANGAY</a>
-                <a href="#vision" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase ring-2 ring-offset-2 ring-yellow-400 transition-all hover:shadow-md">VISION</a>
-                <a href="news-updates.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">NEWS & UPDATES</a>
-                <a href="garbage.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase  transition-all hover:shadow-md">GARBAGE SCHEDULE</a>
-                <a href="queue.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase uppercase  transition-all hover:shadow-md">QUEUING SYSTEM</a>
+            
+            <nav class="flex gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 no-scrollbar items-center justify-start md:justify-end snap-x">
+                <a href="homepage.html" class="shrink-0 snap-start bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">HOME</a>
+                <a href="our-barangay.html" class="shrink-0 snap-start bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">OUR BARANGAY</a>
+                <a href="our-vision.html" class="shrink-0 snap-start bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">VISION</a>
+                <a href="news-updates.html" class="shrink-0 snap-start bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">NEWS & UPDATES</a>
+                <a href="garbage.html" class="shrink-0 snap-start bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">GARBAGE SCHEDULE</a>
+                <a href="customer-login-queue.html" class="shrink-0 snap-start bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">QUEUING SYSTEM</a>
             </nav>
         </div>
         
