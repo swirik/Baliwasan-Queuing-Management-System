@@ -34,6 +34,16 @@ const StateSchema = new mongoose.Schema({
 });
 const State = mongoose.model('State', StateSchema);
 
+const TicketLogSchema = new mongoose.Schema({
+    ticketNumber: Number,
+    category: String,
+    document: String,
+    priority: String,
+    date: String,
+    timestamp: { type: Date, default: Date.now }
+});
+const TicketLog = mongoose.model('TicketLog', TicketLogSchema);
+
 const mediaDir = path.join(__dirname, 'public', 'media');
 if (!fs.existsSync(mediaDir)) {
     fs.mkdirSync(mediaDir, { recursive: true });
@@ -97,6 +107,23 @@ app.post('/upload', upload.single('mediaFile'), (req, res) => {
     res.json({ url: fileUrl });
 });
 
+app.get('/export', async (req, res) => {
+    if (!useMongo) return res.status(400).send("Database offline");
+    try {
+        const logs = await TicketLog.find({}).sort({ timestamp: -1 });
+        let csv = "Date,Time,Ticket,Category,Document,Priority\n";
+        logs.forEach(l => {
+            const timeStr = l.timestamp.toISOString().split('T')[1].substring(0, 8);
+            csv += `${l.date},${timeStr},${l.category}-${l.ticketNumber},${l.category},${l.document},${l.priority}\n`;
+        });
+        res.header('Content-Type', 'text/csv');
+        res.attachment('baliwasan_queue_report.csv');
+        return res.send(csv);
+    } catch (err) {
+        res.status(500).send("Export failed");
+    }
+});
+
 let bookingEngine = {
     globalOnlineBookingEnabled: true,
     autoApprove: false,
@@ -110,8 +137,8 @@ let bookingEngine = {
 
 let queueState = { 
     counters: [
-        { id: 1, currentTicket: null, currentPriority: '', currentDocument: 'SYSTEM STANDBY', currentName: '', currentCategory: '' },
-        { id: 2, currentTicket: null, currentPriority: '', currentDocument: 'SYSTEM STANDBY', currentName: '', currentCategory: '' }
+        { id: 1, isActive: true, currentTicket: null, currentPriority: '', currentDocument: 'SYSTEM STANDBY', currentName: '', currentCategory: '' },
+        { id: 2, isActive: true, currentTicket: null, currentPriority: '', currentDocument: 'SYSTEM STANDBY', currentName: '', currentCategory: '' }
     ],
     lastCalled: {
         ticket: null,
@@ -197,7 +224,7 @@ function isSystemClosed() {
     const now = new Date();
     const offset = now.getTimezoneOffset() * 60000;
     const localNow = new Date(now - offset);
-    return localNow.getUTCHours() >= 17; // 5:00 PM cutoff
+    return localNow.getUTCHours() >= 17;
 }
 
 function generateAutoTime(position, isOnline = false) {
@@ -270,9 +297,69 @@ io.on('connection', (socket) => {
     socket.emit('queueUpdated', queueState);
     socket.emit('bookingEngineUpdated', bookingEngine);
 
+    socket.on('getAnalytics', async () => {
+        if (!useMongo) {
+            socket.emit('analyticsData', { total: 0, pwdCount: 0, topServices: [] });
+            return;
+        }
+        try {
+            const today = getTodayDate();
+            const logs = await TicketLog.find({ date: today });
+            
+            const total = logs.length;
+            const pwdCount = logs.filter(l => l.priority === 'PWD / Senior / Pregnant').length;
+            
+            const serviceCounts = {};
+            logs.forEach(l => {
+                serviceCounts[l.document] = (serviceCounts[l.document] || 0) + 1;
+            });
+            
+            const topServices = Object.keys(serviceCounts)
+                .map(name => ({ name, count: serviceCounts[name] }))
+                .sort((a, b) => b.count - a.count)
+                .slice(0, 5);
+
+            socket.emit('analyticsData', { total, pwdCount, topServices });
+        } catch (err) {
+            console.log(err);
+        }
+    });
+
     socket.on('requestAvailableDates', (data) => {
         const dates = getAvailableDates(data.serviceName, data.startDate, 60);
         socket.emit('availableDatesResponse', dates);
+    });
+
+    socket.on('toggleCounter', (data) => {
+        const counterIndex = queueState.counters.findIndex(c => c.id === data.counterId);
+        if (counterIndex !== -1) {
+            queueState.counters[counterIndex].isActive = !queueState.counters[counterIndex].isActive;
+            if (!queueState.counters[counterIndex].isActive) {
+                queueState.counters[counterIndex].currentTicket = null;
+                queueState.counters[counterIndex].currentPriority = '';
+                queueState.counters[counterIndex].currentDocument = 'OFFLINE';
+                queueState.counters[counterIndex].currentName = '';
+                queueState.counters[counterIndex].currentCategory = '';
+            } else {
+                queueState.counters[counterIndex].currentDocument = 'SYSTEM STANDBY';
+            }
+            saveState();
+            io.emit('queueUpdated', queueState);
+        }
+    });
+
+    socket.on('cancelTicket', (ticketNumber) => {
+        const waitIndex = queueState.waitingList.findIndex(t => t.ticketNumber === ticketNumber);
+        if (waitIndex > -1) {
+            queueState.waitingList.splice(waitIndex, 1);
+        } else {
+            const apptIndex = queueState.appointments.findIndex(t => t.ticketNumber === ticketNumber);
+            if (apptIndex > -1) {
+                queueState.appointments.splice(apptIndex, 1);
+            }
+        }
+        saveState();
+        io.emit('queueUpdated', queueState);
     });
 
     socket.on('submitBookingRequest', (requestData) => {
@@ -501,6 +588,18 @@ io.on('connection', (socket) => {
         if (counterIndex !== -1) {
             if (queueState.waitingList.length > 0) {
                 const next = queueState.waitingList.shift();
+                
+                if (useMongo) {
+                    const logEntry = new TicketLog({
+                        ticketNumber: next.ticketNumber,
+                        category: next.category,
+                        document: next.document,
+                        priority: next.priority,
+                        date: getTodayDate()
+                    });
+                    logEntry.save().catch(err => console.log("Analytics save error:", err));
+                }
+
                 queueState.counters[counterIndex].currentTicket = next.ticketNumber;
                 queueState.counters[counterIndex].currentPriority = next.priority;
                 queueState.counters[counterIndex].currentDocument = next.document;
@@ -561,8 +660,8 @@ io.on('connection', (socket) => {
 
     socket.on('resetQueue', () => {
         queueState.counters = [
-            { id: 1, currentTicket: null, currentPriority: '', currentDocument: 'SYSTEM STANDBY', currentName: '', currentCategory: '' },
-            { id: 2, currentTicket: null, currentPriority: '', currentDocument: 'SYSTEM STANDBY', currentName: '', currentCategory: '' }
+            { id: 1, isActive: true, currentTicket: null, currentPriority: '', currentDocument: 'SYSTEM STANDBY', currentName: '', currentCategory: '' },
+            { id: 2, isActive: true, currentTicket: null, currentPriority: '', currentDocument: 'SYSTEM STANDBY', currentName: '', currentCategory: '' }
         ];
         queueState.lastCalled = { ticket: null, counter: null, document: 'SYSTEM STANDBY', category: '' };
         queueState.waitingList = [];
@@ -575,7 +674,6 @@ io.on('connection', (socket) => {
     });
 });
 
-// Auto-void background process (Runs every 1 minute)
 setInterval(() => {
     if (!useMongo) return;
     const now = new Date();
@@ -587,7 +685,6 @@ setInterval(() => {
     const today = getTodayDate();
     
     queueState.waitingList = queueState.waitingList.filter(ticket => {
-        // We only evaluate tickets scheduled for today
         if (ticket.date !== today) return true;
         if (!ticket.displayTime || ticket.displayTime === 'Please wait' || ticket.displayTime === '5:00 PM') return true;
         
@@ -600,7 +697,6 @@ setInterval(() => {
             
             const ticketAbsolute = h * 60 + m;
             
-            // If the time has passed by more than 5 minutes, delete the ticket
             if (currentAbsolute > ticketAbsolute + 5) {
                 changed = true;
                 return false; 

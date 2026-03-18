@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resident Login - Barangay Baliwasan</title>
     <link href="output.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
         .flatpickr-calendar { font-family: inherit; border-radius: 1rem; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
@@ -65,7 +66,7 @@
         <h2 class="text-xl md:text-2xl font-black uppercase tracking-widest text-gray-900 mb-6 text-center">My Tickets</h2>
         
         <div id="tickets-container" class="space-y-3 max-h-[50vh] overflow-y-auto custom-scrollbar pr-2 mb-6">
-            </div>
+        </div>
 
         <button onclick="goToStep1()" class="w-full bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-4 px-4 rounded-xl shadow-lg transition-all uppercase tracking-wide text-sm flex justify-center items-center gap-2 mb-3">
             <span>+</span> Add Another Transaction
@@ -146,7 +147,7 @@
                 </div>
             </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                 <div>
                     <label class="block text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">Contact Number</label>
                     <input type="tel" id="user-contact" required pattern="^(09|\+639)\d{9}$" placeholder="09XXXXXXXXX" title="Format must be a valid 11-digit Philippine mobile number" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] focus:ring-0 outline-none transition-colors bg-gray-50 text-sm md:text-base">
@@ -252,7 +253,16 @@
         <p id="afternoon-notice" class="hidden text-sm md:text-base text-red-600 bg-red-50 p-3 rounded-lg border border-red-200 mb-8 font-black uppercase tracking-wide">Please come in the afternoon.</p>
 
         <p id="appt-message" class="hidden text-sm md:text-base text-gray-600 mb-8 font-medium leading-relaxed">Please save this ticket. Present this number upon arrival on your scheduled date.</p>
-        <p id="live-message" class="text-sm md:text-base text-gray-600 mb-8 font-medium leading-relaxed">Please wait and save your ticket. Monitor the Live Queue to track your position.</p>
+        <p id="live-message" class="text-sm md:text-base text-gray-600 mb-8 font-medium leading-relaxed">Monitor the Live Queue to track your position.</p>
+
+        <div class="flex gap-2">
+            <button id="btn-cancel-active-ticket" class="w-1/3 bg-red-50 hover:bg-red-100 text-red-600 font-black py-4 px-4 rounded-xl shadow-sm transition-all uppercase tracking-wide text-xs border border-red-200">
+                CANCEL
+            </button>
+            <button id="btn-ticket-done" class="w-2/3 bg-black hover:bg-gray-800 text-[#FFD500] font-black py-4 px-4 rounded-xl shadow-lg transition-all uppercase tracking-wide">
+                DONE
+            </button>
+        </div>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
@@ -277,10 +287,39 @@
         let mySavedTickets = []; 
         let currentTrackId = null;
         let fpInstance = null;
+        let swRegistration = null;
         
         const now = new Date();
         const offset = now.getTimezoneOffset() * 60000;
         const localISOTime = (new Date(now - offset)).toISOString().split('T')[0];
+        
+        if ('serviceWorker' in navigator && 'Notification' in window) {
+            navigator.serviceWorker.register('/sw.js').then(reg => {
+                swRegistration = reg;
+            }).catch(err => {});
+        }
+
+        function requestNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+        }
+
+        document.body.addEventListener('click', requestNotificationPermission, { once: true });
+
+        window.cancelMyTicket = function(ticketNumber, event) {
+            if(event) event.stopPropagation();
+            if(confirm('Are you sure you want to cancel this ticket?')) {
+                socket.emit('cancelTicket', ticketNumber);
+                mySavedTickets = mySavedTickets.filter(t => t.res.ticket.ticketNumber !== ticketNumber);
+                localStorage.setItem('baliwasanTicketsArray', JSON.stringify(mySavedTickets));
+                if(mySavedTickets.length > 0) {
+                    showMyTicketsDashboard();
+                } else {
+                    goToStep1();
+                }
+            }
+        }
 
         function hideAllScreens() {
             const screens = ['step-1', 'step-2', 'step-3', 'step-4', 'step-5', 'pending-approval-screen', 'rejected-screen', 'ticket-result', 'offline-screen', 'my-tickets-screen'];
@@ -304,18 +343,29 @@
         }
 
         function saveTicketLocally(res) {
-            const ticketData = { res: res, savedDate: localISOTime, notified: false };
+            const ticketData = { 
+                res: res, 
+                savedDate: localISOTime, 
+                notified: false,
+                notifiedApproaching: false,
+                notifiedVoided: false
+            };
             mySavedTickets.push(ticketData);
             localStorage.setItem('baliwasanTicketsArray', JSON.stringify(mySavedTickets));
         }
 
         function checkSavedTicket() {
-            // Clean up old single-ticket legacy object to prevent crashes
             const oldSaved = localStorage.getItem('baliwasanTicket');
             if (oldSaved) {
                 try {
                     const parsed = JSON.parse(oldSaved);
-                    mySavedTickets.push({ res: parsed.res, savedDate: parsed.savedDate, notified: false });
+                    mySavedTickets.push({ 
+                        res: parsed.res, 
+                        savedDate: parsed.savedDate, 
+                        notified: false,
+                        notifiedApproaching: false,
+                        notifiedVoided: false
+                    });
                     localStorage.setItem('baliwasanTicketsArray', JSON.stringify(mySavedTickets));
                     localStorage.removeItem('baliwasanTicket');
                 } catch(e) {}
@@ -352,14 +402,17 @@
                 el.className = 'bg-gray-50 border border-gray-200 p-4 rounded-xl cursor-pointer hover:border-[#FFD500] hover:shadow-md transition-all flex justify-between items-center';
                 el.onclick = () => renderTicketResultScreen(t.res, false);
                 el.innerHTML = `
-                    <div>
+                    <div class="flex-1" onclick="renderTicketResultScreen(mySavedTickets[${index}].res, false)">
                         <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest truncate max-w-[150px]">${tick.document}</p>
                         <p class="text-2xl font-black text-black tracking-tighter">${formatTicket(tick.ticketNumber, tick.category)}</p>
                         <p class="text-xs font-bold mt-1 ${dateColor}">${tick.date} • ${tick.timeSlot || 'WALK-IN'}</p>
                     </div>
-                    <div class="text-right shrink-0 ml-2">
-                        <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest mb-1">Expected</p>
-                        <p class="text-sm md:text-base font-black text-[#FFD500] bg-black px-2 py-1 rounded shadow-sm">${dTime}</p>
+                    <div class="text-right shrink-0 ml-2 flex flex-col items-end justify-between h-full">
+                        <div>
+                            <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest mb-1">Expected</p>
+                            <p class="text-sm md:text-base font-black text-[#FFD500] bg-black px-2 py-1 rounded shadow-sm">${dTime}</p>
+                        </div>
+                        <button onclick="cancelMyTicket(${tick.ticketNumber}, event)" class="mt-2 text-[10px] text-red-500 font-bold uppercase tracking-widest hover:text-red-700 bg-red-50 px-2 py-1 rounded-md border border-red-100 transition-colors"><i class="fas fa-times-circle"></i> Cancel</button>
                     </div>
                 `;
                 container.appendChild(el);
@@ -457,6 +510,20 @@
                 document.getElementById('appt-message').classList.remove('hidden');
                 document.getElementById('afternoon-notice').classList.add('hidden');
             }
+
+            document.getElementById('btn-ticket-done').onclick = () => showMyTicketsDashboard();
+            document.getElementById('btn-cancel-active-ticket').onclick = () => {
+                if(confirm('Are you sure you want to cancel this ticket?')) {
+                    socket.emit('cancelTicket', res.ticket.ticketNumber);
+                    mySavedTickets = mySavedTickets.filter(t => t.res.ticket.ticketNumber !== res.ticket.ticketNumber);
+                    localStorage.setItem('baliwasanTicketsArray', JSON.stringify(mySavedTickets));
+                    if(mySavedTickets.length > 0) {
+                        showMyTicketsDashboard();
+                    } else {
+                        goToStep1();
+                    }
+                }
+            };
             window.scrollTo(0, 0);
         }
 
@@ -627,23 +694,65 @@
             if (mySavedTickets.length > 0) {
                 let needsSave = false;
                 mySavedTickets.forEach((t) => {
-                    if (t.notified) return;
+                    if (t.notifiedVoided) return;
+
+                    const inWaitingList = state.waitingList.findIndex(x => x.ticketNumber === t.res.ticket.ticketNumber && x.category === t.res.ticket.category);
                     const servingCounter = state.counters.find(c => c.currentTicket === t.res.ticket.ticketNumber && c.currentCategory === t.res.ticket.category);
+
                     if (servingCounter) {
-                        const formattedTicket = formatTicket(t.res.ticket.ticketNumber, t.res.ticket.category);
-                        smsMessage.innerText = `Hello! Ticket #${formattedTicket} is now being served at Counter ${servingCounter.id}. Please proceed to the counter.`;
-                        smsToast.classList.remove('hidden');
-                        setTimeout(() => {
-                            smsToast.classList.remove('-translate-y-[150%]');
-                            smsToast.classList.add('translate-y-0');
-                        }, 50);
-                        setTimeout(() => {
-                            smsToast.classList.remove('translate-y-0');
-                            smsToast.classList.add('-translate-y-[150%]');
-                            setTimeout(() => { smsToast.classList.add('hidden'); }, 500);
-                        }, 6000);
-                        t.notified = true;
-                        needsSave = true;
+                        if (!t.notified) {
+                            const formattedTicket = formatTicket(t.res.ticket.ticketNumber, t.res.ticket.category);
+                            
+                            if (swRegistration && Notification.permission === 'granted') {
+                                swRegistration.showNotification('It is your turn!', {
+                                    body: `Ticket #${formattedTicket} is now being served at Counter ${servingCounter.id}.`,
+                                    icon: '/resources/logo.png',
+                                    vibrate: [200, 100, 200]
+                                });
+                            }
+
+                            smsMessage.innerText = `Hello! Ticket #${formattedTicket} is now being served at Counter ${servingCounter.id}. Please proceed to the counter.`;
+                            smsToast.classList.remove('hidden');
+                            setTimeout(() => {
+                                smsToast.classList.remove('-translate-y-[150%]');
+                                smsToast.classList.add('translate-y-0');
+                            }, 50);
+                            setTimeout(() => {
+                                smsToast.classList.remove('translate-y-0');
+                                smsToast.classList.add('-translate-y-[150%]');
+                                setTimeout(() => { smsToast.classList.add('hidden'); }, 500);
+                            }, 6000);
+                            t.notified = true;
+                            needsSave = true;
+                        }
+                    } else if (inWaitingList !== -1) {
+                        if (inWaitingList > 0 && inWaitingList <= 3) {
+                            if (!t.notifiedApproaching) {
+                                const formattedTicket = formatTicket(t.res.ticket.ticketNumber, t.res.ticket.category);
+                                if (swRegistration && Notification.permission === 'granted') {
+                                    swRegistration.showNotification('Get Ready!', {
+                                        body: `Ticket #${formattedTicket} is almost up. There are ${inWaitingList} people ahead of you.`,
+                                        icon: '/resources/logo.png',
+                                        vibrate: [100, 50, 100]
+                                    });
+                                }
+                                t.notifiedApproaching = true;
+                                needsSave = true;
+                            }
+                        }
+                    } else {
+                        if (!t.notified && !t.notifiedVoided) {
+                            const formattedTicket = formatTicket(t.res.ticket.ticketNumber, t.res.ticket.category);
+                            if (swRegistration && Notification.permission === 'granted') {
+                                swRegistration.showNotification('Ticket Voided', {
+                                    body: `Ticket #${formattedTicket} was voided because you missed your expected time.`,
+                                    icon: '/resources/logo.png',
+                                    vibrate: [500, 200, 500]
+                                });
+                            }
+                            t.notifiedVoided = true;
+                            needsSave = true;
+                        }
                     }
                 });
                 if (needsSave) {
