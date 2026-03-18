@@ -9,6 +9,9 @@
     <style>
         .flatpickr-calendar { font-family: inherit; border-radius: 1rem; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
         .flatpickr-day.selected { background: #FFD500 !important; border-color: #FFD500 !important; color: black !important; font-weight: 900; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #E5E7EB; border-radius: 10px; }
     </style>
 </head>
 <body class="bg-[#FFF9E2] min-h-screen flex flex-col items-center justify-center font-sans text-gray-900 p-4 md:p-6 overflow-y-auto">
@@ -25,7 +28,7 @@
     </div>
 
     <button id="btn-show-my-ticket" class="hidden fixed bottom-24 right-6 bg-black text-[#FFD500] px-6 py-4 rounded-full font-black shadow-lg z-40 uppercase tracking-widest text-xs border-2 border-[#FFD500] hover:scale-105 transition-transform">
-        MY TICKET
+        MY TICKETS
     </button>
 
     <button id="btn-show-queue" class="fixed bottom-6 right-6 bg-[#FFD500] text-black px-6 py-4 rounded-full font-black shadow-lg z-40 uppercase tracking-widest text-xs border-2 border-black hover:scale-105 transition-transform">
@@ -58,6 +61,17 @@
         </div>
     </div>
 
+    <div id="my-tickets-screen" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-md border-t-8 border-black my-8 relative z-10">
+        <h2 class="text-xl md:text-2xl font-black uppercase tracking-widest text-gray-900 mb-6 text-center">My Tickets</h2>
+        
+        <div id="tickets-container" class="space-y-3 max-h-[50vh] overflow-y-auto custom-scrollbar pr-2 mb-6">
+            </div>
+
+        <button onclick="goToStep1()" class="w-full bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-4 px-4 rounded-xl shadow-lg transition-all uppercase tracking-wide text-sm flex justify-center items-center gap-2">
+            <span>+</span> Add Another Transaction
+        </button>
+    </div>
+
     <div id="offline-screen" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-md border-t-8 border-red-600 text-center my-8 relative z-10">
         <div class="text-center mb-6">
             <h1 class="text-xl md:text-2xl font-black uppercase tracking-widest text-gray-900">SYSTEM OFFLINE</h1>
@@ -66,7 +80,7 @@
         <p class="text-sm md:text-base text-gray-600 mb-8">The barangay is currently not accepting online booking requests. Please try again later.</p>
     </div>
 
-    <div id="step-1" class="bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-4xl border-t-8 border-[#FFD500] my-8 relative z-10">
+    <div id="step-1" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-4xl border-t-8 border-[#FFD500] my-8 relative z-10">
         <div class="flex items-center justify-between mb-8">
             <div class="flex-1 text-center px-2">
                 <h1 class="text-xl md:text-2xl font-black uppercase tracking-widest text-gray-900">Step 1: Transaction</h1>
@@ -234,8 +248,8 @@
         <p id="appt-message" class="hidden text-sm md:text-base text-gray-600 mb-8 font-medium leading-relaxed">Please save this ticket. Present this number upon arrival on your scheduled date.</p>
         <p id="live-message" class="text-sm md:text-base text-gray-600 mb-8 font-medium leading-relaxed">Please wait. Monitor the Live Queue to track your position.</p>
 
-        <button onclick="window.location.reload()" class="border-2 border-gray-200 text-gray-500 px-6 py-2 rounded-full font-bold hover:border-[#FFD500] hover:text-black transition-colors uppercase tracking-wide text-xs md:text-sm">
-            Done
+        <button id="btn-ticket-done" class="w-full bg-black hover:bg-gray-800 text-[#FFD500] font-black py-4 px-4 rounded-xl shadow-lg transition-all uppercase tracking-wide">
+            DONE
         </button>
     </div>
 
@@ -245,11 +259,6 @@
     <script>
         const socket = io();
         
-        const step1 = document.getElementById('step-1');
-        const step2 = document.getElementById('step-2');
-        const step3 = document.getElementById('step-3');
-        const step4 = document.getElementById('step-4');
-        const step5 = document.getElementById('step-5');
         const offlineScreen = document.getElementById('offline-screen');
         const ticketResult = document.getElementById('ticket-result');
         const mobileQueueScreen = document.getElementById('mobile-queue-screen');
@@ -263,14 +272,28 @@
         const dynamicServicesContainer = document.getElementById('dynamic-services-container');
 
         let pendingUser = { name: '', contact: '', priority: '', document: '', date: '' };
-        let myAssignedTicket = null;
-        let myAssignedCat = null;
+        let mySavedTickets = []; 
         let currentTrackId = null;
         let fpInstance = null;
         
         const now = new Date();
         const offset = now.getTimezoneOffset() * 60000;
         const localISOTime = (new Date(now - offset)).toISOString().split('T')[0];
+
+        function hideAllScreens() {
+            const screens = ['step-1', 'step-2', 'step-3', 'step-4', 'step-5', 'pending-approval-screen', 'rejected-screen', 'ticket-result', 'offline-screen', 'my-tickets-screen'];
+            screens.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            });
+        }
+
+        function goToStep1() {
+            hideAllScreens();
+            document.getElementById('step-1').classList.remove('hidden');
+            document.getElementById('step-3-form').reset();
+            window.scrollTo(0, 0);
+        }
 
         function formatTicket(num, cat) {
             if (!num) return "----";
@@ -279,30 +302,71 @@
         }
 
         function saveTicketLocally(res) {
-            const ticketData = {
-                res: res,
-                savedDate: localISOTime
-            };
-            localStorage.setItem('baliwasanTicket', JSON.stringify(ticketData));
+            const ticketData = { res: res, savedDate: localISOTime, notified: false };
+            mySavedTickets.push(ticketData);
+            localStorage.setItem('baliwasanTicketsArray', JSON.stringify(mySavedTickets));
         }
 
         function checkSavedTicket() {
-            const saved = localStorage.getItem('baliwasanTicket');
-            if (saved) {
-                const ticketData = JSON.parse(saved);
-                if (ticketData.savedDate === localISOTime || ticketData.res.ticket.date >= localISOTime) {
-                    btnShowMyTicket.classList.remove('hidden');
-                    return ticketData.res;
-                } else {
+            // Clean up old single-ticket legacy object to prevent crashes
+            const oldSaved = localStorage.getItem('baliwasanTicket');
+            if (oldSaved) {
+                try {
+                    const parsed = JSON.parse(oldSaved);
+                    mySavedTickets.push({ res: parsed.res, savedDate: parsed.savedDate, notified: false });
+                    localStorage.setItem('baliwasanTicketsArray', JSON.stringify(mySavedTickets));
                     localStorage.removeItem('baliwasanTicket');
-                }
+                } catch(e) {}
             }
-            return null;
+
+            const saved = localStorage.getItem('baliwasanTicketsArray');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    mySavedTickets = parsed.filter(t => t.savedDate === localISOTime || t.res.ticket.date >= localISOTime);
+                    if (mySavedTickets.length > 0) {
+                        localStorage.setItem('baliwasanTicketsArray', JSON.stringify(mySavedTickets));
+                        btnShowMyTicket.classList.remove('hidden');
+                        return true;
+                    }
+                } catch(e) {}
+            }
+            localStorage.removeItem('baliwasanTicketsArray');
+            return false;
+        }
+
+        function showMyTicketsDashboard() {
+            hideAllScreens();
+            document.getElementById('my-tickets-screen').classList.remove('hidden');
+            const container = document.getElementById('tickets-container');
+            container.innerHTML = '';
+            
+            mySavedTickets.forEach((t, index) => {
+                const tick = t.res.ticket;
+                const dTime = t.res.displayTime || tick.displayTime || 'Please wait';
+                const dateColor = tick.date === localISOTime ? 'text-green-600' : 'text-gray-500';
+
+                const el = document.createElement('div');
+                el.className = 'bg-gray-50 border border-gray-200 p-4 rounded-xl cursor-pointer hover:border-[#FFD500] hover:shadow-md transition-all flex justify-between items-center';
+                el.onclick = () => renderTicketResultScreen(t.res, false);
+                el.innerHTML = `
+                    <div>
+                        <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest truncate max-w-[150px]">${tick.document}</p>
+                        <p class="text-2xl font-black text-black tracking-tighter">${formatTicket(tick.ticketNumber, tick.category)}</p>
+                        <p class="text-xs font-bold mt-1 ${dateColor}">${tick.date} • ${tick.timeSlot || 'WALK-IN'}</p>
+                    </div>
+                    <div class="text-right shrink-0 ml-2">
+                        <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest mb-1">Expected</p>
+                        <p class="text-sm md:text-base font-black text-[#FFD500] bg-black px-2 py-1 rounded shadow-sm">${dTime}</p>
+                    </div>
+                `;
+                container.appendChild(el);
+            });
+            window.scrollTo(0,0);
         }
 
         btnShowMyTicket.addEventListener('click', () => {
-            const saved = checkSavedTicket();
-            if (saved) showTicket(saved);
+            showMyTicketsDashboard();
         });
 
         const myBookingEngine = new BookingCalendar(socket, {
@@ -336,21 +400,22 @@
                 }
             },
             onRequestPending: (res) => {
-                document.getElementById('step-5').classList.add('hidden');
+                hideAllScreens();
                 document.getElementById('pending-approval-screen').classList.remove('hidden');
                 currentTrackId = res.id;
                 document.getElementById('pending-track-id').innerText = currentTrackId;
                 window.scrollTo(0, 0);
             },
             onAutoApproved: (res) => {
-                showTicket(res);
+                saveTicketLocally(res);
+                renderTicketResultScreen(res, true);
             },
             onBookingResolved: (res) => {
                 if (res.id !== currentTrackId && res.id !== 'N/A') return;
-                document.getElementById('pending-approval-screen').classList.add('hidden');
-                document.getElementById('step-5').classList.add('hidden');
+                hideAllScreens();
                 if (res.approved) {
-                    showTicket(res);
+                    saveTicketLocally(res);
+                    renderTicketResultScreen(res, true);
                 } else {
                     if (res.reason) {
                         document.getElementById('rejected-reason').innerText = res.reason;
@@ -364,21 +429,12 @@
             }
         });
 
-        function showTicket(res) {
-            saveTicketLocally(res);
+        function renderTicketResultScreen(res, isNew) {
             btnShowMyTicket.classList.remove('hidden');
-
-            document.getElementById('step-1').classList.add('hidden');
-            document.getElementById('step-2').classList.add('hidden');
-            document.getElementById('step-3').classList.add('hidden');
-            document.getElementById('step-4').classList.add('hidden');
-            document.getElementById('step-5').classList.add('hidden');
-            document.getElementById('pending-approval-screen').classList.add('hidden');
+            hideAllScreens();
             document.getElementById('ticket-result').classList.remove('hidden');
             
-            myAssignedTicket = res.ticket.ticketNumber;
-            myAssignedCat = res.ticket.category;
-            document.getElementById('my-ticket-number').innerText = formatTicket(myAssignedTicket, myAssignedCat);
+            document.getElementById('my-ticket-number').innerText = formatTicket(res.ticket.ticketNumber, res.ticket.category);
             document.getElementById('my-time-slot').innerText = res.ticket.timeSlot || 'WALK-IN';
             
             if (res.isToday) {
@@ -399,6 +455,8 @@
                 document.getElementById('appt-message').classList.remove('hidden');
                 document.getElementById('afternoon-notice').classList.add('hidden');
             }
+
+            document.getElementById('btn-ticket-done').onclick = () => showMyTicketsDashboard();
             window.scrollTo(0, 0);
         }
 
@@ -418,30 +476,30 @@
                     if (e.target.disabled) return;
                     pendingUser.document = e.target.getAttribute('data-doc');
                     myBookingEngine.selectService(pendingUser.document);
-                    step1.classList.add('hidden');
-                    step2.classList.remove('hidden');
+                    hideAllScreens();
+                    document.getElementById('step-2').classList.remove('hidden');
                     window.scrollTo(0, 0);
                 });
             });
         }
 
         document.getElementById('btn-back-to-1').addEventListener('click', () => {
-            step2.classList.add('hidden');
-            step1.classList.remove('hidden');
+            hideAllScreens();
+            document.getElementById('step-1').classList.remove('hidden');
         });
 
         document.getElementById('step-2-form').addEventListener('submit', (e) => {
             e.preventDefault();
             if(!document.getElementById('user-date').value) return alert("Select a date first.");
             pendingUser.date = document.getElementById('user-date').value;
-            step2.classList.add('hidden');
-            step3.classList.remove('hidden');
+            hideAllScreens();
+            document.getElementById('step-3').classList.remove('hidden');
             window.scrollTo(0, 0);
         });
 
         document.getElementById('btn-back-to-2').addEventListener('click', () => {
-            step3.classList.add('hidden');
-            step2.classList.remove('hidden');
+            hideAllScreens();
+            document.getElementById('step-2').classList.remove('hidden');
         });
 
         document.getElementById('step-3-form').addEventListener('submit', (e) => {
@@ -458,25 +516,25 @@
             confirmDate.innerText = pendingUser.date;
             confirmPriority.innerText = pendingUser.priority;
 
-            step3.classList.add('hidden');
-            step4.classList.remove('hidden');
+            hideAllScreens();
+            document.getElementById('step-4').classList.remove('hidden');
             window.scrollTo(0, 0);
         });
 
         document.getElementById('btn-cancel-confirm').addEventListener('click', () => {
-            step4.classList.add('hidden');
-            step3.classList.remove('hidden');
+            hideAllScreens();
+            document.getElementById('step-3').classList.remove('hidden');
         });
 
         document.getElementById('btn-proceed-consent').addEventListener('click', () => {
-            step4.classList.add('hidden');
-            step5.classList.remove('hidden');
+            hideAllScreens();
+            document.getElementById('step-5').classList.remove('hidden');
             window.scrollTo(0, 0);
         });
 
         document.getElementById('btn-back-to-4').addEventListener('click', () => {
-            step5.classList.add('hidden');
-            step4.classList.remove('hidden');
+            hideAllScreens();
+            document.getElementById('step-4').classList.remove('hidden');
         });
 
         document.getElementById('btn-submit-queue').addEventListener('click', () => {
@@ -484,17 +542,18 @@
         });
 
         socket.on('ticketIssued', (response) => {
-            showTicket(response);
+            saveTicketLocally(response);
+            renderTicketResultScreen(response, true);
         });
 
         socket.on('bookingEngineUpdated', (engineState) => {
             if (!engineState.globalOnlineBookingEnabled) {
-                step1.classList.add('hidden');
+                hideAllScreens();
                 offlineScreen.classList.remove('hidden');
             } else {
-                if(step1.classList.contains('hidden') && offlineScreen.classList.contains('hidden') === false) {
-                    offlineScreen.classList.add('hidden');
-                    step1.classList.remove('hidden');
+                if(!offlineScreen.classList.contains('hidden')) {
+                    if (mySavedTickets.length > 0) showMyTicketsDashboard();
+                    else goToStep1();
                 }
             }
         });
@@ -565,28 +624,40 @@
                 });
             }
 
-            if (myAssignedTicket !== null) {
-                const servingCounter = state.counters.find(c => c.currentTicket === myAssignedTicket);
-                if (servingCounter) {
-                    const formattedTicket = formatTicket(myAssignedTicket, myAssignedCat);
-                    smsMessage.innerText = `Hello! Ticket #${formattedTicket} is now being served at Counter ${servingCounter.id}. Please proceed to the counter.`;
-                    smsToast.classList.remove('hidden');
-                    setTimeout(() => {
-                        smsToast.classList.remove('-translate-y-[150%]');
-                        smsToast.classList.add('translate-y-0');
-                    }, 50);
-                    setTimeout(() => {
-                        smsToast.classList.remove('translate-y-0');
-                        smsToast.classList.add('-translate-y-[150%]');
-                        setTimeout(() => { smsToast.classList.add('hidden'); }, 500);
-                    }, 6000);
-                    myAssignedTicket = null;
+            if (mySavedTickets.length > 0) {
+                let needsSave = false;
+                mySavedTickets.forEach((t) => {
+                    if (t.notified) return;
+                    const servingCounter = state.counters.find(c => c.currentTicket === t.res.ticket.ticketNumber && c.currentCategory === t.res.ticket.category);
+                    if (servingCounter) {
+                        const formattedTicket = formatTicket(t.res.ticket.ticketNumber, t.res.ticket.category);
+                        smsMessage.innerText = `Hello! Ticket #${formattedTicket} is now being served at Counter ${servingCounter.id}. Please proceed to the counter.`;
+                        smsToast.classList.remove('hidden');
+                        setTimeout(() => {
+                            smsToast.classList.remove('-translate-y-[150%]');
+                            smsToast.classList.add('translate-y-0');
+                        }, 50);
+                        setTimeout(() => {
+                            smsToast.classList.remove('translate-y-0');
+                            smsToast.classList.add('-translate-y-[150%]');
+                            setTimeout(() => { smsToast.classList.add('hidden'); }, 500);
+                        }, 6000);
+                        t.notified = true;
+                        needsSave = true;
+                    }
+                });
+                if (needsSave) {
+                    localStorage.setItem('baliwasanTicketsArray', JSON.stringify(mySavedTickets));
                 }
             }
         });
 
         window.addEventListener('load', () => {
-            checkSavedTicket();
+            if (checkSavedTicket()) {
+                showMyTicketsDashboard();
+            } else {
+                goToStep1();
+            }
         });
     </script>
 </body>
