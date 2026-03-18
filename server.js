@@ -679,6 +679,56 @@ setInterval(() => {
     let changed = false;
     const today = getTodayDate();
     
+    for (let i = 0; i < queueState.waitingList.length; i++) {
+        const ticket = queueState.waitingList[i];
+        if (ticket.date !== today) continue;
+        if (!ticket.displayTime || ticket.displayTime === 'Please wait' || ticket.displayTime === '5:00 PM') continue;
+        
+        const match = ticket.displayTime.match(/(\d+):(\d+)\s+(AM|PM)/);
+        if (match) {
+            let h = parseInt(match[1]);
+            let m = parseInt(match[2]);
+            if (match[3] === 'PM' && h !== 12) h += 12;
+            if (match[3] === 'AM' && h === 12) h = 0;
+            
+            const ticketAbsolute = h * 60 + m;
+            
+            if (currentAbsolute >= ticketAbsolute) {
+                const freeCounter = queueState.counters.find(c => c.isActive && !c.currentTicket);
+                if (freeCounter) {
+                    freeCounter.currentTicket = ticket.ticketNumber;
+                    freeCounter.currentPriority = ticket.priority;
+                    freeCounter.currentDocument = ticket.document;
+                    freeCounter.currentName = ticket.name;
+                    freeCounter.currentCategory = ticket.category;
+
+                    queueState.lastCalled = {
+                        ticket: ticket.ticketNumber,
+                        counter: freeCounter.id,
+                        document: ticket.document,
+                        category: ticket.category
+                    };
+
+                    if (useMongo) {
+                        const logEntry = new TicketLog({
+                            ticketNumber: ticket.ticketNumber,
+                            category: ticket.category,
+                            document: ticket.document,
+                            priority: ticket.priority,
+                            date: today
+                        });
+                        logEntry.save().catch(err => console.log(err));
+                    }
+
+                    queueState.waitingList.splice(i, 1);
+                    i--; 
+                    changed = true;
+                }
+            }
+        }
+    }
+
+    const originalLength = queueState.waitingList.length;
     queueState.waitingList = queueState.waitingList.filter(ticket => {
         if (ticket.date !== today) return true;
         if (!ticket.displayTime || ticket.displayTime === 'Please wait' || ticket.displayTime === '5:00 PM') return true;
@@ -693,12 +743,15 @@ setInterval(() => {
             const ticketAbsolute = h * 60 + m;
             
             if (currentAbsolute > ticketAbsolute + 5) {
-                changed = true;
                 return false; 
             }
         }
         return true;
     });
+
+    if (queueState.waitingList.length !== originalLength) {
+        changed = true;
+    }
 
     if (changed) {
         saveState();
