@@ -5,10 +5,15 @@ const path = require('path');
 const multer = require('multer');
 const fs = require('fs');
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
+const basicAuth = require('express-basic-auth');
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
+
+app.use(express.json());
+app.use(cookieParser());
 
 let useMongo = false;
 
@@ -43,11 +48,6 @@ const storage = multer.diskStorage({
     }
 });
 const upload = multer({ storage: storage });
-
-const cookieParser = require('cookie-parser');
-
-app.use(express.json());
-app.use(cookieParser());
 
 app.post('/api/admin-login', (req, res) => {
     const { username, password } = req.body;
@@ -84,10 +84,6 @@ app.use((req, res, next) => {
 });
 
 app.use(express.static(path.join(__dirname, 'public')));
-
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'homepage.html'));
-});
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'homepage.html'));
@@ -184,8 +180,8 @@ if (!useMongo) {
 
 function sortQueue() {
     queueState.waitingList.sort((a, b) => {
-        const priorityA = a.priority === 'PWD / SENIOR' ? 1 : 0;
-        const priorityB = b.priority === 'PWD / SENIOR' ? 1 : 0;
+        const priorityA = a.priority === 'PWD / Senior / Pregnant' ? 1 : 0;
+        const priorityB = b.priority === 'PWD / Senior / Pregnant' ? 1 : 0;
         if (priorityA !== priorityB) return priorityB - priorityA;
         return a.ticketNumber - b.ticketNumber;
     });
@@ -197,13 +193,22 @@ function getTodayDate() {
     return (new Date(now - offset)).toISOString().split('T')[0];
 }
 
-function generateAutoTime(position) {
+function generateAutoTime(position, isOnline = false) {
     const now = new Date();
     const offset = now.getTimezoneOffset() * 60000;
-    const localNow = new Date(now - offset);
-    localNow.setMinutes(localNow.getMinutes() + (position * 12));
-    let hours = localNow.getHours();
-    let mins = localNow.getMinutes();
+    let localNow = new Date(now - offset);
+
+    if (isOnline) {
+        let tenAM = new Date(now - offset);
+        tenAM.setUTCHours(10, 0, 0, 0);
+        if (localNow < tenAM) {
+            localNow = tenAM;
+        }
+    }
+
+    localNow.setUTCMinutes(localNow.getUTCMinutes() + (position * 12));
+    let hours = localNow.getUTCHours();
+    let mins = localNow.getUTCMinutes();
     const ampm = hours >= 12 ? 'PM' : 'AM';
     hours = hours % 12;
     hours = hours ? hours : 12; 
@@ -299,7 +304,7 @@ io.on('connection', (socket) => {
                 queueState.waitingList.push(finalAppointment);
                 sortQueue();
                 const position = queueState.waitingList.findIndex(t => t.ticketNumber === finalAppointment.ticketNumber);
-                dTime = generateAutoTime(position + 1);
+                dTime = generateAutoTime(position + 1, true);
             } else {
                 queueState.appointments.push(finalAppointment);
                 dTime = autoSlot === 'MORNING' ? '8:00 AM' : '1:00 PM';
@@ -363,7 +368,7 @@ io.on('connection', (socket) => {
                     isToday = true;
                     if (!dTime) {
                         const position = queueState.waitingList.length;
-                        dTime = generateAutoTime(position + 1);
+                        dTime = generateAutoTime(position + 1, true);
                     }
                     finalAppointment.displayTime = dTime;
                     queueState.waitingList.push(finalAppointment);
@@ -427,7 +432,7 @@ io.on('connection', (socket) => {
             queueState.waitingList.push(newTicket);
             sortQueue();
             const position = queueState.waitingList.findIndex(t => t.ticketNumber === newTicket.ticketNumber);
-            dTime = generateAutoTime(position + 1);
+            dTime = generateAutoTime(position + 1, true);
         } else {
             queueState.appointments.push(newTicket);
             dTime = autoSlot === 'MORNING' ? '8:00 AM' : '1:00 PM';
@@ -458,7 +463,7 @@ io.on('connection', (socket) => {
         };
 
         const position = queueState.waitingList.length;
-        newTicket.displayTime = generateAutoTime(position + 1);
+        newTicket.displayTime = generateAutoTime(position + 1, false);
         queueState.waitingList.push(newTicket);
         sortQueue();
         saveState();

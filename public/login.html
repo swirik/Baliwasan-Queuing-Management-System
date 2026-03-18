@@ -24,6 +24,10 @@
         <div class="text-sm text-gray-600 mt-1 font-medium" id="sms-message"></div>
     </div>
 
+    <button id="btn-show-my-ticket" class="hidden fixed bottom-24 right-6 bg-black text-[#FFD500] px-6 py-4 rounded-full font-black shadow-lg z-40 uppercase tracking-widest text-xs border-2 border-[#FFD500] hover:scale-105 transition-transform">
+        MY TICKET
+    </button>
+
     <button id="btn-show-queue" class="fixed bottom-6 right-6 bg-[#FFD500] text-black px-6 py-4 rounded-full font-black shadow-lg z-40 uppercase tracking-widest text-xs border-2 border-black hover:scale-105 transition-transform">
         LIVE QUEUE
     </button>
@@ -250,6 +254,7 @@
         const ticketResult = document.getElementById('ticket-result');
         const mobileQueueScreen = document.getElementById('mobile-queue-screen');
         const btnShowQueue = document.getElementById('btn-show-queue');
+        const btnShowMyTicket = document.getElementById('btn-show-my-ticket');
         const smsToast = document.getElementById('sms-toast');
         const smsMessage = document.getElementById('sms-message');
         const confirmDocName = document.getElementById('confirm-doc-name');
@@ -272,6 +277,33 @@
             const prefix = cat ? cat : "M";
             return `${prefix}-${num.toString().padStart(3, '0')}`;
         }
+
+        function saveTicketLocally(res) {
+            const ticketData = {
+                res: res,
+                savedDate: localISOTime
+            };
+            localStorage.setItem('baliwasanTicket', JSON.stringify(ticketData));
+        }
+
+        function checkSavedTicket() {
+            const saved = localStorage.getItem('baliwasanTicket');
+            if (saved) {
+                const ticketData = JSON.parse(saved);
+                if (ticketData.savedDate === localISOTime || ticketData.res.ticket.date >= localISOTime) {
+                    btnShowMyTicket.classList.remove('hidden');
+                    return ticketData.res;
+                } else {
+                    localStorage.removeItem('baliwasanTicket');
+                }
+            }
+            return null;
+        }
+
+        btnShowMyTicket.addEventListener('click', () => {
+            const saved = checkSavedTicket();
+            if (saved) showTicket(saved);
+        });
 
         const myBookingEngine = new BookingCalendar(socket, {
             onLoadingDates: () => {
@@ -333,7 +365,15 @@
         });
 
         function showTicket(res) {
+            saveTicketLocally(res);
+            btnShowMyTicket.classList.remove('hidden');
+
+            document.getElementById('step-1').classList.add('hidden');
+            document.getElementById('step-2').classList.add('hidden');
+            document.getElementById('step-3').classList.add('hidden');
+            document.getElementById('step-4').classList.add('hidden');
             document.getElementById('step-5').classList.add('hidden');
+            document.getElementById('pending-approval-screen').classList.add('hidden');
             document.getElementById('ticket-result').classList.remove('hidden');
             
             myAssignedTicket = res.ticket.ticketNumber;
@@ -543,6 +583,10 @@
                     myAssignedTicket = null;
                 }
             }
+        });
+
+        window.addEventListener('load', () => {
+            checkSavedTicket();
         });
     </script>
 </body>
