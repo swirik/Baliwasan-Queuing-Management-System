@@ -220,10 +220,12 @@
         <div id="my-ticket-number" class="text-6xl md:text-7xl font-black text-gray-900 mb-2 drop-shadow-sm">---</div>
         <div id="my-time-slot" class="text-sm font-black text-white bg-black px-4 py-1 rounded-md inline-block mb-6 tracking-widest uppercase">---</div>
         
-        <div id="ewt-container" class="bg-gray-50 border border-gray-200 rounded-xl p-4 mb-6">
-            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Estimated Wait Time</p>
-            <p id="ewt-display" class="text-2xl font-black text-black">-- mins</p>
+        <div id="display-time-container" class="bg-gray-50 border border-gray-200 rounded-xl p-4 mb-6">
+            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Expected Time</p>
+            <p id="display-time" class="text-2xl font-black text-black">--:--</p>
         </div>
+
+        <p id="afternoon-notice" class="hidden text-sm md:text-base text-red-600 bg-red-50 p-3 rounded-lg border border-red-200 mb-8 font-black uppercase tracking-wide">Please come in the afternoon.</p>
 
         <p id="appt-message" class="hidden text-sm md:text-base text-gray-600 mb-8 font-medium leading-relaxed">Please save this ticket. Present this number upon arrival on your scheduled date.</p>
         <p id="live-message" class="text-sm md:text-base text-gray-600 mb-8 font-medium leading-relaxed">Please wait. Monitor the Live Queue to track your position.</p>
@@ -337,17 +339,25 @@
             myAssignedTicket = res.ticket.ticketNumber;
             myAssignedCat = res.ticket.category;
             document.getElementById('my-ticket-number').innerText = formatTicket(myAssignedTicket, myAssignedCat);
-            document.getElementById('my-time-slot').innerText = res.ticket.timeSlot;
+            document.getElementById('my-time-slot').innerText = res.ticket.timeSlot || 'WALK-IN';
             
             if (res.isToday) {
-                document.getElementById('ewt-display').innerText = `~${res.ewt} mins`;
-                document.getElementById('ewt-container').classList.remove('hidden');
+                document.getElementById('display-time').innerText = res.displayTime || res.ticket.displayTime || 'Please wait';
+                document.getElementById('display-time-container').classList.remove('hidden');
                 document.getElementById('live-message').classList.remove('hidden');
                 document.getElementById('appt-message').classList.add('hidden');
+
+                const currentHour = new Date().getHours();
+                if (res.ticket.timeSlot === 'AFTERNOON' && currentHour < 12) {
+                    document.getElementById('afternoon-notice').classList.remove('hidden');
+                } else {
+                    document.getElementById('afternoon-notice').classList.add('hidden');
+                }
             } else {
-                document.getElementById('ewt-container').classList.add('hidden');
+                document.getElementById('display-time-container').classList.add('hidden');
                 document.getElementById('live-message').classList.add('hidden');
                 document.getElementById('appt-message').classList.remove('hidden');
+                document.getElementById('afternoon-notice').classList.add('hidden');
             }
             window.scrollTo(0, 0);
         }

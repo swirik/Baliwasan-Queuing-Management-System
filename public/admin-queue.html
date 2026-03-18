@@ -363,7 +363,8 @@
 
         window.approveRequest = function(id) {
             const slot = document.getElementById('slot-' + id).value;
-            socket.emit('adminReviewBooking', { id: id, approved: true, timeSlot: slot });
+            const timeInput = document.getElementById('time-' + id).value;
+            socket.emit('adminReviewBooking', { id: id, approved: true, timeSlot: slot, customTime: timeInput });
         }
 
         window.rejectRequest = function(id) {
@@ -439,6 +440,7 @@
                                 <option value="MORNING">Morning</option>
                                 <option value="AFTERNOON">Afternoon</option>
                             </select>
+                            <input type="time" id="time-${req.id}" class="text-[10px] border border-gray-200 rounded p-1 w-20 font-bold" title="Leave blank for Auto">
                             <button class="flex-1 bg-red-100 hover:bg-red-200 text-red-700 text-[10px] font-black py-1.5 rounded uppercase transition-colors" onclick="rejectRequest('${req.id}')">Reject</button>
                             <button class="flex-1 bg-green-500 hover:bg-green-600 text-white text-[10px] font-black py-1.5 rounded uppercase transition-colors" onclick="approveRequest('${req.id}')">Approve</button>
                         </div>
@@ -460,7 +462,7 @@
                         <div class="font-black text-lg text-gray-900">${formatTicket(item.ticketNumber, item.category)}</div>
                         <div class="text-xs font-bold text-gray-800">${item.name}</div>
                         <div class="text-[10px] text-gray-400 font-medium">${item.contact}</div>
-                        <div class="text-[10px] font-bold mt-1 ${dateColor}">${item.date} ${item.timeSlot && !isLive ? '· ' + item.timeSlot : ''}</div>
+                        <div class="text-[10px] font-bold mt-1 ${dateColor}">${item.date} ${item.timeSlot && !isLive ? '· ' + item.timeSlot : ''} ${item.displayTime ? '· ' + item.displayTime : ''}</div>
                     </div>
                     <div class="text-[9px] font-black uppercase ${badgeColor} px-2 py-1 rounded-md border tracking-tighter">
                         ${item.priority}

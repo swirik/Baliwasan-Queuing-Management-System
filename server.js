@@ -58,7 +58,7 @@ let bookingEngine = {
     globalOnlineBookingEnabled: true,
     autoApprove: false,
     defaultMaxCapacity: 50,
-    disabledDaysOfWeek: [0, 6], 
+    disabledDaysOfWeek: [], 
     blockedDates: [], 
     serviceRules: {},
     pendingRequests: [],
@@ -137,8 +137,8 @@ if (!useMongo) {
 
 function sortQueue() {
     queueState.waitingList.sort((a, b) => {
-        const priorityA = a.priority === 'PWD / Senior / Pregnant' ? 1 : 0;
-        const priorityB = b.priority === 'PWD / Senior / Pregnant' ? 1 : 0;
+        const priorityA = a.priority === 'PWD / SENIOR' ? 1 : 0;
+        const priorityB = b.priority === 'PWD / SENIOR' ? 1 : 0;
         if (priorityA !== priorityB) return priorityB - priorityA;
         return a.ticketNumber - b.ticketNumber;
     });
@@ -148,6 +148,20 @@ function getTodayDate() {
     const now = new Date();
     const offset = now.getTimezoneOffset() * 60000;
     return (new Date(now - offset)).toISOString().split('T')[0];
+}
+
+function generateAutoTime(position) {
+    const now = new Date();
+    const offset = now.getTimezoneOffset() * 60000;
+    const localNow = new Date(now - offset);
+    localNow.setMinutes(localNow.getMinutes() + (position * 12));
+    let hours = localNow.getHours();
+    let mins = localNow.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; 
+    mins = mins < 10 ? '0' + mins : mins;
+    return `${hours}:${mins} ${ampm}`;
 }
 
 function getServiceCategory(docName) {
@@ -219,32 +233,37 @@ io.on('connection', (socket) => {
 
         if (bookingEngine.autoApprove) {
             const tNum = getNextTicketNumber(newRequest.requestedDate);
+            const nowHour = new Date().getHours();
+            const autoSlot = nowHour < 12 ? 'MORNING' : 'AFTERNOON';
+
             const finalAppointment = {
                 ...newRequest,
                 ticketNumber: tNum,
-                timeSlot: 'AUTO-ASSIGNED',
+                timeSlot: autoSlot,
                 status: 'APPROVED'
             };
             
             const today = getTodayDate();
-            let ewt = 0;
             let isToday = false;
+            let dTime = '';
 
             if (newRequest.requestedDate === today) {
                 isToday = true;
                 queueState.waitingList.push(finalAppointment);
                 sortQueue();
                 const position = queueState.waitingList.findIndex(t => t.ticketNumber === finalAppointment.ticketNumber);
-                ewt = (position + 1) * 12;
+                dTime = generateAutoTime(position + 1);
             } else {
                 queueState.appointments.push(finalAppointment);
+                dTime = autoSlot === 'MORNING' ? '8:00 AM' : '1:00 PM';
             }
 
+            finalAppointment.displayTime = dTime;
             bookingEngine.dailyLoad[newRequest.requestedDate] = (bookingEngine.dailyLoad[newRequest.requestedDate] || 0) + 1;
             
             saveState();
             io.emit('queueUpdated', queueState);
-            socket.emit('bookingApproved', { ticket: finalAppointment, isToday: isToday, ewt: ewt, id: requestId });
+            socket.emit('bookingApproved', { ticket: finalAppointment, isToday: isToday, displayTime: dTime, id: requestId });
         } else {
             newRequest.status = 'PENDING';
             bookingEngine.pendingRequests.push(newRequest);
@@ -263,6 +282,20 @@ io.on('connection', (socket) => {
             if (reviewData.approved) {
                 const tNum = getNextTicketNumber(request.requestedDate);
                 const cat = getServiceCategory(request.document);
+                
+                let dTime = reviewData.customTime;
+                if (dTime) {
+                    const parts = dTime.split(':');
+                    if (parts.length === 2) {
+                        let h = parseInt(parts[0]);
+                        let m = parts[1];
+                        let ampm = h >= 12 ? 'PM' : 'AM';
+                        h = h % 12;
+                        h = h ? h : 12;
+                        dTime = `${h}:${m} ${ampm}`;
+                    }
+                }
+
                 const finalAppointment = {
                     ...request,
                     ticketNumber: tNum,
@@ -273,22 +306,26 @@ io.on('connection', (socket) => {
                 };
 
                 const today = getTodayDate();
-                let ewt = 0;
                 let isToday = false;
 
                 if (request.requestedDate === today) {
                     isToday = true;
+                    if (!dTime) {
+                        const position = queueState.waitingList.length;
+                        dTime = generateAutoTime(position + 1);
+                    }
+                    finalAppointment.displayTime = dTime;
                     queueState.waitingList.push(finalAppointment);
                     sortQueue();
-                    const position = queueState.waitingList.findIndex(t => t.ticketNumber === finalAppointment.ticketNumber);
-                    ewt = (position + 1) * 12;
                 } else {
+                    if (!dTime) dTime = reviewData.timeSlot === 'MORNING' ? '8:00 AM' : '1:00 PM';
+                    finalAppointment.displayTime = dTime;
                     queueState.appointments.push(finalAppointment);
                 }
 
                 bookingEngine.dailyLoad[request.requestedDate] = (bookingEngine.dailyLoad[request.requestedDate] || 0) + 1;
                 io.emit('queueUpdated', queueState);
-                io.emit('bookingResolved', { id: reviewData.id, approved: true, ticket: finalAppointment, isToday: isToday, ewt: ewt });
+                io.emit('bookingResolved', { id: reviewData.id, approved: true, ticket: finalAppointment, isToday: isToday, displayTime: dTime });
             } else {
                 io.emit('bookingResolved', { id: reviewData.id, approved: false });
             }
@@ -316,6 +353,9 @@ io.on('connection', (socket) => {
     socket.on('joinQueue', (data) => {
         const tNum = getNextTicketNumber(data.date);
         const cat = getServiceCategory(data.document);
+        const nowHour = new Date().getHours();
+        const autoSlot = nowHour < 12 ? 'MORNING' : 'AFTERNOON';
+
         const newTicket = {
             ticketNumber: tNum,
             name: data.name,
@@ -323,42 +363,52 @@ io.on('connection', (socket) => {
             priority: data.priority,
             document: data.document,
             category: cat,
-            date: data.date 
+            date: data.date,
+            timeSlot: autoSlot
         };
 
         const today = getTodayDate();
-        let ewt = 0;
         let isToday = false;
+        let dTime = '';
 
         if (data.date === today) {
             isToday = true;
             queueState.waitingList.push(newTicket);
             sortQueue();
             const position = queueState.waitingList.findIndex(t => t.ticketNumber === newTicket.ticketNumber);
-            ewt = (position + 1) * 12; 
+            dTime = generateAutoTime(position + 1);
         } else {
             queueState.appointments.push(newTicket);
+            dTime = autoSlot === 'MORNING' ? '8:00 AM' : '1:00 PM';
         }
         
+        newTicket.displayTime = dTime;
         saveState();
         io.emit('queueUpdated', queueState);
-        socket.emit('ticketIssued', { ticket: newTicket, ewt: ewt, isToday: isToday });
+        socket.emit('ticketIssued', { ticket: newTicket, displayTime: dTime, isToday: isToday });
     });
 
     socket.on('generateTicket', (data) => {
         const walkInDate = getTodayDate();
         const tNum = getNextTicketNumber(walkInDate);
         const cat = getServiceCategory(data.document);
+        const nowHour = new Date().getHours();
+        const autoSlot = nowHour < 12 ? 'MORNING' : 'AFTERNOON';
 
-        queueState.waitingList.push({
+        const newTicket = {
             ticketNumber: tNum,
             name: 'Walk-in',
             contact: 'N/A',
             priority: data.priority,
             document: data.document,
             category: cat,
-            date: walkInDate
-        });
+            date: walkInDate,
+            timeSlot: autoSlot
+        };
+
+        const position = queueState.waitingList.length;
+        newTicket.displayTime = generateAutoTime(position + 1);
+        queueState.waitingList.push(newTicket);
         sortQueue();
         saveState();
         io.emit('queueUpdated', queueState);
