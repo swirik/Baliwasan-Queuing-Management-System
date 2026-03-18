@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Digital Queue Monitor - Barangay Baliwasan</title>
     <link href="output.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @keyframes marquee {
             from { left: 100%; transform: translateX(0); }
@@ -14,80 +15,85 @@
             animation: marquee 25s linear infinite;
         }
         @keyframes flashText {
-            0%, 100% { color: #111827; transform: scale(1); text-shadow: none; }
-            50% { color: #FFD500; transform: scale(1.1); text-shadow: 0 0 20px rgba(255, 213, 0, 0.6); }
+            0%, 100% { color: #071c4d; transform: scale(1); text-shadow: none; }
+            50% { color: #ffffff; transform: scale(1.1); text-shadow: 0 0 30px rgba(255, 255, 255, 1); }
         }
         .is-blinking {
-            animation: flashText 0.4s ease-in-out 6;
+            animation: flashText 0.5s ease-in-out 6;
             display: inline-block;
         }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
-<body class="bg-gray-900 h-screen w-screen overflow-hidden flex flex-col font-sans text-white">
+<body class="bg-gray-100 h-screen w-screen overflow-hidden flex flex-col font-sans text-gray-900">
 
-    <header class="h-20 bg-white text-gray-900 flex justify-between items-center px-8 shrink-0 z-30 shadow-md border-b-8 border-[#FFD500]">
+    <header class="h-20 bg-[#071c4d] text-white flex justify-between items-center px-8 shrink-0 z-30 shadow-lg border-b-4 border-[#FFD500]">
         <div class="flex flex-col">
-            <div id="clock-date" class="text-sm font-bold uppercase tracking-wider text-gray-500">Loading Date...</div>
-            <div id="clock-time" class="text-3xl font-black tracking-widest leading-none text-black">00:00:00</div>
+            <div id="clock-date" class="text-xs font-bold uppercase tracking-widest text-[#FFD500]">Loading Date...</div>
+            <div id="clock-time" class="text-3xl font-black tracking-widest leading-none text-white">00:00:00</div>
         </div>
         <div class="flex items-center gap-4">
-            <h1 class="text-2xl font-black tracking-widest uppercase text-black">BARANGAY BALIWASAN QUEUE SYSTEM</h1>
-            <img src="resources/logo.png" alt="Logo" class="w-12 h-12 object-contain">
+            <h1 class="text-2xl font-black tracking-widest uppercase text-white hidden md:block">BARANGAY BALIWASAN</h1>
+            <div class="w-12 h-12 bg-white rounded-full p-1 shadow-inner">
+                <img src="resources/logo.png" alt="Logo" class="w-full h-full object-contain">
+            </div>
         </div>
     </header>
 
-    <main style="display: grid; grid-template-columns: 25% 50% 25%; width: 100%;" class="flex-1 overflow-hidden bg-gray-100 text-gray-900">
+    <main class="flex-1 flex overflow-hidden w-full">
         
-        <aside class="bg-white border-r border-gray-300 flex flex-col shadow-lg z-20 overflow-hidden">
-            <div class="bg-[#FFD500] p-5 text-center shrink-0 border-b-4 border-[#FFDC2E]">
-                <h2 class="text-2xl font-black text-black tracking-widest uppercase">QUEUE</h2>
-            </div>
-            <div class="p-3 border-b border-gray-200 flex justify-between items-center bg-gray-50 shrink-0">
-                <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">Waiting</span>
-                <span id="waiting-count" class="text-sm font-black text-[#FFD500] bg-black px-3 py-1 rounded-lg">0</span>
-            </div>
-            <div id="waiting-list-container" class="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-100 inset-shadow-sm">
-                <div class="w-full text-center text-gray-400 font-bold py-10 uppercase tracking-wider text-sm">Queue is empty</div>
-            </div>
-        </aside>
-
-        <section class="bg-black relative shadow-inner flex items-center justify-center overflow-hidden" id="media-container">
-            <div class="w-full h-full bg-gray-900 flex items-center justify-center text-[#FFD500] font-black text-4xl uppercase opacity-20">
-                Standby Media
-            </div>
-        </section>
-
-        <aside class="bg-white border-l border-gray-300 flex flex-col shadow-[-10px_0_30px_rgba(0,0,0,0.1)] z-20 overflow-hidden">
-            <div class="bg-[#FFD500] p-5 text-center shrink-0 border-b-4 border-[#FFDC2E]">
-                <h2 class="text-2xl font-black text-black tracking-widest uppercase">NOW SERVING</h2>
-            </div>
-            <div class="flex-1 flex flex-col items-center justify-center p-8 bg-[#FFF9E2]">
-                <div class="w-full flex flex-col items-center text-center">
-                    <div class="text-sm font-bold text-gray-500 mb-2 uppercase tracking-widest">TICKET NUMBER</div>
-                    <div id="current-ticket" class="text-[6rem] xl:text-[7rem] font-black text-gray-900 mb-8 drop-shadow-sm leading-none transition-all">----</div>
-                    <div class="text-sm font-bold text-gray-500 mb-2 uppercase tracking-widest">PROCEED TO</div>
-                    <div id="current-counter" class="text-4xl xl:text-5xl font-black text-black bg-[#FFD500] px-8 py-4 rounded-3xl shadow-lg uppercase tracking-widest border-4 border-[#FFDC2E] w-full text-center">--</div>
-                    <div id="current-doc" class="mt-8 text-xs font-bold text-[#FFD500] bg-black px-4 py-2 rounded-md text-center w-full truncate uppercase tracking-widest">SYSTEM STANDBY</div>
+        <div class="w-[65%] flex flex-col border-r-4 border-gray-300 shadow-2xl z-10 bg-black">
+            <section id="media-container" class="flex-1 relative flex items-center justify-center overflow-hidden">
+                <div class="w-full h-full bg-gray-900 flex items-center justify-center text-[#FFD500] font-black text-4xl uppercase opacity-20">
+                    Standby Media
                 </div>
-            </div>
-        </aside>
+            </section>
 
+            <div class="h-40 bg-gray-100 flex flex-col shrink-0 border-t-4 border-[#071c4d]">
+                <div class="bg-gray-200 text-[10px] font-black text-[#071c4d] uppercase tracking-widest py-1.5 text-center border-b border-gray-300 shadow-sm">
+                    <i class="fas fa-desktop mr-2"></i> Active Counters
+                </div>
+                <div class="flex-1 flex justify-center items-center gap-8 px-6 bg-gray-100 shadow-inner" id="currently-serving-row">
+                    </div>
+            </div>
+        </div>
+
+        <div class="w-[35%] flex flex-col bg-gray-50 z-20 shadow-[-10px_0_30px_rgba(0,0,0,0.15)]">
+            
+            <aside class="flex flex-col shrink-0 bg-[#FFD500] border-b-8 border-yellow-600 shadow-xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 opacity-10 text-[10rem] -mt-10 -mr-4"><i class="fas fa-bullhorn"></i></div>
+                <div class="bg-[#071c4d] text-white py-2 text-center text-sm font-black tracking-widest uppercase shadow-md">
+                    NOW SERVING
+                </div>
+                <div class="p-8 flex flex-col items-center text-center relative z-10">
+                    <div id="current-ticket" class="text-[7rem] xl:text-[8.5rem] font-black text-[#071c4d] leading-none drop-shadow-md mb-4 transition-all">----</div>
+                    <div class="text-sm font-bold text-[#071c4d]/70 mb-1 uppercase tracking-widest">PROCEED TO</div>
+                    <div id="current-counter" class="text-4xl xl:text-5xl font-black text-white bg-[#071c4d] px-8 py-3 rounded-2xl shadow-inner uppercase tracking-widest w-full text-center">--</div>
+                    <div id="current-doc" class="mt-4 text-xs font-bold text-gray-800 bg-white/60 px-4 py-1.5 rounded-md text-center max-w-[90%] truncate uppercase tracking-widest border border-yellow-400">SYSTEM STANDBY</div>
+                </div>
+            </aside>
+
+            <aside class="flex-1 flex flex-col overflow-hidden bg-white">
+                <div class="bg-gray-100 p-4 border-b border-gray-200 flex justify-between items-center shadow-sm shrink-0">
+                    <h2 class="text-lg font-black text-[#071c4d] tracking-widest uppercase"><i class="fas fa-users mr-2"></i>UP NEXT</h2>
+                    <span id="waiting-count" class="text-sm font-black text-[#FFD500] bg-[#071c4d] px-3 py-1 rounded-full shadow">0</span>
+                </div>
+                <div id="waiting-list-container" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar shadow-inner bg-gray-50/50">
+                    <div class="w-full h-full flex items-center justify-center text-gray-400 font-bold uppercase tracking-wider text-sm">Queue is empty</div>
+                </div>
+            </aside>
+
+        </div>
     </main>
 
-    <div class="h-28 bg-white border-t-4 border-gray-200 shadow-[0_-5px_15px_rgba(0,0,0,0.05)] z-20 flex flex-col shrink-0">
-        <div class="bg-gray-100 text-[10px] font-black text-gray-400 uppercase tracking-widest py-1 text-center border-b border-gray-200">
-            Currently Serving at Counters
+    <footer class="h-16 bg-[#071c4d] text-white flex items-center overflow-hidden shrink-0 relative border-t-2 border-[#FFD500]/30">
+        <div class="bg-[#FFD500] text-[#071c4d] h-full px-8 flex items-center justify-center font-black tracking-widest uppercase z-20 shadow-[10px_0_15px_rgba(0,0,0,0.5)] shrink-0 text-xl border-r-4 border-yellow-600">
+            <i class="fas fa-info-circle mr-3"></i> ANNOUNCEMENT
         </div>
-        <div class="flex-1 flex justify-center items-center gap-6 px-6 overflow-hidden" id="currently-serving-row">
-        </div>
-    </div>
-
-    <footer class="h-16 bg-gray-900 text-white flex items-center overflow-hidden shrink-0 border-t-4 border-[#FFD500] relative">
-        <div class="bg-[#FFD500] text-black h-full px-8 flex items-center justify-center font-black tracking-widest uppercase z-20 shadow-[10px_0_15px_rgba(0,0,0,0.3)] shrink-0 text-xl border-r-4 border-[#FFDC2E]">
-            ANNOUNCEMENT
-        </div>
-        <div class="flex-1 overflow-hidden relative h-full flex items-center bg-gray-900">
-            <div class="absolute animate-marquee font-black text-2xl tracking-widest text-[#FFD500]" id="scrolling-ticker" style="white-space: nowrap;">
+        <div class="flex-1 overflow-hidden relative h-full flex items-center bg-[#071c4d]">
+            <div class="absolute animate-marquee font-black text-2xl tracking-widest text-white drop-shadow-md" id="scrolling-ticker" style="white-space: nowrap;">
                 WELCOME TO BARANGAY BALIWASAN
             </div>
         </div>

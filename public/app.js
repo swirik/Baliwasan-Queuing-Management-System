@@ -33,14 +33,16 @@ socket.on('queueUpdated', (state) => {
 
     servingRow.innerHTML = '';
     state.counters.forEach(c => {
+        if(!c.isActive) return; // Skip offline counters
+        
         const tNum = c.currentTicket ? formatTicket(c.currentTicket, c.currentCategory) : '----';
         const doc = c.currentDocument !== 'SYSTEM STANDBY' ? c.currentDocument : 'Available';
         
         const el = document.createElement('div');
-        el.className = 'flex flex-col items-center justify-center bg-[#FFF9E2] px-8 py-2 rounded-2xl border-2 border-[#FFD500] shadow-sm min-w-[250px]';
+        el.className = 'flex flex-col items-center justify-center bg-white px-8 py-3 rounded-2xl border-l-8 border-[#FFD500] shadow-md min-w-[280px] transition-all hover:shadow-lg';
         el.innerHTML = `
-            <span class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">COUNTER ${c.id} &bull; <span class="truncate max-w-[150px] inline-block align-bottom">${doc}</span></span>
-            <span class="text-3xl font-black text-gray-900 leading-none">${tNum}</span>
+            <span class="text-[11px] font-black text-gray-500 uppercase tracking-widest mb-1">COUNTER ${c.id} &bull; <span class="truncate max-w-[150px] inline-block align-bottom text-[#071c4d]">${doc}</span></span>
+            <span class="text-5xl font-black text-[#071c4d] leading-none">${tNum}</span>
         `;
         servingRow.appendChild(el);
     });
@@ -83,22 +85,21 @@ socket.on('queueUpdated', (state) => {
     waitingCount.innerText = state.waitingList.length;
 
     if (state.waitingList.length === 0) {
-        waitingListContainer.innerHTML = '<div class="w-full text-center text-gray-400 font-bold py-10 uppercase tracking-wider text-sm">Queue is empty</div>';
+        waitingListContainer.innerHTML = '<div class="w-full h-full flex items-center justify-center text-gray-400 font-bold py-10 uppercase tracking-wider text-sm">Queue is empty</div>';
     } else {
         waitingListContainer.innerHTML = '';
         state.waitingList.forEach((item) => {
-            const badgeColor = item.priority === 'PWD / Senior / Pregnant' ? 'bg-black text-[#FFD500] border-gray-800' : 'bg-[#FFF394] text-black border-[#FFE761]';
+            const badgeColor = item.priority === 'PWD / Senior / Pregnant' ? 'bg-[#071c4d] text-[#FFD500] border-[#071c4d]' : 'bg-gray-100 text-gray-600 border-gray-200';
             
             const el = document.createElement('div');
-            el.className = 'bg-white border-l-8 border-[#FFD500] rounded-xl p-3 shadow-sm flex justify-between items-center';
+            el.className = 'bg-white border-l-4 border-[#071c4d] rounded-xl p-4 shadow-sm flex justify-between items-center transition-all hover:shadow-md hover:border-[#FFD500]';
             el.innerHTML = `
                 <div>
-                    <span class="block text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Ticket</span>
-                    <span class="block text-2xl font-black text-gray-900">${formatTicket(item.ticketNumber, item.category)}</span>
+                    <span class="block text-3xl font-black text-[#071c4d] leading-none mb-1">${formatTicket(item.ticketNumber, item.category)}</span>
+                    <span class="block text-[10px] font-bold text-gray-500 uppercase truncate max-w-[200px]">${item.document}</span>
                 </div>
-                <div class="text-right flex flex-col items-end gap-1 w-2/3">
-                    <span class="block text-[9px] font-black uppercase ${badgeColor} px-2 py-0.5 rounded border">${item.priority}</span>
-                    <span class="block text-[10px] font-bold text-gray-600 bg-gray-50 px-2 py-1 rounded-md border border-gray-200 truncate w-full text-right">${item.document}</span>
+                <div class="text-right flex flex-col items-end justify-center">
+                    <span class="block text-[9px] font-black uppercase ${badgeColor} px-2 py-1 rounded shadow-sm">${item.priority}</span>
                 </div>
             `;
             waitingListContainer.appendChild(el);
