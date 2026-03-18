@@ -236,6 +236,7 @@ function generateAutoTime(position, isOnline = false) {
         }
     }
 
+    // Fixed math: position * 12 mins instead of (position + 1)
     phNow.setUTCMinutes(phNow.getUTCMinutes() + (position * 12));
     let hours = phNow.getUTCHours();
     let mins = phNow.getUTCMinutes();
@@ -404,7 +405,7 @@ io.on('connection', (socket) => {
                 queueState.waitingList.push(finalAppointment);
                 sortQueue();
                 const position = queueState.waitingList.findIndex(t => t.ticketNumber === finalAppointment.ticketNumber);
-                dTime = generateAutoTime(position + 1, true);
+                dTime = generateAutoTime(position, true);
             } else {
                 queueState.appointments.push(finalAppointment);
                 dTime = autoSlot === 'MORNING' ? '8:00 AM' : '1:00 PM';
@@ -469,7 +470,7 @@ io.on('connection', (socket) => {
                     isToday = true;
                     if (!dTime) {
                         const position = queueState.waitingList.length;
-                        dTime = generateAutoTime(position + 1, true);
+                        dTime = generateAutoTime(position, true);
                     }
                     finalAppointment.displayTime = dTime;
                     queueState.waitingList.push(finalAppointment);
@@ -537,7 +538,7 @@ io.on('connection', (socket) => {
             queueState.waitingList.push(newTicket);
             sortQueue();
             const position = queueState.waitingList.findIndex(t => t.ticketNumber === newTicket.ticketNumber);
-            dTime = generateAutoTime(position + 1, true);
+            dTime = generateAutoTime(position, true);
         } else {
             queueState.appointments.push(newTicket);
             dTime = autoSlot === 'MORNING' ? '8:00 AM' : '1:00 PM';
@@ -573,7 +574,7 @@ io.on('connection', (socket) => {
         };
 
         const position = queueState.waitingList.length;
-        newTicket.displayTime = generateAutoTime(position + 1, false);
+        newTicket.displayTime = generateAutoTime(position, false);
         queueState.waitingList.push(newTicket);
         sortQueue();
         saveState();
@@ -671,14 +672,15 @@ io.on('connection', (socket) => {
     });
 });
 
+// Auto-Move & Void Logic - Firing every 5 seconds
 setInterval(() => {
-    if (!useMongo) return;
     const phNow = getPhDateObj();
     const currentAbsolute = phNow.getUTCHours() * 60 + phNow.getUTCMinutes();
 
     let changed = false;
     const today = getTodayDate();
     
+    // 1. Process Auto-Moves
     for (let i = 0; i < queueState.waitingList.length; i++) {
         const ticket = queueState.waitingList[i];
         if (ticket.date !== today) continue;
@@ -728,6 +730,7 @@ setInterval(() => {
         }
     }
 
+    // 2. Process Auto-Voids
     const originalLength = queueState.waitingList.length;
     queueState.waitingList = queueState.waitingList.filter(ticket => {
         if (ticket.date !== today) return true;
@@ -742,7 +745,7 @@ setInterval(() => {
             
             const ticketAbsolute = h * 60 + m;
             
-            if (currentAbsolute > ticketAbsolute + 5) {
+            if (currentAbsolute > ticketAbsolute + 10) { 
                 return false; 
             }
         }
@@ -757,6 +760,6 @@ setInterval(() => {
         saveState();
         io.emit('queueUpdated', queueState);
     }
-}, 60000);
+}, 5000);
 
 server.listen(process.env.PORT || 3000, '0.0.0.0');
