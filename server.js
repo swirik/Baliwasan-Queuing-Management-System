@@ -46,6 +46,10 @@ const upload = multer({ storage: storage });
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'homepage.html'));
+});
+
 app.post('/upload', upload.single('mediaFile'), (req, res) => {
     if (!req.file) {
         return res.status(400).json({ error: 'No file uploaded' });
