@@ -315,25 +315,23 @@
         <div class="absolute top-1/2 -left-4 w-8 h-8 bg-gray-50 rounded-full shadow-inner transform -translate-y-1/2"></div>
         <div class="absolute top-1/2 -right-4 w-8 h-8 bg-gray-50 rounded-full shadow-inner transform -translate-y-1/2"></div>
 
-        <div class="mb-8 border-b-2 border-dashed border-gray-200 pb-8">
+        <div class="mb-6 border-b-2 border-dashed border-gray-200 pb-6">
             <h2 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">Your Ticket Number</h2>
             <div id="my-ticket-number" class="text-6xl md:text-7xl font-black text-[#071c4d] mb-4 drop-shadow-sm leading-none tracking-tighter">---</div>
             <div id="my-time-slot" class="text-[10px] font-black text-[#FFD500] bg-[#071c4d] px-4 py-1.5 rounded-full inline-block tracking-widest uppercase shadow-sm">---</div>
         </div>
         
-        <div id="display-time-container" class="bg-gray-50 border border-gray-200 rounded-2xl p-6 mb-8 shadow-inner">
-            <p class="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-2"><i class="fas fa-clock mr-1"></i> Expected Time</p>
-            <p id="display-time" class="text-3xl font-black text-gray-900">--:--</p>
-        </div>
+        <div id="display-time-container" class="mb-6">
+            </div>
 
-        <p id="afternoon-notice" class="hidden text-xs md:text-sm text-red-600 bg-red-50 p-4 rounded-xl border border-red-200 mb-8 font-black uppercase tracking-wide"><i class="fas fa-exclamation-triangle mr-1"></i> Please come in the afternoon.</p>
+        <p id="afternoon-notice" class="hidden text-xs md:text-sm text-red-600 bg-red-50 p-4 rounded-xl border border-red-200 mb-6 font-black uppercase tracking-wide"><i class="fas fa-exclamation-triangle mr-1"></i> Please come in the afternoon.</p>
 
         <p id="appt-message" class="hidden text-xs md:text-sm text-gray-500 mb-8 font-medium leading-relaxed px-4"><i class="fas fa-save mr-1 text-[#071c4d]"></i> Screenshot or save this ticket. Present it upon arrival on your scheduled date.</p>
         <p id="live-message" class="text-xs md:text-sm text-gray-500 mb-8 font-medium leading-relaxed px-4"><i class="fas fa-mobile-alt mr-1 text-[#071c4d]"></i> Please wait. Monitor the Live Queue screen to track your position.</p>
 
         <div class="flex gap-3 relative z-10">
             <button id="btn-cancel-active-ticket" class="w-[30%] bg-white hover:bg-red-50 text-red-500 font-black py-4 px-2 rounded-xl transition-all uppercase tracking-wider text-[10px] border-2 border-red-100 flex flex-col items-center justify-center gap-1">
-                <i class="fas fa-times text-sm"></i> Cancel
+                <i class="fas fa-times text-sm"></i> Void
             </button>
             <button id="btn-ticket-done" class="w-[70%] bg-[#071c4d] hover:bg-[#0a2a6e] hover:-translate-y-1 text-white font-black py-4 px-4 rounded-xl shadow-xl transition-all uppercase tracking-widest flex items-center justify-center gap-2 text-sm">
                 Finish <i class="fas fa-check-circle text-[#FFD500]"></i>
@@ -364,6 +362,7 @@
         let currentTrackId = null;
         let fpInstance = null;
         let swRegistration = null;
+        let currentQueueState = null;
         
         const phTime = new Date(new Date().getTime() + (8 * 60 * 60 * 1000));
         const localISOTime = phTime.toISOString().split('T')[0];
@@ -423,29 +422,15 @@
                 savedDate: localISOTime, 
                 notified: false,
                 notifiedApproaching: false,
-                notifiedVoided: false
+                notifiedVoided: false,
+                isServing: false,
+                counterId: null
             };
             mySavedTickets.push(ticketData);
             localStorage.setItem('baliwasanTicketsArray', JSON.stringify(mySavedTickets));
         }
 
         function checkSavedTicket() {
-            const oldSaved = localStorage.getItem('baliwasanTicket');
-            if (oldSaved) {
-                try {
-                    const parsed = JSON.parse(oldSaved);
-                    mySavedTickets.push({ 
-                        res: parsed.res, 
-                        savedDate: parsed.savedDate, 
-                        notified: false,
-                        notifiedApproaching: false,
-                        notifiedVoided: false
-                    });
-                    localStorage.setItem('baliwasanTicketsArray', JSON.stringify(mySavedTickets));
-                    localStorage.removeItem('baliwasanTicket');
-                } catch(e) {}
-            }
-
             const saved = localStorage.getItem('baliwasanTicketsArray');
             if (saved) {
                 try {
@@ -473,6 +458,13 @@
                 const dTime = t.res.displayTime || tick.displayTime || 'Please wait';
                 const dateColor = tick.date === localISOTime ? 'text-green-600' : 'text-gray-500';
 
+                let statusUI = t.isServing 
+                    ? `<div class="mt-2"><p class="text-[9px] font-black text-white bg-green-600 px-3 py-2 rounded-lg shadow-md animate-pulse uppercase tracking-widest"><i class="fas fa-walking mr-1"></i> Counter ${t.counterId}</p></div>`
+                    : `<div>
+                           <p class="text-[8px] text-gray-400 font-black uppercase tracking-widest mb-1 opacity-70">Expected</p>
+                           <p class="text-sm font-black text-[#071c4d] bg-gray-100 px-3 py-1.5 rounded-lg border border-gray-200">${dTime}</p>
+                       </div>`;
+
                 const el = document.createElement('div');
                 el.className = 'bg-white border border-gray-200 p-5 rounded-2xl cursor-pointer hover:border-[#071c4d] hover:shadow-lg transition-all flex justify-between items-center group relative overflow-hidden';
                 el.onclick = () => renderTicketResultScreen(t.res, false);
@@ -484,10 +476,7 @@
                         <p class="text-[10px] font-bold mt-2 ${dateColor}"><i class="fas fa-calendar-day mr-1"></i>${tick.date} &nbsp;&bull;&nbsp; ${tick.timeSlot || 'WALK-IN'}</p>
                     </div>
                     <div class="text-right shrink-0 ml-2 flex flex-col items-end justify-between h-full">
-                        <div>
-                            <p class="text-[8px] text-gray-400 font-black uppercase tracking-widest mb-1 opacity-70">Expected</p>
-                            <p class="text-sm font-black text-[#071c4d] bg-gray-100 px-3 py-1.5 rounded-lg border border-gray-200">${dTime}</p>
-                        </div>
+                        ${statusUI}
                         <button onclick="cancelMyTicket(${tick.ticketNumber}, event)" class="mt-3 text-[9px] text-red-500 font-bold uppercase tracking-widest hover:text-white hover:bg-red-500 bg-red-50 px-3 py-1.5 rounded-md transition-colors shadow-sm"><i class="fas fa-trash-alt mr-1"></i> Cancel</button>
                     </div>
                 `;
@@ -569,10 +558,29 @@
             document.getElementById('my-time-slot').innerText = res.ticket.timeSlot || 'WALK-IN';
             
             if (res.isToday) {
-                document.getElementById('display-time').innerText = res.displayTime || res.ticket.displayTime || 'Please wait';
                 document.getElementById('display-time-container').classList.remove('hidden');
                 document.getElementById('live-message').classList.remove('hidden');
                 document.getElementById('appt-message').classList.add('hidden');
+
+                const servingCounter = currentQueueState ? currentQueueState.counters.find(c => c.currentTicket === res.ticket.ticketNumber && c.currentCategory === res.ticket.category) : null;
+                
+                if (servingCounter) {
+                    document.getElementById('display-time-container').innerHTML = `
+                        <div class="bg-green-100 border-2 border-green-500 rounded-2xl p-6 text-center animate-pulse shadow-inner">
+                            <p class="text-xs text-green-700 font-black uppercase tracking-widest mb-1"><i class="fas fa-bullhorn mr-1"></i> It is your turn!</p>
+                            <p class="text-3xl font-black text-green-800">PROCEED TO COUNTER ${servingCounter.id}</p>
+                        </div>
+                    `;
+                    document.getElementById('live-message').classList.add('hidden');
+                } else {
+                    document.getElementById('display-time-container').innerHTML = `
+                        <div class="bg-gray-50 border border-gray-200 rounded-2xl p-6 shadow-inner">
+                            <p class="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-2"><i class="fas fa-clock mr-1"></i> Expected Time</p>
+                            <p id="display-time" class="text-3xl font-black text-gray-900">${res.displayTime || res.ticket.displayTime || '--:--'}</p>
+                        </div>
+                    `;
+                    document.getElementById('live-message').classList.remove('hidden');
+                }
 
                 const phNow = new Date(new Date().getTime() + (8 * 60 * 60 * 1000));
                 const currentHour = phNow.getUTCHours();
@@ -703,6 +711,7 @@
         });
 
         socket.on('queueUpdated', (state) => {
+            currentQueueState = state;
             dynamicServicesContainer.innerHTML = '';
             
             const specialServices = state.services.filter(s => s.category === 'S');
@@ -784,62 +793,67 @@
                     const servingCounter = state.counters.find(c => c.currentTicket === tick.ticketNumber && c.currentCategory === tick.category);
                     const isToday = tick.date === localISOTime;
 
-                    if (isToday && inWaitingList === -1 && !servingCounter) {
-                        needsSave = true;
-                        if (t.notified) {
-                            const formattedTicket = formatTicket(tick.ticketNumber, tick.category);
-                            smsMessage.innerText = `Ticket #${formattedTicket} has been completed. Thank you!`;
-                            smsToast.classList.remove('hidden');
-                            setTimeout(() => { smsToast.classList.remove('-translate-y-[150%]'); smsToast.classList.add('translate-y-0'); }, 50);
-                            setTimeout(() => { smsToast.classList.remove('translate-y-0'); smsToast.classList.add('-translate-y-[150%]'); setTimeout(() => { smsToast.classList.add('hidden'); }, 500); }, 6000);
-                        }
-                        return; 
-                    }
-
-                    if (servingCounter) {
-                        if (!t.notified) {
-                            const formattedTicket = formatTicket(tick.ticketNumber, tick.category);
-                            
-                            if (swRegistration && Notification.permission === 'granted') {
-                                swRegistration.showNotification('It is your turn!', {
-                                    body: `Ticket #${formattedTicket} is now being served at Counter ${servingCounter.id}.`,
-                                    icon: '/resources/logo.png',
-                                    vibrate: [200, 100, 200]
-                                });
-                            }
-
-                            smsMessage.innerText = `Hello! Ticket #${formattedTicket} is now being served at Counter ${servingCounter.id}. Please proceed to the counter.`;
-                            smsToast.classList.remove('hidden');
-                            setTimeout(() => {
-                                smsToast.classList.remove('-translate-y-[150%]');
-                                smsToast.classList.add('translate-y-0');
-                            }, 50);
-                            setTimeout(() => {
-                                smsToast.classList.remove('translate-y-0');
-                                smsToast.classList.add('-translate-y-[150%]');
-                                setTimeout(() => { smsToast.classList.add('hidden'); }, 500);
-                            }, 6000);
-                            t.notified = true;
-                            needsSave = true;
-                        }
-                    } else if (inWaitingList !== -1) {
-                        if (inWaitingList > 0 && inWaitingList <= 3) {
-                            if (!t.notifiedApproaching) {
+                    if (isToday) {
+                        if (servingCounter) {
+                            t.isServing = true;
+                            t.counterId = servingCounter.id;
+                            if (!t.notified) {
                                 const formattedTicket = formatTicket(tick.ticketNumber, tick.category);
                                 if (swRegistration && Notification.permission === 'granted') {
-                                    swRegistration.showNotification('Get Ready!', {
-                                        body: `Ticket #${formattedTicket} is almost up. There are ${inWaitingList} people ahead of you.`,
+                                    swRegistration.showNotification('It is your turn!', {
+                                        body: `Ticket #${formattedTicket} is now being served at Counter ${servingCounter.id}.`,
                                         icon: '/resources/logo.png',
-                                        vibrate: [100, 50, 100]
+                                        vibrate: [200, 100, 200]
                                     });
                                 }
-                                t.notifiedApproaching = true;
+                                smsMessage.innerText = `Hello! Ticket #${formattedTicket} is now being served at Counter ${servingCounter.id}. Please proceed to the counter.`;
+                                smsToast.classList.remove('hidden');
+                                setTimeout(() => { smsToast.classList.remove('-translate-y-[150%]'); smsToast.classList.add('translate-y-0'); }, 50);
+                                setTimeout(() => { smsToast.classList.remove('translate-y-0'); smsToast.classList.add('-translate-y-[150%]'); setTimeout(() => { smsToast.classList.add('hidden'); }, 500); }, 6000);
+                                t.notified = true;
                                 needsSave = true;
                             }
+                            activeTickets.push(t);
+                        } else if (inWaitingList !== -1) {
+                            t.isServing = false;
+                            if (inWaitingList > 0 && inWaitingList <= 3) {
+                                if (!t.notifiedApproaching) {
+                                    const formattedTicket = formatTicket(tick.ticketNumber, tick.category);
+                                    if (swRegistration && Notification.permission === 'granted') {
+                                        swRegistration.showNotification('Get Ready!', {
+                                            body: `Ticket #${formattedTicket} is almost up. There are ${inWaitingList} people ahead of you.`,
+                                            icon: '/resources/logo.png',
+                                            vibrate: [100, 50, 100]
+                                        });
+                                    }
+                                    t.notifiedApproaching = true;
+                                    needsSave = true;
+                                }
+                            }
+                            activeTickets.push(t);
+                        } else {
+                            needsSave = true;
+                            if (t.notified) {
+                                const formattedTicket = formatTicket(tick.ticketNumber, tick.category);
+                                smsMessage.innerText = `Ticket #${formattedTicket} has been completed. Thank you!`;
+                                smsToast.classList.remove('hidden');
+                                setTimeout(() => { smsToast.classList.remove('-translate-y-[150%]'); smsToast.classList.add('translate-y-0'); }, 50);
+                                setTimeout(() => { smsToast.classList.remove('translate-y-0'); smsToast.classList.add('-translate-y-[150%]'); setTimeout(() => { smsToast.classList.add('hidden'); }, 500); }, 6000);
+                            } else if (!t.notifiedVoided) {
+                                const formattedTicket = formatTicket(tick.ticketNumber, tick.category);
+                                if (swRegistration && Notification.permission === 'granted') {
+                                    swRegistration.showNotification('Ticket Voided', {
+                                        body: `Ticket #${formattedTicket} was voided because you missed your expected time.`,
+                                        icon: '/resources/logo.png',
+                                        vibrate: [500, 200, 500]
+                                    });
+                                }
+                                t.notifiedVoided = true;
+                            }
                         }
+                    } else {
+                        activeTickets.push(t);
                     }
-
-                    activeTickets.push(t);
                 });
 
                 if (mySavedTickets.length !== activeTickets.length || needsSave) {
@@ -855,6 +869,9 @@
                     } else {
                         if (!document.getElementById('my-tickets-screen').classList.contains('hidden')) {
                             showMyTicketsDashboard();
+                        } else if (!document.getElementById('ticket-result').classList.contains('hidden')) {
+                            const activeRes = mySavedTickets.find(t => t.res.ticket.ticketNumber === document.getElementById('my-ticket-number').innerText.split('-')[1] * 1);
+                            if(activeRes) renderTicketResultScreen(activeRes.res, false);
                         }
                     }
                 }
