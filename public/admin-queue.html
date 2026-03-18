@@ -2,213 +2,281 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Queue Admin - Barangay Baliwasan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="output.css" rel="stylesheet">
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .hover-scale { transition: transform 0.2s ease; }
+        .hover-scale:hover { transform: scale(1.02); }
+    </style>
 </head>
-<body class="bg-[#FFF9E2] h-screen flex flex-col items-center justify-center font-sans text-gray-900 p-6 overflow-hidden">
-    <div class="bg-white p-6 rounded-3xl shadow-2xl w-full max-w-[95rem] flex gap-6 border-t-8 border-[#FFD500] h-full max-h-[95vh]">
+
+<body class="bg-gray-50 font-sans text-gray-900">
+    
+    <header class="bg-white border-b-2 border-yellow-400 flex flex-col w-full fixed top-0 z-50 shadow-md">
+        <div class="flex justify-between items-center px-6 py-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-cover bg-center border-2 border-yellow-400 shadow-sm" style="background-image: url('resources/logo.png');">
+                    </div>
+                    <h1 class="text-xl md:text-2xl font-bold text-black tracking-wide uppercase">ADMIN</h1>
+                    <p class=" text-xs text-yellow-500">ONE BALIWASAN</p>
+                </div>
+                <nav class="flex gap-2 flex-wrap justify-end">
+                    <a href="admin.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">DASHBOARD</a>
+                    <a href="homepage-admin.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">HOMEPAGE</a>
+                    <a href="citizen-profiling.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">CITIZEN PROFILING</a>
+                    <a href="news&update-admin.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">NEWS & UPDATES</a>
+                    <a href="garbage-admin.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">GARBAGE SCHEDULE</a>
+                    <a href="admin-queue.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase ring-2 ring-offset-2 ring-yellow-400 transition-all hover:shadow-md">QUEUING SYSTEM</a>
+                </nav>
+        </div>
         
-        <div class="w-1/3 flex flex-col gap-6 overflow-y-auto pr-2 custom-scrollbar">
-            <h1 class="text-2xl font-black uppercase tracking-wider shrink-0">ADMIN SIDE</h1>
-            
-            <div class="bg-gray-50 p-5 rounded-2xl border border-gray-100 shrink-0">
-                <h2 class="text-sm font-bold text-gray-400 mb-3 uppercase tracking-widest">1. CALENDAR & BOOKING RULES</h2>
-                <div class="flex flex-col gap-4">
-                    <div class="flex justify-between items-center p-3 bg-red-50 rounded-xl border border-red-200 shadow-sm">
-                        <span class="text-xs font-black text-red-700 uppercase tracking-wide">Enable Online Booking</span>
-                        <button id="toggle-global-booking" class="shrink-0 w-10 h-5 rounded-full bg-gray-400 transition-colors relative">
-                            <div id="knob-global-booking" class="w-4 h-4 bg-white rounded-full absolute top-[2px] left-0.5 transition-all shadow-sm"></div>
-                        </button>
-                    </div>
-
-                    <div class="flex justify-between items-center p-3 bg-white rounded-xl border border-gray-200 shadow-sm">
-                        <span class="text-xs font-bold text-gray-700 uppercase tracking-wide">Auto-Approve Bookings</span>
-                        <button id="toggle-auto-approve" class="shrink-0 w-10 h-5 rounded-full bg-gray-400 transition-colors relative">
-                            <div id="knob-auto-approve" class="w-4 h-4 bg-white rounded-full absolute top-[2px] left-0.5 transition-all shadow-sm"></div>
-                        </button>
-                    </div>
-
-                    <div class="flex gap-2 items-end">
-                        <div class="flex-1">
-                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Max Daily Capacity</label>
-                            <input type="number" id="admin-capacity" class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] outline-none bg-white text-xs font-bold">
-                        </div>
-                        <button id="btn-update-capacity" class="bg-black hover:bg-gray-800 text-white font-black py-2 px-4 rounded-xl shadow-md transition-all uppercase tracking-widest text-[10px] h-[36px]">SAVE</button>
-                    </div>
-
-                    <div class="border-t border-gray-200 pt-3">
-                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Block Specific Date</label>
-                        <div class="flex gap-2">
-                            <input type="date" id="admin-block-date" class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] outline-none bg-white text-xs font-bold">
-                            <button id="btn-add-block" class="bg-red-500 hover:bg-red-600 text-white font-black py-2 px-4 rounded-xl shadow-md transition-all uppercase tracking-widest text-[10px]">BLOCK</button>
-                        </div>
-                    </div>
-
-                    <div class="border-t border-gray-200 pt-3">
-                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Service Allowed Days Matrix</label>
-                        <select id="matrix-service-select" class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] outline-none bg-white text-xs font-bold mb-2"></select>
-                        <div class="grid grid-cols-7 gap-1 text-center" id="matrix-days-container"></div>
-                        <button id="btn-save-matrix" class="w-full mt-2 bg-black hover:bg-gray-800 text-[#FFD500] font-black py-2 rounded-xl shadow-md transition-all uppercase tracking-widest text-[10px]">SAVE SERVICE RULES</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-gray-50 p-5 rounded-2xl border border-gray-100 shrink-0">
-                <h2 class="text-sm font-bold text-gray-400 mb-3 uppercase tracking-widest">2. ISSUE WALK-IN TICKET</h2>
-                <div class="flex flex-col gap-2">
-                    <select id="admin-priority" class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] outline-none bg-white font-bold text-xs">
-                        <option value="REGULAR">Regular</option>
-                        <option value="PWD / Senior / Pregnant">PWD / Senior / Pregnant</option>
-                    </select>
-
-                    <select id="admin-document" class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] outline-none bg-white font-bold text-xs">
-                    </select>
-
-                    <button id="btn-gen-walkin" class="bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-3 px-4 rounded-xl shadow-md transition-all uppercase tracking-widest mt-1 text-sm">
-                        + ADD WALK-IN
-                    </button>
-                </div>
-            </div>
-
-            <div class="bg-gray-50 p-5 rounded-2xl border border-gray-100 shrink-0">
-                <h2 class="text-sm font-bold text-gray-400 mb-3 uppercase tracking-widest flex justify-between items-center">
-                    <span>3. MANAGE SERVICES</span>
-                    <span class="text-[9px] bg-black text-[#FFD500] px-2 py-1 rounded">LIVE</span>
-                </h2>
-                <div class="flex flex-col gap-2 max-h-40 overflow-y-auto pr-2 custom-scrollbar mb-4" id="service-toggles"></div>
-                
-                <div class="border-t border-gray-200 pt-4 mt-2">
-                    <h3 class="text-[10px] font-bold text-gray-400 mb-2 uppercase tracking-widest">Add Custom Service</h3>
-                    <div class="flex flex-col gap-2">
-                        <input type="text" id="new-service-name" placeholder="Service Name (e.g. Dog Vaccination)" class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] outline-none bg-white text-xs">
-                        <select id="new-service-cat" class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] outline-none bg-white font-bold text-xs">
-                            <option value="C">Certification / Clearance (Prefix: C)</option>
-                            <option value="P">Permit / License (Prefix: P)</option>
-                            <option value="I">ID / Registration (Prefix: I)</option>
-                            <option value="S">Special Event / Ayuda (Prefix: S)</option>
-                            <option value="M">Miscellaneous (Prefix: M)</option>
-                        </select>
-                        <button id="btn-add-service" class="bg-black hover:bg-gray-800 text-white font-black py-2 px-4 rounded-xl shadow-md transition-all uppercase tracking-widest text-[10px]">
-                            CREATE NEW SERVICE
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-gray-50 p-5 rounded-2xl border border-gray-100 shrink-0">
-                <h2 class="text-sm font-bold text-gray-400 mb-3 uppercase tracking-widest">4. DISPLAY MEDIA</h2>
-                <div class="flex flex-col gap-2">
-                    <select id="media-type" class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] outline-none bg-white font-bold text-xs">
-                        <option value="none">None (Blank)</option>
-                        <option value="upload">Upload File (MP4/PNG/JPG)</option>
-                        <option value="youtube">YouTube Embed URL</option>
-                    </select>
-
-                    <input type="text" id="media-url" placeholder="Paste URL here..." class="hidden w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] outline-none bg-white text-xs">
-                    
-                    <input type="file" id="media-file" accept="video/mp4, video/webm, image/jpeg, image/png" class="hidden w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] outline-none bg-white text-xs bg-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[#FFD500] file:text-black hover:file:bg-[#FFDC2E]">
-
-                    <button id="btn-push-media" class="bg-black hover:bg-gray-800 text-[#FFD500] font-black py-3 px-4 rounded-xl shadow-md transition-all uppercase tracking-widest mt-1 text-sm">
-                        PUSH TO SCREEN
-                    </button>
-                </div>
-            </div>
-
-            <div class="bg-gray-50 p-5 rounded-2xl border border-gray-100 shrink-0">
-                <h2 class="text-sm font-bold text-gray-400 mb-3 uppercase tracking-widest">5. ANNOUNCEMENT TICKER</h2>
-                <div class="flex flex-col gap-2">
-                    <input type="text" id="ticker-input" placeholder="Enter scrolling text..." class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] outline-none bg-white text-xs">
-                    <button id="btn-update-ticker" class="bg-black hover:bg-gray-800 text-[#FFD500] font-black py-3 px-4 rounded-xl shadow-md transition-all uppercase tracking-widest mt-1 text-sm">
-                        UPDATE TICKER
-                    </button>
-                </div>
-            </div>
-
-            <div class="bg-gray-50 p-5 rounded-2xl border border-gray-100 shrink-0">
-                <h2 class="text-sm font-bold text-gray-400 mb-3 uppercase tracking-widest">6. SYSTEM DATA & ANALYTICS</h2>
-                <div class="flex flex-col gap-3">
-                    <button id="btn-open-analytics" class="bg-black hover:bg-gray-800 text-[#FFD500] font-black py-3 px-4 rounded-xl shadow-md transition-all uppercase tracking-widest text-sm flex justify-between items-center">
-                        <span>OPEN DASHBOARD</span>
-                        <span>&nearr;</span>
-                    </button>
-                    <button id="btn-export-data" class="bg-white hover:bg-gray-50 text-gray-600 border-2 border-gray-200 font-bold py-3 px-4 rounded-xl transition-all uppercase tracking-widest text-xs">
-                        DOWNLOAD CSV REPORT
-                    </button>
-                </div>
-            </div>
-            
-            <button id="btn-reset" class="text-black hover:bg-[#FFD500] font-bold py-2 px-4 rounded-xl transition-all w-full uppercase text-xs tracking-widest mt-auto border-2 border-transparent hover:border-black shrink-0">
-                RESET SYSTEM
-            </button>
-        </div>
-
-        <div class="w-1/3 flex flex-col gap-4">
-            <div class="bg-[#FFF9E2] p-6 rounded-3xl border-2 border-[#FFF394] flex flex-col h-1/2 relative shadow-sm">
-                <h2 class="text-xs font-bold text-gray-500 mb-1 uppercase tracking-widest">COUNTER 1</h2>
-                <div id="c1-ticket" class="text-7xl font-black text-gray-900 mb-1">----</div>
-                <div id="c1-name" class="text-lg font-bold text-gray-700 mb-1 truncate">Name: ---</div>
-                <div id="c1-doc" class="text-xs font-bold text-[#FFD500] bg-black px-3 py-1 rounded-md inline-block mb-4 self-start">SYSTEM STANDBY</div>
-
-                <button id="btn-call-1" class="w-full bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-5 px-4 rounded-2xl shadow-lg text-xl transition-all mt-auto uppercase tracking-tighter">
-                    CALL NEXT (C1)
-                </button>
-            </div>
-
-            <div class="bg-[#FFF9E2] p-6 rounded-3xl border-2 border-[#FFF394] flex flex-col h-1/2 relative shadow-sm">
-                <h2 class="text-xs font-bold text-gray-500 mb-1 uppercase tracking-widest">COUNTER 2</h2>
-                <div id="c2-ticket" class="text-7xl font-black text-gray-900 mb-1">----</div>
-                <div id="c2-name" class="text-lg font-bold text-gray-700 mb-1 truncate">Name: ---</div>
-                <div id="c2-doc" class="text-xs font-bold text-[#FFD500] bg-black px-3 py-1 rounded-md inline-block mb-4 self-start">SYSTEM STANDBY</div>
-
-                <button id="btn-call-2" class="w-full bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-5 px-4 rounded-2xl shadow-lg text-xl transition-all mt-auto uppercase tracking-tighter">
-                    CALL NEXT (C2)
-                </button>
+        <div class="bg-yellow-100 py-1.5 flex flex-col sm:flex-row justify-between items-center px-4 md:px-8 border-t border-yellow-300">
+            <div id="portal-clock" class="text-xs font-medium text-yellow-800 mb-1 sm:mb-0">Loading Date & Time...</div>
+            <div class="flex gap-2 w-full sm:w-auto">
+                <input type="text" placeholder="Search..." class="flex-1 sm:flex-none p-1 px-3 rounded text-xs border border-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:border-transparent">
+                <button class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-1 px-4 rounded text-xs transition-all hover:shadow-md">Search</button>
             </div>
         </div>
 
-        <div class="w-1/3 flex flex-col gap-4 h-full">
-            <div class="flex flex-col bg-gray-50 rounded-3xl border border-gray-100 overflow-hidden h-1/3">
-                <div class="p-3 bg-gray-100 border-b border-gray-200 flex justify-between items-center shrink-0">
-                    <h2 class="text-xs font-bold text-gray-600 uppercase tracking-widest">LIVE QUEUE</h2>
-                    <span id="admin-waiting-count" class="bg-black text-[#FFD500] px-3 py-1 rounded-lg font-black text-xs shadow-sm">0</span>
+        <div class="bg-[#0a2a6e] px-6 py-2 flex flex-wrap gap-6 text-white" id="header-stats">
+            <div class="flex items-center gap-2">
+                <span>Total Live: <strong id="header-waiting-count">0</strong></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span>Pending Approvals: <strong id="header-pending-count">0</strong></span>
+            </div>
+        </div>
+    </header>
+
+    <main id="admin" class="pt-[140px] mt-12 pb-10 px-6 md:px-10 bg-[#1a3d63] min-h-screen">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden hover-scale border border-gray-200 flex flex-col">
+                <div class="bg-gradient-to-br from-yellow-500 to-yellow-400 p-4 text-black flex justify-between items-center">
+                    <h3 class="text-xl font-black uppercase tracking-widest text-[#071c4d]">Counter 1</h3>
+                    <span class="text-sm font-bold bg-white/50 px-3 py-1 rounded-full"><i class="fas fa-desktop mr-1"></i> Active</span>
                 </div>
-                <div id="admin-waiting-list" class="flex-1 overflow-y-auto p-3 space-y-2 custom-scrollbar">
+                <div class="p-8 flex flex-col items-center text-center bg-gray-50 flex-1">
+                    <div id="c1-ticket" class="text-6xl md:text-7xl font-black text-gray-900 mb-2 drop-shadow-sm">----</div>
+                    <div id="c1-name" class="text-lg font-bold text-gray-600 mb-3 truncate w-full">Name: ---</div>
+                    <div id="c1-doc" class="text-xs font-bold text-yellow-400 bg-[#071c4d] px-4 py-2 rounded-lg mb-8 uppercase tracking-widest shadow-inner">SYSTEM STANDBY</div>
+                    <button id="btn-call-1" class="w-full bg-green-600 hover:bg-green-700 text-white font-black py-5 px-4 rounded-xl shadow-lg transition-all text-xl md:text-2xl uppercase tracking-wider flex items-center justify-center gap-3 mt-auto">
+                        <span>CALL NEXT</span>
+                        <i class="fas fa-bullhorn"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden hover-scale border border-gray-200 flex flex-col">
+                <div class="bg-gradient-to-br from-yellow-500 to-yellow-400 p-4 text-black flex justify-between items-center">
+                    <h3 class="text-xl font-black uppercase tracking-widest text-[#071c4d]">Counter 2</h3>
+                    <span class="text-sm font-bold bg-white/50 px-3 py-1 rounded-full"><i class="fas fa-desktop mr-1"></i> Active</span>
+                </div>
+                <div class="p-8 flex flex-col items-center text-center bg-gray-50 flex-1">
+                    <div id="c2-ticket" class="text-6xl md:text-7xl font-black text-gray-900 mb-2 drop-shadow-sm">----</div>
+                    <div id="c2-name" class="text-lg font-bold text-gray-600 mb-3 truncate w-full">Name: ---</div>
+                    <div id="c2-doc" class="text-xs font-bold text-yellow-400 bg-[#071c4d] px-4 py-2 rounded-lg mb-8 uppercase tracking-widest shadow-inner">SYSTEM STANDBY</div>
+                    <button id="btn-call-2" class="w-full bg-green-600 hover:bg-green-700 text-white font-black py-5 px-4 rounded-xl shadow-lg transition-all text-xl md:text-2xl uppercase tracking-wider flex items-center justify-center gap-3 mt-auto">
+                        <span>CALL NEXT</span>
+                        <i class="fas fa-bullhorn"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col h-[500px]">
+                <div class="bg-gradient-to-br from-yellow-500 to-yellow-300 p-4 flex justify-between items-center text-black">
+                    <h3 class="text-lg font-bold uppercase tracking-widest"><i class="fas fa-users mr-2"></i>Live Queue</h3>
+                    <span id="admin-waiting-count" class="bg-black text-[#FFD500] px-3 py-1 rounded-full text-sm font-bold shadow">0</span>
+                </div>
+                <div id="admin-waiting-list" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar bg-gray-50/50">
                     <div class="text-center py-10 text-gray-400 font-medium uppercase text-xs tracking-widest">No residents in queue</div>
                 </div>
             </div>
 
-            <div class="flex flex-col bg-gray-50 rounded-3xl border border-gray-100 overflow-hidden h-1/3">
-                <div class="p-3 bg-gray-100 border-b border-gray-200 flex justify-between items-center shrink-0">
-                    <h2 class="text-xs font-bold text-gray-600 uppercase tracking-widest">PENDING APPROVALS</h2>
-                    <span id="admin-pending-count" class="bg-red-500 text-white px-3 py-1 rounded-lg font-black text-xs shadow-sm">0</span>
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col h-[500px]">
+                <div class="bg-gradient-to-br from-yellow-500 to-yellow-300 p-4 flex justify-between items-center text-black">
+                    <h3 class="text-lg font-bold uppercase tracking-widest"><i class="fas fa-clock mr-2"></i>Pending</h3>
+                    <span id="admin-pending-count" class="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-bold shadow">0</span>
                 </div>
-                <div id="admin-pending-list" class="flex-1 overflow-y-auto p-3 space-y-2 custom-scrollbar">
+                <div id="admin-pending-list" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar bg-gray-50/50">
                     <div class="text-center py-10 text-gray-400 font-medium uppercase text-xs tracking-widest">No pending requests</div>
                 </div>
             </div>
 
-            <div class="flex flex-col bg-gray-50 rounded-3xl border border-gray-100 overflow-hidden h-1/3">
-                <div class="p-3 bg-gray-100 border-b border-gray-200 flex justify-between items-center shrink-0">
-                    <h2 class="text-xs font-bold text-gray-600 uppercase tracking-widest">UPCOMING APPOINTMENTS</h2>
-                    <span id="admin-appointment-count" class="bg-gray-300 text-gray-800 px-3 py-1 rounded-lg font-black text-xs shadow-sm">0</span>
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col h-[500px]">
+                <div class="bg-gradient-to-br from-yellow-500 to-yellow-300 p-4 flex justify-between items-center text-black">
+                    <h3 class="text-lg font-bold uppercase tracking-widest"><i class="fas fa-calendar-check mr-2"></i>Appointments</h3>
+                    <span id="admin-appointment-count" class="bg-[#071c4d] text-white px-3 py-1 rounded-full text-sm font-bold shadow">0</span>
                 </div>
-                <div id="admin-appointment-list" class="flex-1 overflow-y-auto p-3 space-y-2 custom-scrollbar">
+                <div id="admin-appointment-list" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar bg-gray-50/50">
                     <div class="text-center py-10 text-gray-400 font-medium uppercase text-xs tracking-widest">No future appointments</div>
                 </div>
             </div>
         </div>
 
-    </div>
+        <h2 class="text-2xl font-black uppercase tracking-wider text-white mb-6 border-b border-white/20 pb-2"><i class="fas fa-cogs mr-2"></i>System Management</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+            
+            <div class="bg-white p-5 rounded-2xl shadow-xl flex flex-col gap-4">
+                <h3 class="text-sm font-bold text-[#071c4d] uppercase tracking-widest border-b pb-2">Actions & Services</h3>
+                
+                <div class="bg-yellow-50 p-3 rounded-xl border border-yellow-200">
+                    <h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Issue Walk-in Ticket</h4>
+                    <select id="admin-priority" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-yellow-400 outline-none text-xs font-bold mb-2">
+                        <option value="REGULAR">Regular</option>
+                        <option value="PWD / Senior / Pregnant">PWD / Senior / Pregnant</option>
+                    </select>
+                    <select id="admin-document" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-yellow-400 outline-none text-xs font-bold mb-2"></select>
+                    <button id="btn-gen-walkin" class="w-full bg-[#071c4d] hover:bg-[#0a2a6e] text-white font-bold py-2 rounded-lg transition-all text-xs uppercase tracking-wider shadow-md">
+                        + Add Walk-in
+                    </button>
+                </div>
 
-    <style>
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #E5E7EB; border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #D1D5DB; }
-    </style>
+                <div class="flex flex-col gap-2">
+                    <h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-2 flex justify-between">
+                        <span>Toggle Services</span> <span class="bg-green-100 text-green-700 px-1 rounded">LIVE</span>
+                    </h4>
+                    <div id="service-toggles" class="max-h-28 overflow-y-auto custom-scrollbar pr-1 flex flex-col gap-1 border border-gray-100 rounded p-1"></div>
+                    
+                    <div class="mt-2 border-t pt-2">
+                        <input type="text" id="new-service-name" placeholder="New Service Name" class="w-full px-3 py-1.5 rounded-lg border border-gray-300 text-xs mb-1">
+                        <select id="new-service-cat" class="w-full px-3 py-1.5 rounded-lg border border-gray-300 text-xs mb-2">
+                            <option value="C">Clearance (C)</option>
+                            <option value="P">Permit (P)</option>
+                            <option value="I">ID (I)</option>
+                            <option value="S">Special (S)</option>
+                        </select>
+                        <button id="btn-add-service" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-1.5 rounded-lg transition-all text-xs uppercase shadow-sm">Add Service</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl shadow-xl flex flex-col gap-4">
+                <h3 class="text-sm font-bold text-[#071c4d] uppercase tracking-widest border-b pb-2">Booking Rules</h3>
+                
+                <div class="flex justify-between items-center p-2 hover:bg-gray-50 rounded">
+                    <span class="text-xs font-bold text-gray-700 uppercase">Enable Booking</span>
+                    <button id="toggle-global-booking" class="shrink-0 w-10 h-5 rounded-full bg-gray-400 transition-colors relative shadow-inner">
+                        <div id="knob-global-booking" class="w-4 h-4 bg-white rounded-full absolute top-[2px] left-0.5 transition-all shadow-sm"></div>
+                    </button>
+                </div>
+
+                <div class="flex justify-between items-center p-2 hover:bg-gray-50 rounded">
+                    <span class="text-xs font-bold text-gray-700 uppercase">Auto-Approve</span>
+                    <button id="toggle-auto-approve" class="shrink-0 w-10 h-5 rounded-full bg-gray-400 transition-colors relative shadow-inner">
+                        <div id="knob-auto-approve" class="w-4 h-4 bg-white rounded-full absolute top-[2px] left-0.5 transition-all shadow-sm"></div>
+                    </button>
+                </div>
+
+                <div class="flex gap-2 items-end">
+                    <div class="flex-1">
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Max Daily Capacity</label>
+                        <input type="number" id="admin-capacity" class="w-full px-3 py-1.5 rounded-lg border border-gray-300 text-xs font-bold">
+                    </div>
+                    <button id="btn-update-capacity" class="bg-gray-800 hover:bg-black text-white font-bold py-1.5 px-3 rounded-lg text-[10px] uppercase">Save</button>
+                </div>
+
+                <div class="border-t pt-2">
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Block Specific Date</label>
+                    <div class="flex gap-2">
+                        <input type="date" id="admin-block-date" class="w-full px-3 py-1.5 rounded-lg border border-gray-300 text-xs font-bold">
+                        <button id="btn-add-block" class="bg-red-600 hover:bg-red-700 text-white font-bold py-1.5 px-3 rounded-lg text-[10px] uppercase">Block</button>
+                    </div>
+                </div>
+
+                <div class="border-t pt-2">
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Service Allowed Days</label>
+                    <select id="matrix-service-select" class="w-full px-3 py-1.5 rounded-lg border border-gray-300 text-[10px] font-bold mb-2"></select>
+                    <div class="grid grid-cols-7 gap-1 text-center" id="matrix-days-container"></div>
+                    <button id="btn-save-matrix" class="w-full mt-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-1.5 rounded-lg text-[10px] uppercase">Save Matrix</button>
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl shadow-xl flex flex-col gap-4">
+                <h3 class="text-sm font-bold text-[#071c4d] uppercase tracking-widest border-b pb-2">Screen Displays</h3>
+                
+                <div>
+                    <h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Monitor Media Content</h4>
+                    <select id="media-type" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs font-bold mb-2">
+                        <option value="none">None (Blank)</option>
+                        <option value="upload">Upload File (MP4/PNG/JPG)</option>
+                        <option value="youtube">YouTube Embed URL</option>
+                    </select>
+                    <input type="text" id="media-url" placeholder="Paste URL here..." class="hidden w-full px-3 py-2 rounded-lg border border-gray-300 text-xs mb-2">
+                    <input type="file" id="media-file" accept="video/mp4, video/webm, image/jpeg, image/png" class="hidden w-full text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-yellow-400 file:text-[#071c4d] hover:file:bg-yellow-500 mb-2">
+                    <button id="btn-push-media" class="w-full bg-[#071c4d] hover:bg-[#0a2a6e] text-white font-bold py-2 rounded-lg transition-all text-xs uppercase tracking-wider shadow-md">
+                        Push to Screen
+                    </button>
+                </div>
+
+                <div class="border-t pt-4">
+                    <h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Scrolling Ticker Text</h4>
+                    <input type="text" id="ticker-input" placeholder="Enter scrolling text..." class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs mb-2">
+                    <button id="btn-update-ticker" class="w-full bg-gray-800 hover:bg-black text-white font-bold py-2 rounded-lg transition-all text-xs uppercase tracking-wider shadow-md">
+                        Update Ticker
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl shadow-xl flex flex-col gap-4">
+                <h3 class="text-sm font-bold text-[#071c4d] uppercase tracking-widest border-b pb-2">Quick Links & Reset</h3>
+                
+                <div class="flex flex-col gap-3 mt-2">
+                    <button id="btn-open-monitor" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl shadow-md transition-all text-sm flex justify-between items-center">
+                        <div class="flex items-center gap-2"><i class="fas fa-tv"></i> Queue Monitor</div>
+                        <i class="fas fa-external-link-alt text-xs opacity-70"></i>
+                    </button>
+                    <button id="btn-open-analytics" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-xl shadow-md transition-all text-sm flex justify-between items-center">
+                        <div class="flex items-center gap-2"><i class="fas fa-chart-pie"></i> Analytics Dashboard</div>
+                        <i class="fas fa-external-link-alt text-xs opacity-70"></i>
+                    </button>
+                    <button id="btn-export-data" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-xl shadow-md transition-all text-sm flex justify-between items-center">
+                        <div class="flex items-center gap-2"><i class="fas fa-download"></i> Download CSV Logs</div>
+                    </button>
+                </div>
+
+                <div class="mt-auto border-t border-red-100 pt-4">
+                    <button id="btn-reset" class="w-full bg-red-50 hover:bg-red-600 text-red-600 hover:text-white font-bold py-3 rounded-xl transition-all text-xs uppercase tracking-widest border border-red-200 hover:border-red-600 shadow-sm flex items-center justify-center gap-2">
+                        <i class="fas fa-exclamation-triangle"></i> Factory Reset Queue
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div class="bg-[#0f2a4a] flex flex-col md:flex-row justify-between items-center text-white/70 text-sm py-4 px-6 md:px-10">
+        <p>© 2026 Barangay Baliwasan. All Rights Reserved</p>
+        <div class="flex gap-4 md:gap-6 mt-3 md:mt-0">
+            <a href="#" class="hover:text-yellow-400 transition-colors">Privacy Policy</a>
+            <a href="#" class="hover:text-yellow-400 transition-colors">Terms & Conditions</a>
+            <a href="#" class="hover:text-yellow-400 transition-colors">Sitemap</a>
+        </div>
+    </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
+        // HEADER CLOCK
+        function updatePortalClock() {
+            const now = new Date();
+            const options = { month: 'long', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+            const clockElement = document.getElementById('portal-clock');
+            if (clockElement) { clockElement.innerText = now.toLocaleString('en-US', options); }
+        }
+        setInterval(updatePortalClock, 1000);
+        updatePortalClock();
+
+        // QUEUE LOGIC
         const socket = io();
         let currentAutoApproveState = false;
         let globalBookingEnabled = true;
@@ -269,6 +337,14 @@
                 document.getElementById('ticker-input').value = '';
             }
         });
+        
+        document.getElementById('btn-open-monitor').addEventListener('click', () => {
+            window.open('queue-monitor.html', '_blank');
+        });
+
+        socket.on('ticketError', (msg) => {
+            alert(msg);
+        });
 
         pushBtn.addEventListener('click', async () => {
             const type = mediaTypeSelect.value;
@@ -299,7 +375,7 @@
                 } catch (error) {
                     alert('Error uploading file: ' + error.message);
                 } finally {
-                    pushBtn.innerText = 'PUSH TO SCREEN';
+                    pushBtn.innerText = 'Push to Screen';
                     pushBtn.classList.remove('opacity-50', 'pointer-events-none');
                 }
             }
@@ -417,6 +493,7 @@
 
             const pendingList = document.getElementById('admin-pending-list');
             document.getElementById('admin-pending-count').innerText = engineState.pendingRequests.length;
+            document.getElementById('header-pending-count').innerText = engineState.pendingRequests.length;
             pendingList.innerHTML = '';
 
             if (engineState.pendingRequests.length === 0) {
@@ -440,7 +517,7 @@
                                 <option value="MORNING">Morning</option>
                                 <option value="AFTERNOON">Afternoon</option>
                             </select>
-                            <input type="time" id="time-${req.id}" class="text-[10px] border border-gray-200 rounded p-1 w-20 font-bold" title="Leave blank for Auto">
+                            <input type="time" id="time-${req.id}" class="text-[10px] border border-gray-200 rounded p-1 w-16 font-bold" title="Leave blank for Auto">
                             <button class="flex-1 bg-red-100 hover:bg-red-200 text-red-700 text-[10px] font-black py-1.5 rounded uppercase transition-colors" onclick="rejectRequest('${req.id}')">Reject</button>
                             <button class="flex-1 bg-green-500 hover:bg-green-600 text-white text-[10px] font-black py-1.5 rounded uppercase transition-colors" onclick="approveRequest('${req.id}')">Approve</button>
                         </div>
@@ -455,7 +532,7 @@
             const dateColor = isLive ? 'text-green-600' : 'text-gray-500';
             
             const el = document.createElement('div');
-            el.className = 'bg-white p-3 rounded-2xl border border-gray-200 shadow-sm flex flex-col gap-2';
+            el.className = 'bg-white p-3 rounded-xl border border-gray-200 shadow-sm flex flex-col gap-2 hover:border-[#FFD500] transition-colors';
             el.innerHTML = `
                 <div class="flex justify-between items-start">
                     <div>
@@ -464,7 +541,7 @@
                         <div class="text-[10px] text-gray-400 font-medium">${item.contact}</div>
                         <div class="text-[10px] font-bold mt-1 ${dateColor}">${item.date} ${item.timeSlot && !isLive ? '· ' + item.timeSlot : ''} ${item.displayTime ? '· ' + item.displayTime : ''}</div>
                     </div>
-                    <div class="text-[9px] font-black uppercase ${badgeColor} px-2 py-1 rounded-md border tracking-tighter">
+                    <div class="text-[9px] font-black uppercase ${badgeColor} px-2 py-1 rounded-md border tracking-tighter text-center max-w-[80px]">
                         ${item.priority}
                     </div>
                 </div>
@@ -488,6 +565,7 @@
             document.getElementById('c2-doc').innerText = c2.currentDocument;
             
             document.getElementById('admin-waiting-count').innerText = state.waitingList.length;
+            document.getElementById('header-waiting-count').innerText = state.waitingList.length;
             document.getElementById('ticker-input').placeholder = state.tickerText;
             
             const docSelect = document.getElementById('admin-document');
@@ -520,16 +598,16 @@
             toggleContainer.innerHTML = '';
             state.services.forEach(service => {
                 const isOff = state.disabledServices.includes(service.name);
-                const colorClass = isOff ? 'bg-black' : 'bg-[#FFD500] border-2 border-black';
-                const textClass = isOff ? 'text-gray-400 line-through' : 'text-gray-900';
-                const knobClass = isOff ? 'bg-gray-600 left-0.5' : 'bg-black left-4';
+                const colorClass = isOff ? 'bg-gray-300' : 'bg-green-500';
+                const textClass = isOff ? 'text-gray-400 line-through' : 'text-gray-700';
+                const knobClass = isOff ? 'bg-white left-0.5' : 'bg-white left-4';
                 
                 const el = document.createElement('div');
-                el.className = 'flex justify-between items-center p-2 bg-white rounded-lg border border-gray-100 shadow-sm shrink-0';
+                el.className = 'flex justify-between items-center p-1 hover:bg-gray-50 rounded shrink-0';
                 el.innerHTML = `
                     <span class="text-[10px] font-bold ${textClass} truncate pr-2 uppercase">${service.name}</span>
-                    <button class="shrink-0 w-8 h-4 rounded-full ${colorClass} transition-colors relative" onclick="socket.emit('toggleService', '${service.name}')">
-                        <div class="w-3 h-3 rounded-full absolute top-[1px] transition-all ${knobClass}"></div>
+                    <button class="shrink-0 w-8 h-4 rounded-full ${colorClass} transition-colors relative shadow-inner" onclick="socket.emit('toggleService', '${service.name}')">
+                        <div class="w-3 h-3 rounded-full absolute top-[2px] transition-all ${knobClass} shadow-sm"></div>
                     </button>
                 `;
                 toggleContainer.appendChild(el);

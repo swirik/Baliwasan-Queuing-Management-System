@@ -129,7 +129,7 @@ let queueState = {
         { name: "Ayuda / Cash Assistance", category: "S", isNew: false },
         { name: "Barangay Clearance", category: "C", isNew: false },
         { name: "Barangay ID", category: "I", isNew: false },
-        { name: "Building and Fencing Permit", category: "P", isNew: false },
+        { name: "Building and Fencing Permit", type: "P", isNew: false },
         { name: "Business Clearance/Permit", category: "P", isNew: false },
         { name: "Certificate of Indigency", category: "C", isNew: false },
         { name: "Certificate of Residency", category: "C", isNew: false },
@@ -193,6 +193,13 @@ function getTodayDate() {
     return (new Date(now - offset)).toISOString().split('T')[0];
 }
 
+function isSystemClosed() {
+    const now = new Date();
+    const offset = now.getTimezoneOffset() * 60000;
+    const localNow = new Date(now - offset);
+    return localNow.getUTCHours() >= 17; // 5:00 PM cutoff
+}
+
 function generateAutoTime(position, isOnline = false) {
     const now = new Date();
     const offset = now.getTimezoneOffset() * 60000;
@@ -209,6 +216,11 @@ function generateAutoTime(position, isOnline = false) {
     localNow.setUTCMinutes(localNow.getUTCMinutes() + (position * 12));
     let hours = localNow.getUTCHours();
     let mins = localNow.getUTCMinutes();
+    
+    if (hours >= 17) {
+        return "5:00 PM";
+    }
+
     const ampm = hours >= 12 ? 'PM' : 'AM';
     hours = hours % 12;
     hours = hours ? hours : 12; 
@@ -266,6 +278,11 @@ io.on('connection', (socket) => {
     socket.on('submitBookingRequest', (requestData) => {
         if (!bookingEngine.globalOnlineBookingEnabled) {
             socket.emit('bookingResolved', { id: 'N/A', approved: false, reason: 'Online booking is disabled' });
+            return;
+        }
+
+        if (requestData.date === getTodayDate() && isSystemClosed()) {
+            socket.emit('bookingResolved', { id: 'N/A', approved: false, reason: 'The queue system is closed for today. Please select a future date.' });
             return;
         }
 
@@ -407,6 +424,10 @@ io.on('connection', (socket) => {
     });
 
     socket.on('joinQueue', (data) => {
+        if (data.date === getTodayDate() && isSystemClosed()) {
+            return;
+        }
+
         const tNum = getNextTicketNumber(data.date);
         const cat = getServiceCategory(data.document);
         const nowHour = new Date().getHours();
@@ -445,6 +466,11 @@ io.on('connection', (socket) => {
     });
 
     socket.on('generateTicket', (data) => {
+        if (isSystemClosed()) {
+            socket.emit('ticketError', "Walk-ins are currently disabled. The queue system is closed for today.");
+            return;
+        }
+
         const walkInDate = getTodayDate();
         const tNum = getNextTicketNumber(walkInDate);
         const cat = getServiceCategory(data.document);
@@ -548,5 +574,45 @@ io.on('connection', (socket) => {
         io.emit('bookingEngineUpdated', bookingEngine);
     });
 });
+
+// Auto-void background process (Runs every 1 minute)
+setInterval(() => {
+    if (!useMongo) return;
+    const now = new Date();
+    const offset = now.getTimezoneOffset() * 60000;
+    const localNow = new Date(now - offset);
+    const currentAbsolute = localNow.getUTCHours() * 60 + localNow.getUTCMinutes();
+
+    let changed = false;
+    const today = getTodayDate();
+    
+    queueState.waitingList = queueState.waitingList.filter(ticket => {
+        // We only evaluate tickets scheduled for today
+        if (ticket.date !== today) return true;
+        if (!ticket.displayTime || ticket.displayTime === 'Please wait' || ticket.displayTime === '5:00 PM') return true;
+        
+        const match = ticket.displayTime.match(/(\d+):(\d+)\s+(AM|PM)/);
+        if (match) {
+            let h = parseInt(match[1]);
+            let m = parseInt(match[2]);
+            if (match[3] === 'PM' && h !== 12) h += 12;
+            if (match[3] === 'AM' && h === 12) h = 0;
+            
+            const ticketAbsolute = h * 60 + m;
+            
+            // If the time has passed by more than 5 minutes, delete the ticket
+            if (currentAbsolute > ticketAbsolute + 5) {
+                changed = true;
+                return false; 
+            }
+        }
+        return true;
+    });
+
+    if (changed) {
+        saveState();
+        io.emit('queueUpdated', queueState);
+    }
+}, 60000);
 
 server.listen(process.env.PORT || 3000, '0.0.0.0');
