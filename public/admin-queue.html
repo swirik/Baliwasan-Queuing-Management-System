@@ -265,23 +265,61 @@
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="bookingClient.js"></script>
     <script>
-        // HEADER CLOCK
-        function updatePortalClock() {
-            const now = new Date();
-            const options = { month: 'long', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
-            const clockElement = document.getElementById('portal-clock');
-            if (clockElement) { clockElement.innerText = now.toLocaleString('en-US', options); }
-        }
-        setInterval(updatePortalClock, 1000);
-        updatePortalClock();
-
-        // QUEUE LOGIC
         const socket = io();
-        let currentAutoApproveState = false;
-        let globalBookingEnabled = true;
-        let blockedDatesList = [];
-        let engineRulesData = {};
+        
+        const offlineScreen = document.getElementById('offline-screen');
+        const ticketResult = document.getElementById('ticket-result');
+        const mobileQueueScreen = document.getElementById('mobile-queue-screen');
+        const btnShowQueue = document.getElementById('btn-show-queue');
+        const btnShowMyTicket = document.getElementById('btn-show-my-ticket');
+        const smsToast = document.getElementById('sms-toast');
+        const smsMessage = document.getElementById('sms-message');
+        const confirmDocName = document.getElementById('confirm-doc-name');
+        const confirmDate = document.getElementById('confirm-date');
+        const confirmPriority = document.getElementById('confirm-priority');
+        const dynamicServicesContainer = document.getElementById('dynamic-services-container');
+
+        let pendingUser = { name: '', contact: '', priority: '', document: '', date: '' };
+        let mySavedTickets = []; 
+        let currentTrackId = null;
+        let fpInstance = null;
+        let swRegistration = null;
+        
+        const now = new Date();
+        const offset = now.getTimezoneOffset() * 60000;
+        const localISOTime = (new Date(now - offset)).toISOString().split('T')[0];
+
+        if ('serviceWorker' in navigator && 'Notification' in window) {
+            navigator.serviceWorker.register('/sw.js').then(reg => {
+                swRegistration = reg;
+            }).catch(err => {});
+        }
+
+        function requestNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+        }
+
+        document.body.addEventListener('click', requestNotificationPermission, { once: true });
+
+        function hideAllScreens() {
+            const screens = ['step-1', 'step-2', 'step-3', 'step-4', 'step-5', 'pending-approval-screen', 'rejected-screen', 'ticket-result', 'offline-screen', 'my-tickets-screen'];
+            screens.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            });
+        }
+
+        function goToStep1() {
+            hideAllScreens();
+            document.getElementById('step-1').classList.remove('hidden');
+            document.getElementById('step-3-form').reset();
+            window.scrollTo(0, 0);
+        }
 
         function formatTicket(num, cat) {
             if (!num) return "----";
@@ -289,346 +327,413 @@
             return `${prefix}-${num.toString().padStart(3, '0')}`;
         }
 
-        const mediaTypeSelect = document.getElementById('media-type');
-        const mediaUrlInput = document.getElementById('media-url');
-        const mediaFileInput = document.getElementById('media-file');
-        const pushBtn = document.getElementById('btn-push-media');
+        function saveTicketLocally(res) {
+            const ticketData = { 
+                res: res, 
+                savedDate: localISOTime, 
+                notified: false,
+                notifiedApproaching: false,
+                notifiedVoided: false
+            };
+            mySavedTickets.push(ticketData);
+            localStorage.setItem('baliwasanTicketsArray', JSON.stringify(mySavedTickets));
+        }
 
-        mediaTypeSelect.addEventListener('change', (e) => {
-            if (e.target.value === 'upload') {
-                mediaUrlInput.classList.add('hidden');
-                mediaFileInput.classList.remove('hidden');
-            } else if (e.target.value === 'youtube') {
-                mediaFileInput.classList.add('hidden');
-                mediaUrlInput.classList.remove('hidden');
-            } else {
-                mediaFileInput.classList.add('hidden');
-                mediaUrlInput.classList.add('hidden');
-            }
-        });
-
-        document.getElementById('btn-gen-walkin').addEventListener('click', () => {
-            const priority = document.getElementById('admin-priority').value;
-            const documentType = document.getElementById('admin-document').value;
-            socket.emit('generateTicket', { priority, document: documentType });
-        });
-
-        document.getElementById('btn-add-service').addEventListener('click', () => {
-            const name = document.getElementById('new-service-name').value.trim();
-            const cat = document.getElementById('new-service-cat').value;
-            if(name) {
-                socket.emit('addService', { name: name, category: cat });
-                document.getElementById('new-service-name').value = '';
-            }
-        });
-
-        document.getElementById('btn-call-1').addEventListener('click', () => {
-            socket.emit('callNext', { counterId: 1 });
-        });
-
-        document.getElementById('btn-call-2').addEventListener('click', () => {
-            socket.emit('callNext', { counterId: 2 });
-        });
-
-        document.getElementById('btn-update-ticker').addEventListener('click', () => {
-            const text = document.getElementById('ticker-input').value;
-            if(text) {
-                socket.emit('updateTicker', text);
-                document.getElementById('ticker-input').value = '';
-            }
-        });
-        
-        document.getElementById('btn-open-monitor').addEventListener('click', () => {
-            window.open('queue-monitor.html', '_blank');
-        });
-
-        socket.on('ticketError', (msg) => {
-            alert(msg);
-        });
-
-        pushBtn.addEventListener('click', async () => {
-            const type = mediaTypeSelect.value;
-            if (type === 'none') {
-                socket.emit('updateMedia', { type: 'none', url: '' });
-                return;
-            }
-            if (type === 'youtube') {
-                const url = mediaUrlInput.value;
-                if (!url) return alert('Enter a valid YouTube URL');
-                socket.emit('updateMedia', { type: 'youtube', url: url });
-                return;
-            }
-            if (type === 'upload') {
-                const file = mediaFileInput.files[0];
-                if (!file) return alert('Select a file to upload first.');
-                pushBtn.innerText = 'UPLOADING...';
-                pushBtn.classList.add('opacity-50', 'pointer-events-none');
-                const formData = new FormData();
-                formData.append('mediaFile', file);
+        function checkSavedTicket() {
+            const oldSaved = localStorage.getItem('baliwasanTicket');
+            if (oldSaved) {
                 try {
-                    const response = await fetch('/upload', { method: 'POST', body: formData });
-                    if (!response.ok) throw new Error('Upload failed');
-                    const data = await response.json();
-                    const detectedType = file.type.startsWith('video') ? 'video' : 'image';
-                    socket.emit('updateMedia', { type: detectedType, url: data.url });
-                    mediaFileInput.value = '';
-                } catch (error) {
-                    alert('Error uploading file: ' + error.message);
-                } finally {
-                    pushBtn.innerText = 'Push to Screen';
-                    pushBtn.classList.remove('opacity-50', 'pointer-events-none');
+                    const parsed = JSON.parse(oldSaved);
+                    mySavedTickets.push({ 
+                        res: parsed.res, 
+                        savedDate: parsed.savedDate, 
+                        notified: false,
+                        notifiedApproaching: false,
+                        notifiedVoided: false
+                    });
+                    localStorage.setItem('baliwasanTicketsArray', JSON.stringify(mySavedTickets));
+                    localStorage.removeItem('baliwasanTicket');
+                } catch(e) {}
+            }
+
+            const saved = localStorage.getItem('baliwasanTicketsArray');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    mySavedTickets = parsed.filter(t => t.savedDate === localISOTime || t.res.ticket.date >= localISOTime);
+                    if (mySavedTickets.length > 0) {
+                        localStorage.setItem('baliwasanTicketsArray', JSON.stringify(mySavedTickets));
+                        btnShowMyTicket.classList.remove('hidden');
+                        return true;
+                    }
+                } catch(e) {}
+            }
+            localStorage.removeItem('baliwasanTicketsArray');
+            return false;
+        }
+
+        function showMyTicketsDashboard() {
+            hideAllScreens();
+            document.getElementById('my-tickets-screen').classList.remove('hidden');
+            const container = document.getElementById('tickets-container');
+            container.innerHTML = '';
+            
+            mySavedTickets.forEach((t, index) => {
+                const tick = t.res.ticket;
+                const dTime = t.res.displayTime || tick.displayTime || 'Please wait';
+                const dateColor = tick.date === localISOTime ? 'text-green-600' : 'text-gray-500';
+
+                const el = document.createElement('div');
+                el.className = 'bg-gray-50 border border-gray-200 p-4 rounded-xl cursor-pointer hover:border-[#FFD500] hover:shadow-md transition-all flex justify-between items-center';
+                el.onclick = () => renderTicketResultScreen(t.res, false);
+                el.innerHTML = `
+                    <div>
+                        <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest truncate max-w-[150px]">${tick.document}</p>
+                        <p class="text-2xl font-black text-black tracking-tighter">${formatTicket(tick.ticketNumber, tick.category)}</p>
+                        <p class="text-xs font-bold mt-1 ${dateColor}">${tick.date} • ${tick.timeSlot || 'WALK-IN'}</p>
+                    </div>
+                    <div class="text-right shrink-0 ml-2">
+                        <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest mb-1">Expected</p>
+                        <p class="text-sm md:text-base font-black text-[#FFD500] bg-black px-2 py-1 rounded shadow-sm">${dTime}</p>
+                    </div>
+                `;
+                container.appendChild(el);
+            });
+            window.scrollTo(0,0);
+        }
+
+        btnShowMyTicket.addEventListener('click', () => {
+            showMyTicketsDashboard();
+        });
+
+        const myBookingEngine = new BookingCalendar(socket, {
+            onLoadingDates: () => {
+                document.getElementById('user-date').placeholder = "Fetching available dates...";
+                document.getElementById('user-date').disabled = true;
+            },
+            onDatesLoaded: (dates) => {
+                const dateInput = document.getElementById('user-date');
+                const btnToday = document.getElementById('btn-select-today');
+                
+                dateInput.disabled = false;
+                dateInput.placeholder = "Select Date";
+                
+                if (fpInstance) fpInstance.destroy();
+                
+                fpInstance = flatpickr(dateInput, {
+                    minDate: "today",
+                    enable: dates,
+                    dateFormat: "Y-m-d",
+                    disableMobile: "true"
+                });
+
+                if (dates.includes(localISOTime)) {
+                    btnToday.classList.remove('hidden');
+                    btnToday.onclick = () => {
+                        fpInstance.setDate(localISOTime, true);
+                    };
+                } else {
+                    btnToday.classList.add('hidden');
+                }
+            },
+            onRequestPending: (res) => {
+                hideAllScreens();
+                document.getElementById('pending-approval-screen').classList.remove('hidden');
+                currentTrackId = res.id;
+                document.getElementById('pending-track-id').innerText = currentTrackId;
+                window.scrollTo(0, 0);
+            },
+            onAutoApproved: (res) => {
+                saveTicketLocally(res);
+                renderTicketResultScreen(res, true);
+            },
+            onBookingResolved: (res) => {
+                if (res.id !== currentTrackId && res.id !== 'N/A') return;
+                hideAllScreens();
+                if (res.approved) {
+                    saveTicketLocally(res);
+                    renderTicketResultScreen(res, true);
+                } else {
+                    if (res.reason) {
+                        document.getElementById('rejected-reason').innerText = res.reason;
+                    }
+                    document.getElementById('rejected-screen').classList.remove('hidden');
+                    window.scrollTo(0, 0);
+                }
+            },
+            onError: (msg) => {
+                alert(msg);
+            }
+        });
+
+        function renderTicketResultScreen(res, isNew) {
+            btnShowMyTicket.classList.remove('hidden');
+            hideAllScreens();
+            document.getElementById('ticket-result').classList.remove('hidden');
+            
+            document.getElementById('my-ticket-number').innerText = formatTicket(res.ticket.ticketNumber, res.ticket.category);
+            document.getElementById('my-time-slot').innerText = res.ticket.timeSlot || 'WALK-IN';
+            
+            if (res.isToday) {
+                document.getElementById('display-time').innerText = res.displayTime || res.ticket.displayTime || 'Please wait';
+                document.getElementById('display-time-container').classList.remove('hidden');
+                document.getElementById('live-message').classList.remove('hidden');
+                document.getElementById('appt-message').classList.add('hidden');
+
+                const currentHour = new Date().getHours();
+                if (res.ticket.timeSlot === 'AFTERNOON' && currentHour < 12) {
+                    document.getElementById('afternoon-notice').classList.remove('hidden');
+                } else {
+                    document.getElementById('afternoon-notice').classList.add('hidden');
+                }
+            } else {
+                document.getElementById('display-time-container').classList.add('hidden');
+                document.getElementById('live-message').classList.add('hidden');
+                document.getElementById('appt-message').classList.remove('hidden');
+                document.getElementById('afternoon-notice').classList.add('hidden');
+            }
+            window.scrollTo(0, 0);
+        }
+
+        btnShowQueue.addEventListener('click', () => {
+            mobileQueueScreen.classList.remove('hidden');
+            mobileQueueScreen.classList.add('flex');
+        });
+
+        document.getElementById('btn-hide-queue').addEventListener('click', () => {
+            mobileQueueScreen.classList.add('hidden');
+            mobileQueueScreen.classList.remove('flex');
+        });
+
+        function setupDocButtons() {
+            document.querySelectorAll('.doc-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    if (e.target.disabled) return;
+                    pendingUser.document = e.target.getAttribute('data-doc');
+                    myBookingEngine.selectService(pendingUser.document);
+                    hideAllScreens();
+                    document.getElementById('step-2').classList.remove('hidden');
+                    window.scrollTo(0, 0);
+                });
+            });
+        }
+
+        document.getElementById('btn-back-to-1').addEventListener('click', () => {
+            hideAllScreens();
+            document.getElementById('step-1').classList.remove('hidden');
+        });
+
+        document.getElementById('step-2-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            if(!document.getElementById('user-date').value) return alert("Select a date first.");
+            pendingUser.date = document.getElementById('user-date').value;
+            hideAllScreens();
+            document.getElementById('step-3').classList.remove('hidden');
+            window.scrollTo(0, 0);
+        });
+
+        document.getElementById('btn-back-to-2').addEventListener('click', () => {
+            hideAllScreens();
+            document.getElementById('step-2').classList.remove('hidden');
+        });
+
+        document.getElementById('step-3-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const fname = document.getElementById('user-fname').value.trim();
+            const mname = document.getElementById('user-mname').value.trim();
+            const lname = document.getElementById('user-lname').value.trim();
+            
+            pendingUser.name = fname + (mname ? ' ' + mname : '') + ' ' + lname;
+            pendingUser.contact = document.getElementById('user-contact').value;
+            pendingUser.priority = document.getElementById('user-priority').value;
+            
+            confirmDocName.innerText = pendingUser.document;
+            confirmDate.innerText = pendingUser.date;
+            confirmPriority.innerText = pendingUser.priority;
+
+            hideAllScreens();
+            document.getElementById('step-4').classList.remove('hidden');
+            window.scrollTo(0, 0);
+        });
+
+        document.getElementById('btn-cancel-confirm').addEventListener('click', () => {
+            hideAllScreens();
+            document.getElementById('step-3').classList.remove('hidden');
+        });
+
+        document.getElementById('btn-proceed-consent').addEventListener('click', () => {
+            hideAllScreens();
+            document.getElementById('step-5').classList.remove('hidden');
+            window.scrollTo(0, 0);
+        });
+
+        document.getElementById('btn-back-to-4').addEventListener('click', () => {
+            hideAllScreens();
+            document.getElementById('step-4').classList.remove('hidden');
+        });
+
+        document.getElementById('btn-submit-queue').addEventListener('click', () => {
+            myBookingEngine.submitRequest(pendingUser, pendingUser.date);
+        });
+
+        socket.on('ticketIssued', (response) => {
+            saveTicketLocally(response);
+            renderTicketResultScreen(response, true);
+        });
+
+        socket.on('bookingEngineUpdated', (engineState) => {
+            if (!engineState.globalOnlineBookingEnabled) {
+                hideAllScreens();
+                offlineScreen.classList.remove('hidden');
+            } else {
+                if(!offlineScreen.classList.contains('hidden')) {
+                    if (mySavedTickets.length > 0) showMyTicketsDashboard();
+                    else goToStep1();
                 }
             }
         });
 
-        document.getElementById('btn-reset').addEventListener('click', () => {
-            if(confirm("DANGER: This will wipe all current queue data. Proceed?")) {
-                socket.emit('resetQueue');
-            }
-        });
-
-        document.getElementById('toggle-auto-approve').addEventListener('click', () => {
-            currentAutoApproveState = !currentAutoApproveState;
-            socket.emit('updateBookingRules', { autoApprove: currentAutoApproveState });
-        });
-
-        document.getElementById('toggle-global-booking').addEventListener('click', () => {
-            globalBookingEnabled = !globalBookingEnabled;
-            socket.emit('updateBookingRules', { globalOnlineBookingEnabled: globalBookingEnabled });
-        });
-
-        document.getElementById('btn-update-capacity').addEventListener('click', () => {
-            const cap = parseInt(document.getElementById('admin-capacity').value);
-            if(cap > 0) {
-                socket.emit('updateBookingRules', { defaultMaxCapacity: cap });
-            }
-        });
-
-        document.getElementById('btn-add-block').addEventListener('click', () => {
-            const bDate = document.getElementById('admin-block-date').value;
-            if(bDate && !blockedDatesList.includes(bDate)) {
-                blockedDatesList.push(bDate);
-                socket.emit('updateBookingRules', { blockedDates: blockedDatesList });
-                document.getElementById('admin-block-date').value = '';
-            }
-        });
-
-        document.getElementById('matrix-service-select').addEventListener('change', (e) => {
-            renderMatrixDays(e.target.value);
-        });
-
-        document.getElementById('btn-save-matrix').addEventListener('click', () => {
-            const srv = document.getElementById('matrix-service-select').value;
-            if(!srv) return;
-            const checkboxes = document.querySelectorAll('.matrix-day-chk');
-            let allowed = [];
-            checkboxes.forEach(chk => {
-                if(chk.checked) allowed.push(parseInt(chk.value));
-            });
-            socket.emit('updateServiceRule', { serviceName: srv, allowedDays: allowed });
-            alert("Rules updated for " + srv);
-        });
-
-        document.getElementById('btn-export-data').addEventListener('click', () => {
-            window.open('/export', '_blank');
-        });
-
-        document.getElementById('btn-open-analytics').addEventListener('click', () => {
-            window.open('analytics.html', '_blank');
-        });
-
-        window.approveRequest = function(id) {
-            const slot = document.getElementById('slot-' + id).value;
-            const timeInput = document.getElementById('time-' + id).value;
-            socket.emit('adminReviewBooking', { id: id, approved: true, timeSlot: slot, customTime: timeInput });
-        }
-
-        window.rejectRequest = function(id) {
-            socket.emit('adminReviewBooking', { id: id, approved: false });
-        }
-
-        function renderMatrixDays(serviceName) {
-            const container = document.getElementById('matrix-days-container');
-            container.innerHTML = '';
-            const days = [{d:1, n:'Mon'}, {d:2, n:'Tue'}, {d:3, n:'Wed'}, {d:4, n:'Thu'}, {d:5, n:'Fri'}, {d:6, n:'Sat'}, {d:0, n:'Sun'}];
-            const rules = engineRulesData[serviceName] ? engineRulesData[serviceName].allowedDays : [1,2,3,4,5];
-            
-            days.forEach(day => {
-                const isChecked = rules.includes(day.d) ? 'checked' : '';
-                container.innerHTML += `
-                    <label class="flex flex-col items-center bg-gray-50 p-1 rounded border border-gray-200 cursor-pointer hover:bg-gray-100">
-                        <span class="text-[9px] font-bold text-gray-600 uppercase">${day.n}</span>
-                        <input type="checkbox" value="${day.d}" class="matrix-day-chk accent-[#FFD500]" ${isChecked}>
-                    </label>
-                `;
-            });
-        }
-
-        socket.on('bookingEngineUpdated', (engineState) => {
-            engineRulesData = engineState.serviceRules;
-            currentAutoApproveState = engineState.autoApprove;
-            globalBookingEnabled = engineState.globalOnlineBookingEnabled;
-            blockedDatesList = engineState.blockedDates;
-            document.getElementById('admin-capacity').value = engineState.defaultMaxCapacity;
-
-            const toggleAutoBtn = document.getElementById('toggle-auto-approve');
-            const knobAuto = document.getElementById('knob-auto-approve');
-            if (currentAutoApproveState) {
-                toggleAutoBtn.classList.replace('bg-gray-400', 'bg-green-500');
-                knobAuto.classList.replace('left-0.5', 'left-[22px]');
-            } else {
-                toggleAutoBtn.classList.replace('bg-green-500', 'bg-gray-400');
-                knobAuto.classList.replace('left-[22px]', 'left-0.5');
-            }
-
-            const toggleGlobalBtn = document.getElementById('toggle-global-booking');
-            const knobGlobal = document.getElementById('knob-global-booking');
-            if (globalBookingEnabled) {
-                toggleGlobalBtn.classList.replace('bg-gray-400', 'bg-green-500');
-                knobGlobal.classList.replace('left-0.5', 'left-[22px]');
-            } else {
-                toggleGlobalBtn.classList.replace('bg-green-500', 'bg-gray-400');
-                knobGlobal.classList.replace('left-[22px]', 'left-0.5');
-            }
-
-            const pendingList = document.getElementById('admin-pending-list');
-            document.getElementById('admin-pending-count').innerText = engineState.pendingRequests.length;
-            document.getElementById('header-pending-count').innerText = engineState.pendingRequests.length;
-            pendingList.innerHTML = '';
-
-            if (engineState.pendingRequests.length === 0) {
-                pendingList.innerHTML = '<div class="text-center py-10 text-gray-400 font-medium uppercase text-xs tracking-widest">No pending requests</div>';
-            } else {
-                engineState.pendingRequests.forEach(req => {
-                    const el = document.createElement('div');
-                    el.className = 'bg-white p-3 rounded-xl border border-gray-200 shadow-sm flex flex-col gap-2';
-                    el.innerHTML = `
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <div class="font-black text-sm text-gray-900">${req.name}</div>
-                                <div class="text-[10px] text-gray-400 font-medium">${req.contact}</div>
-                                <div class="text-[10px] font-bold text-blue-600 mt-1">${req.requestedDate}</div>
-                            </div>
-                            <div class="text-[9px] font-black uppercase bg-gray-100 text-gray-600 px-2 py-1 rounded border">${req.priority}</div>
-                        </div>
-                        <div class="text-[10px] font-bold bg-gray-50 text-gray-500 px-2 py-1 rounded border border-gray-100 uppercase truncate">${req.document}</div>
-                        <div class="flex gap-2 items-center mt-1">
-                            <select id="slot-${req.id}" class="text-[10px] border border-gray-200 rounded p-1 font-bold">
-                                <option value="MORNING">Morning</option>
-                                <option value="AFTERNOON">Afternoon</option>
-                            </select>
-                            <input type="time" id="time-${req.id}" class="text-[10px] border border-gray-200 rounded p-1 w-16 font-bold" title="Leave blank for Auto">
-                            <button class="flex-1 bg-red-100 hover:bg-red-200 text-red-700 text-[10px] font-black py-1.5 rounded uppercase transition-colors" onclick="rejectRequest('${req.id}')">Reject</button>
-                            <button class="flex-1 bg-green-500 hover:bg-green-600 text-white text-[10px] font-black py-1.5 rounded uppercase transition-colors" onclick="approveRequest('${req.id}')">Approve</button>
-                        </div>
+        socket.on('queueUpdated', (state) => {
+            dynamicServicesContainer.innerHTML = '';
+            const specialServices = state.services.filter(s => s.category === 'S');
+            if(specialServices.length > 0) {
+                const specialHTML = specialServices.map(s => {
+                    const disabledClass = state.disabledServices.includes(s.name) ? 'opacity-30 cursor-not-allowed bg-gray-200' : 'bg-[#FFF394] hover:bg-[#FFD500] hover:border-[#FFD500]';
+                    const newBadge = s.isNew ? '<span class="bg-red-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded absolute -top-2 -right-2 tracking-widest shadow-sm">NEW</span>' : '';
+                    return `
+                        <button ${state.disabledServices.includes(s.name) ? 'disabled' : ''} class="doc-btn ${disabledClass} relative border-2 border-[#FFD500] text-black font-black py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-sm tracking-wide w-full" data-doc="${s.name}">
+                            ${newBadge}
+                            ⭐ ${s.name}
+                        </button>
                     `;
-                    pendingList.appendChild(el);
+                }).join('');
+                dynamicServicesContainer.innerHTML += `
+                    <div>
+                        <h3 class="text-xs md:text-sm font-bold text-gray-400 uppercase tracking-widest mb-3 text-center md:text-left">Special Events</h3>
+                        <div class="grid grid-cols-1 gap-4">${specialHTML}</div>
+                    </div>
+                `;
+            }
+
+            const standardServices = state.services.filter(s => s.category !== 'S');
+            if(standardServices.length > 0) {
+                const standardHTML = standardServices.map(s => {
+                    const disabledClass = state.disabledServices.includes(s.name) ? 'opacity-30 cursor-not-allowed bg-gray-200' : 'bg-gray-50 hover:bg-[#FFD500] hover:border-[#FFD500]';
+                    const newBadge = s.isNew ? '<span class="bg-red-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded absolute -top-2 -right-2 tracking-widest shadow-sm">NEW</span>' : '';
+                    return `
+                        <button ${state.disabledServices.includes(s.name) ? 'disabled' : ''} class="doc-btn ${disabledClass} relative border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm w-full" data-doc="${s.name}">
+                            ${newBadge}
+                            ${s.name}
+                        </button>
+                    `;
+                }).join('');
+                dynamicServicesContainer.innerHTML += `
+                    <div>
+                        <h3 class="text-xs md:text-sm font-bold text-gray-400 uppercase tracking-widest mb-3 text-center md:text-left">Standard Documents</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">${standardHTML}</div>
+                    </div>
+                `;
+            }
+            setupDocButtons();
+
+            document.getElementById('mobile-serving-ticket').innerText = state.lastCalled && state.lastCalled.ticket ? formatTicket(state.lastCalled.ticket, state.lastCalled.category) : "----";
+            document.getElementById('mobile-serving-counter').innerText = state.lastCalled && state.lastCalled.counter ? `COUNTER ${state.lastCalled.counter}` : "--";
+            document.getElementById('mobile-serving-doc').innerText = state.lastCalled && state.lastCalled.document ? state.lastCalled.document : "SYSTEM STANDBY";
+            document.getElementById('mobile-waiting-count').innerText = state.waitingList.length;
+            
+            const mobileList = document.getElementById('mobile-waiting-list');
+            mobileList.innerHTML = '';
+
+            if (state.waitingList.length === 0) {
+                mobileList.innerHTML = '<div class="text-center py-10 text-gray-300 font-bold uppercase text-xs tracking-wider">Queue is empty</div>';
+            } else {
+                state.waitingList.forEach(item => {
+                    const badgeColor = item.priority === 'PWD / Senior / Pregnant' ? 'bg-black text-[#FFD500] border-gray-800' : 'bg-white text-gray-600 border-gray-200';
+                    const el = document.createElement('div');
+                    el.className = 'flex justify-between items-center p-4 border border-gray-100 rounded-2xl bg-gray-50 shadow-sm';
+                    el.innerHTML = `
+                        <div class="font-black text-3xl text-gray-900">${formatTicket(item.ticketNumber, item.category)}</div>
+                        <div class="text-[9px] font-black uppercase ${badgeColor} px-2 py-1 rounded border tracking-widest">${item.priority}</div>
+                    `;
+                    mobileList.appendChild(el);
                 });
             }
+
+            if (mySavedTickets.length > 0) {
+                let needsSave = false;
+                mySavedTickets.forEach((t) => {
+                    if (t.notifiedVoided) return;
+
+                    const inWaitingList = state.waitingList.findIndex(x => x.ticketNumber === t.res.ticket.ticketNumber && x.category === t.res.ticket.category);
+                    const servingCounter = state.counters.find(c => c.currentTicket === t.res.ticket.ticketNumber && c.currentCategory === t.res.ticket.category);
+
+                    if (servingCounter) {
+                        if (!t.notified) {
+                            const formattedTicket = formatTicket(t.res.ticket.ticketNumber, t.res.ticket.category);
+                            
+                            if (swRegistration && Notification.permission === 'granted') {
+                                swRegistration.showNotification('It is your turn!', {
+                                    body: `Ticket #${formattedTicket} is now being served at Counter ${servingCounter.id}.`,
+                                    icon: '/resources/logo.png',
+                                    vibrate: [200, 100, 200]
+                                });
+                            }
+
+                            smsMessage.innerText = `Hello! Ticket #${formattedTicket} is now being served at Counter ${servingCounter.id}. Please proceed to the counter.`;
+                            smsToast.classList.remove('hidden');
+                            setTimeout(() => {
+                                smsToast.classList.remove('-translate-y-[150%]');
+                                smsToast.classList.add('translate-y-0');
+                            }, 50);
+                            setTimeout(() => {
+                                smsToast.classList.remove('translate-y-0');
+                                smsToast.classList.add('-translate-y-[150%]');
+                                setTimeout(() => { smsToast.classList.add('hidden'); }, 500);
+                            }, 6000);
+                            t.notified = true;
+                            needsSave = true;
+                        }
+                    } else if (inWaitingList !== -1) {
+                        if (inWaitingList > 0 && inWaitingList <= 3) {
+                            if (!t.notifiedApproaching) {
+                                const formattedTicket = formatTicket(t.res.ticket.ticketNumber, t.res.ticket.category);
+                                if (swRegistration && Notification.permission === 'granted') {
+                                    swRegistration.showNotification('Get Ready!', {
+                                        body: `Ticket #${formattedTicket} is almost up. There are ${inWaitingList} people ahead of you.`,
+                                        icon: '/resources/logo.png',
+                                        vibrate: [100, 50, 100]
+                                    });
+                                }
+                                t.notifiedApproaching = true;
+                                needsSave = true;
+                            }
+                        }
+                    } else {
+                        if (!t.notified && !t.notifiedVoided) {
+                            const formattedTicket = formatTicket(t.res.ticket.ticketNumber, t.res.ticket.category);
+                            if (swRegistration && Notification.permission === 'granted') {
+                                swRegistration.showNotification('Ticket Voided', {
+                                    body: `Ticket #${formattedTicket} was voided because you missed your expected time.`,
+                                    icon: '/resources/logo.png',
+                                    vibrate: [500, 200, 500]
+                                });
+                            }
+                            t.notifiedVoided = true;
+                            needsSave = true;
+                        }
+                    }
+                });
+                if (needsSave) {
+                    localStorage.setItem('baliwasanTicketsArray', JSON.stringify(mySavedTickets));
+                }
+            }
         });
 
-        function createTicketCard(item, isLive) {
-            const badgeColor = item.priority === 'PWD / Senior / Pregnant' ? 'bg-black text-[#FFD500] border-gray-800' : 'bg-[#FFF9E2] text-gray-700 border-[#FFE761]';
-            const dateColor = isLive ? 'text-green-600' : 'text-gray-500';
-            
-            const el = document.createElement('div');
-            el.className = 'bg-white p-3 rounded-xl border border-gray-200 shadow-sm flex flex-col gap-2 hover:border-[#FFD500] transition-colors';
-            el.innerHTML = `
-                <div class="flex justify-between items-start">
-                    <div>
-                        <div class="font-black text-lg text-gray-900">${formatTicket(item.ticketNumber, item.category)}</div>
-                        <div class="text-xs font-bold text-gray-800">${item.name}</div>
-                        <div class="text-[10px] text-gray-400 font-medium">${item.contact}</div>
-                        <div class="text-[10px] font-bold mt-1 ${dateColor}">${item.date} ${item.timeSlot && !isLive ? '· ' + item.timeSlot : ''} ${item.displayTime ? '· ' + item.displayTime : ''}</div>
-                    </div>
-                    <div class="text-[9px] font-black uppercase ${badgeColor} px-2 py-1 rounded-md border tracking-tighter text-center max-w-[80px]">
-                        ${item.priority}
-                    </div>
-                </div>
-                <div class="text-[10px] font-bold bg-gray-50 text-gray-500 px-2 py-1 rounded-lg border border-gray-100 mt-1 uppercase truncate">
-                    ${item.document}
-                </div>
-            `;
-            return el;
-        }
-
-        socket.on('queueUpdated', (state) => {
-            const c1 = state.counters.find(c => c.id === 1);
-            const c2 = state.counters.find(c => c.id === 2);
-
-            document.getElementById('c1-ticket').innerText = c1.currentTicket ? formatTicket(c1.currentTicket, c1.currentCategory) : "----";
-            document.getElementById('c1-name').innerText = c1.currentName ? `Name: ${c1.currentName}` : "Name: ---";
-            document.getElementById('c1-doc').innerText = c1.currentDocument;
-
-            document.getElementById('c2-ticket').innerText = c2.currentTicket ? formatTicket(c2.currentTicket, c2.currentCategory) : "----";
-            document.getElementById('c2-name').innerText = c2.currentName ? `Name: ${c2.currentName}` : "Name: ---";
-            document.getElementById('c2-doc').innerText = c2.currentDocument;
-            
-            document.getElementById('admin-waiting-count').innerText = state.waitingList.length;
-            document.getElementById('header-waiting-count').innerText = state.waitingList.length;
-            document.getElementById('ticker-input').placeholder = state.tickerText;
-            
-            const docSelect = document.getElementById('admin-document');
-            const matrixSelect = document.getElementById('matrix-service-select');
-            
-            const currentMatrixVal = matrixSelect.value;
-            
-            docSelect.innerHTML = '';
-            matrixSelect.innerHTML = '';
-            
-            state.services.forEach(s => {
-                const opt1 = document.createElement('option');
-                opt1.value = s.name;
-                opt1.innerText = s.name;
-                docSelect.appendChild(opt1);
-
-                const opt2 = document.createElement('option');
-                opt2.value = s.name;
-                opt2.innerText = s.name;
-                matrixSelect.appendChild(opt2);
-            });
-
-            if(currentMatrixVal && state.services.find(s => s.name === currentMatrixVal)) {
-                matrixSelect.value = currentMatrixVal;
-            } else if (state.services.length > 0) {
-                renderMatrixDays(state.services[0].name);
-            }
-
-            const toggleContainer = document.getElementById('service-toggles');
-            toggleContainer.innerHTML = '';
-            state.services.forEach(service => {
-                const isOff = state.disabledServices.includes(service.name);
-                const colorClass = isOff ? 'bg-gray-300' : 'bg-green-500';
-                const textClass = isOff ? 'text-gray-400 line-through' : 'text-gray-700';
-                const knobClass = isOff ? 'bg-white left-0.5' : 'bg-white left-4';
-                
-                const el = document.createElement('div');
-                el.className = 'flex justify-between items-center p-1 hover:bg-gray-50 rounded shrink-0';
-                el.innerHTML = `
-                    <span class="text-[10px] font-bold ${textClass} truncate pr-2 uppercase">${service.name}</span>
-                    <button class="shrink-0 w-8 h-4 rounded-full ${colorClass} transition-colors relative shadow-inner" onclick="socket.emit('toggleService', '${service.name}')">
-                        <div class="w-3 h-3 rounded-full absolute top-[2px] transition-all ${knobClass} shadow-sm"></div>
-                    </button>
-                `;
-                toggleContainer.appendChild(el);
-            });
-
-            const listContainer = document.getElementById('admin-waiting-list');
-            listContainer.innerHTML = '';
-            if (state.waitingList.length === 0) {
-                listContainer.innerHTML = '<div class="text-center py-10 text-gray-400 font-medium uppercase text-xs tracking-widest">No residents in queue</div>';
+        window.addEventListener('load', () => {
+            if (checkSavedTicket()) {
+                showMyTicketsDashboard();
             } else {
-                state.waitingList.forEach(item => listContainer.appendChild(createTicketCard(item, true)));
-            }
-
-            const appointmentList = state.appointments || [];
-            document.getElementById('admin-appointment-count').innerText = appointmentList.length;
-            const apptContainer = document.getElementById('admin-appointment-list');
-            apptContainer.innerHTML = '';
-            if (appointmentList.length === 0) {
-                apptContainer.innerHTML = '<div class="text-center py-10 text-gray-400 font-medium uppercase text-xs tracking-widest">No future appointments</div>';
-            } else {
-                appointmentList.forEach(item => apptContainer.appendChild(createTicketCard(item, false)));
+                goToStep1();
             }
         });
     </script>
