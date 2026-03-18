@@ -236,7 +236,6 @@ function generateAutoTime(position, isOnline = false) {
         }
     }
 
-    // Fixed math: position * 12 mins instead of (position + 1)
     phNow.setUTCMinutes(phNow.getUTCMinutes() + (position * 12));
     let hours = phNow.getUTCHours();
     let mins = phNow.getUTCMinutes();
@@ -437,14 +436,15 @@ io.on('connection', (socket) => {
                 const cat = getServiceCategory(request.document);
                 
                 let dTime = reviewData.customTime;
+                let finalTimeSlot = reviewData.timeSlot;
+
                 if (dTime) {
                     const parts = dTime.split(':');
                     if (parts.length === 2) {
                         let h = parseInt(parts[0]);
                         let m = parts[1];
                         
-                        if (reviewData.timeSlot === 'MORNING' && h >= 12) h -= 12;
-                        if (reviewData.timeSlot === 'AFTERNOON' && h < 12) h += 12;
+                        finalTimeSlot = h >= 12 ? 'AFTERNOON' : 'MORNING';
                         
                         let ampm = h >= 12 ? 'PM' : 'AM';
                         h = h % 12;
@@ -458,7 +458,7 @@ io.on('connection', (socket) => {
                     ...request,
                     ticketNumber: tNum,
                     category: cat,
-                    timeSlot: reviewData.timeSlot, 
+                    timeSlot: finalTimeSlot, 
                     status: 'APPROVED',
                     date: request.requestedDate
                 };
@@ -672,15 +672,14 @@ io.on('connection', (socket) => {
     });
 });
 
-// Auto-Move & Void Logic - Firing every 5 seconds
 setInterval(() => {
+    if (!useMongo) return;
     const phNow = getPhDateObj();
     const currentAbsolute = phNow.getUTCHours() * 60 + phNow.getUTCMinutes();
 
     let changed = false;
     const today = getTodayDate();
     
-    // 1. Process Auto-Moves
     for (let i = 0; i < queueState.waitingList.length; i++) {
         const ticket = queueState.waitingList[i];
         if (ticket.date !== today) continue;
@@ -730,7 +729,6 @@ setInterval(() => {
         }
     }
 
-    // 2. Process Auto-Voids
     const originalLength = queueState.waitingList.length;
     queueState.waitingList = queueState.waitingList.filter(ticket => {
         if (ticket.date !== today) return true;

@@ -67,7 +67,7 @@
                     <div id="c1-ticket" class="text-6xl md:text-7xl font-black text-gray-900 mb-2 drop-shadow-sm">----</div>
                     <div id="c1-name" class="text-lg font-bold text-gray-600 mb-3 truncate w-full">Name: ---</div>
                     <div id="c1-doc" class="text-xs font-bold text-yellow-400 bg-[#071c4d] px-4 py-2 rounded-lg mb-8 uppercase tracking-widest shadow-inner">SYSTEM STANDBY</div>
-                    <button id="btn-call-1" class="w-full bg-green-600 hover:bg-green-700 text-white font-black py-5 px-4 rounded-xl shadow-lg transition-all text-xl md:text-2xl uppercase tracking-wider flex items-center justify-center gap-3 mt-auto">
+                    <button id="btn-call-1" class="w-full bg-green-600 hover:bg-green-700 text-white font-black py-5 px-4 rounded-2xl shadow-lg transition-all text-xl md:text-2xl uppercase tracking-wider flex items-center justify-center gap-3 mt-auto border-b-4 border-green-800 active:border-b-0 active:translate-y-1">
                         <span>CALL NEXT</span>
                         <i class="fas fa-bullhorn"></i>
                     </button>
@@ -83,7 +83,7 @@
                     <div id="c2-ticket" class="text-6xl md:text-7xl font-black text-gray-900 mb-2 drop-shadow-sm">----</div>
                     <div id="c2-name" class="text-lg font-bold text-gray-600 mb-3 truncate w-full">Name: ---</div>
                     <div id="c2-doc" class="text-xs font-bold text-yellow-400 bg-[#071c4d] px-4 py-2 rounded-lg mb-8 uppercase tracking-widest shadow-inner">SYSTEM STANDBY</div>
-                    <button id="btn-call-2" class="w-full bg-green-600 hover:bg-green-700 text-white font-black py-5 px-4 rounded-xl shadow-lg transition-all text-xl md:text-2xl uppercase tracking-wider flex items-center justify-center gap-3 mt-auto">
+                    <button id="btn-call-2" class="w-full bg-green-600 hover:bg-green-700 text-white font-black py-5 px-4 rounded-2xl shadow-lg transition-all text-xl md:text-2xl uppercase tracking-wider flex items-center justify-center gap-3 mt-auto border-b-4 border-green-800 active:border-b-0 active:translate-y-1">
                         <span>CALL NEXT</span>
                         <i class="fas fa-bullhorn"></i>
                     </button>
@@ -92,33 +92,33 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-            <div class="bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col h-[500px]">
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col h-[650px]">
                 <div class="bg-gradient-to-br from-yellow-500 to-yellow-300 p-4 flex justify-between items-center text-black">
                     <h3 class="text-lg font-bold uppercase tracking-widest"><i class="fas fa-users mr-2"></i>Live Queue</h3>
                     <span id="admin-waiting-count" class="bg-black text-[#FFD500] px-3 py-1 rounded-full text-sm font-bold shadow">0</span>
                 </div>
-                <div id="admin-waiting-list" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar bg-gray-50/50">
-                    <div class="text-center py-10 text-gray-400 font-medium uppercase text-xs tracking-widest">No residents in queue</div>
+                <div id="admin-waiting-list" class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-gray-50/50">
+                    <div class="h-full flex items-center justify-center text-gray-400 font-bold uppercase text-xs tracking-widest"><i class="fas fa-inbox mr-2 text-xl opacity-50"></i> Queue is empty</div>
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col h-[500px]">
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col h-[650px]">
                 <div class="bg-gradient-to-br from-yellow-500 to-yellow-300 p-4 flex justify-between items-center text-black">
                     <h3 class="text-lg font-bold uppercase tracking-widest"><i class="fas fa-clock mr-2"></i>Pending</h3>
                     <span id="admin-pending-count" class="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-bold shadow">0</span>
                 </div>
-                <div id="admin-pending-list" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar bg-gray-50/50">
-                    <div class="text-center py-10 text-gray-400 font-medium uppercase text-xs tracking-widest">No pending requests</div>
+                <div id="admin-pending-list" class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-gray-50/50">
+                    <div class="h-full flex items-center justify-center text-gray-400 font-bold uppercase text-xs tracking-widest"><i class="fas fa-hourglass-half mr-2 text-xl opacity-50"></i> No pending requests</div>
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col h-[500px]">
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col h-[650px]">
                 <div class="bg-gradient-to-br from-yellow-500 to-yellow-300 p-4 flex justify-between items-center text-black">
                     <h3 class="text-lg font-bold uppercase tracking-widest"><i class="fas fa-calendar-check mr-2"></i>Appointments</h3>
                     <span id="admin-appointment-count" class="bg-[#071c4d] text-white px-3 py-1 rounded-full text-sm font-bold shadow">0</span>
                 </div>
-                <div id="admin-appointment-list" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar bg-gray-50/50">
-                    <div class="text-center py-10 text-gray-400 font-medium uppercase text-xs tracking-widest">No future appointments</div>
+                <div id="admin-appointment-list" class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-gray-50/50">
+                    <div class="h-full flex items-center justify-center text-gray-400 font-bold uppercase text-xs tracking-widest"><i class="fas fa-calendar-times mr-2 text-xl opacity-50"></i> No future appointments</div>
                 </div>
             </div>
         </div>
@@ -128,126 +128,135 @@
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
             
             <div class="bg-white p-5 rounded-2xl shadow-xl flex flex-col gap-4">
-                <h3 class="text-sm font-bold text-[#071c4d] uppercase tracking-widest border-b pb-2">Actions & Services</h3>
+                <h3 class="text-sm font-black text-[#071c4d] uppercase tracking-widest border-b border-gray-200 pb-3">Actions & Services</h3>
                 
-                <div class="bg-yellow-50 p-3 rounded-xl border border-yellow-200">
-                    <h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Issue Walk-in Ticket</h4>
-                    <select id="admin-priority" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-yellow-400 outline-none text-xs font-bold mb-2">
+                <div class="bg-[#FFF9E2] p-4 rounded-xl border border-[#FFD500] shadow-inner">
+                    <h4 class="text-[10px] font-black text-gray-600 uppercase tracking-widest mb-3">Issue Walk-in Ticket</h4>
+                    <select id="admin-priority" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[#FFD500] outline-none text-xs font-bold mb-3 shadow-sm">
                         <option value="REGULAR">Regular</option>
                         <option value="PWD / Senior / Pregnant">PWD / Senior / Pregnant</option>
                     </select>
-                    <select id="admin-document" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-yellow-400 outline-none text-xs font-bold mb-2"></select>
-                    <button id="btn-gen-walkin" class="w-full bg-[#071c4d] hover:bg-[#0a2a6e] text-white font-bold py-2 rounded-lg transition-all text-xs uppercase tracking-wider shadow-md">
-                        + Add Walk-in
+                    <select id="admin-document" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[#FFD500] outline-none text-xs font-bold mb-4 shadow-sm"></select>
+                    
+                    <button id="btn-gen-walkin" class="w-full bg-[#071c4d] hover:bg-[#0a2a6e] text-white font-black py-4 rounded-xl transition-all text-xs uppercase tracking-widest shadow-md flex justify-center items-center gap-2 border-b-4 border-gray-900 active:border-b-0 active:translate-y-1">
+                        <i class="fas fa-plus-circle text-[#FFD500] text-sm"></i> ADD WALK-IN
                     </button>
                 </div>
 
-                <div class="flex flex-col gap-2">
-                    <h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-2 flex justify-between">
-                        <span>Toggle Services</span> <span class="bg-green-100 text-green-700 px-1 rounded">LIVE</span>
+                <div class="flex flex-col gap-2 mt-2">
+                    <h4 class="text-[10px] font-black text-gray-600 uppercase tracking-widest flex justify-between items-center mb-1">
+                        <span>Toggle Services</span> <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded shadow-sm">LIVE</span>
                     </h4>
-                    <div id="service-toggles" class="max-h-28 overflow-y-auto custom-scrollbar pr-1 flex flex-col gap-1 border border-gray-100 rounded p-1"></div>
+                    <div id="service-toggles" class="max-h-32 overflow-y-auto custom-scrollbar pr-2 flex flex-col gap-2 bg-gray-50 p-2 rounded-lg border border-gray-100"></div>
                     
-                    <div class="mt-2 border-t pt-2">
-                        <input type="text" id="new-service-name" placeholder="New Service Name" class="w-full px-3 py-1.5 rounded-lg border border-gray-300 text-xs mb-1">
-                        <select id="new-service-cat" class="w-full px-3 py-1.5 rounded-lg border border-gray-300 text-xs mb-2">
+                    <div class="mt-3 border-t border-gray-200 pt-4">
+                        <input type="text" id="new-service-name" placeholder="New Service Name" class="w-full px-4 py-3 rounded-lg border border-gray-300 text-xs mb-2 shadow-sm focus:border-[#FFD500] outline-none">
+                        <select id="new-service-cat" class="w-full px-4 py-3 rounded-lg border border-gray-300 text-xs mb-3 shadow-sm focus:border-[#FFD500] outline-none font-medium">
                             <option value="C">Clearance (C)</option>
                             <option value="P">Permit (P)</option>
                             <option value="I">ID (I)</option>
                             <option value="S">Special (S)</option>
                         </select>
-                        <button id="btn-add-service" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-1.5 rounded-lg transition-all text-xs uppercase shadow-sm">Add Service</button>
+                        <button id="btn-add-service" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-black py-3 rounded-xl transition-all text-xs uppercase shadow-sm border-b-2 border-gray-400 active:border-b-0 active:translate-y-px">
+                            ADD SERVICE
+                        </button>
                     </div>
                 </div>
             </div>
 
             <div class="bg-white p-5 rounded-2xl shadow-xl flex flex-col gap-4">
-                <h3 class="text-sm font-bold text-[#071c4d] uppercase tracking-widest border-b pb-2">Booking Rules</h3>
+                <h3 class="text-sm font-black text-[#071c4d] uppercase tracking-widest border-b border-gray-200 pb-3">Booking Rules</h3>
                 
-                <div class="flex justify-between items-center p-2 hover:bg-gray-50 rounded">
-                    <span class="text-xs font-bold text-gray-700 uppercase">Enable Booking</span>
-                    <button id="toggle-global-booking" class="shrink-0 w-10 h-5 rounded-full bg-gray-400 transition-colors relative shadow-inner">
-                        <div id="knob-global-booking" class="w-4 h-4 bg-white rounded-full absolute top-[2px] left-0.5 transition-all shadow-sm"></div>
+                <div class="flex justify-between items-center p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors border border-gray-100">
+                    <span class="text-xs font-black text-gray-700 uppercase">Enable Booking</span>
+                    <button id="toggle-global-booking" class="shrink-0 w-12 h-6 rounded-full bg-gray-400 transition-colors relative shadow-inner">
+                        <div id="knob-global-booking" class="w-5 h-5 bg-white rounded-full absolute top-[2px] left-[2px] transition-all shadow-md"></div>
                     </button>
                 </div>
 
-                <div class="flex justify-between items-center p-2 hover:bg-gray-50 rounded">
-                    <span class="text-xs font-bold text-gray-700 uppercase">Auto-Approve</span>
-                    <button id="toggle-auto-approve" class="shrink-0 w-10 h-5 rounded-full bg-gray-400 transition-colors relative shadow-inner">
-                        <div id="knob-auto-approve" class="w-4 h-4 bg-white rounded-full absolute top-[2px] left-0.5 transition-all shadow-sm"></div>
+                <div class="flex justify-between items-center p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors border border-gray-100">
+                    <span class="text-xs font-black text-gray-700 uppercase">Auto-Approve</span>
+                    <button id="toggle-auto-approve" class="shrink-0 w-12 h-6 rounded-full bg-gray-400 transition-colors relative shadow-inner">
+                        <div id="knob-auto-approve" class="w-5 h-5 bg-white rounded-full absolute top-[2px] left-[2px] transition-all shadow-md"></div>
                     </button>
                 </div>
 
-                <div class="flex gap-2 items-end">
+                <div class="flex gap-2 items-end mt-2">
                     <div class="flex-1">
-                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Max Daily Capacity</label>
-                        <input type="number" id="admin-capacity" class="w-full px-3 py-1.5 rounded-lg border border-gray-300 text-xs font-bold">
+                        <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Max Daily Capacity</label>
+                        <input type="number" id="admin-capacity" class="w-full px-4 py-3 rounded-lg border border-gray-300 text-xs font-bold shadow-sm focus:border-[#FFD500] outline-none">
                     </div>
-                    <button id="btn-update-capacity" class="bg-gray-800 hover:bg-black text-white font-bold py-1.5 px-3 rounded-lg text-[10px] uppercase">Save</button>
+                    <button id="btn-update-capacity" class="bg-[#071c4d] hover:bg-[#0a2a6e] text-white font-black py-3 px-5 rounded-lg text-xs uppercase shadow-md border-b-4 border-gray-900 active:border-b-0 active:translate-y-1">SAVE</button>
                 </div>
 
-                <div class="border-t pt-2">
-                    <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Block Specific Date</label>
+                <div class="border-t border-gray-200 pt-4 mt-2">
+                    <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Block Specific Date</label>
                     <div class="flex gap-2">
-                        <input type="date" id="admin-block-date" class="w-full px-3 py-1.5 rounded-lg border border-gray-300 text-xs font-bold">
-                        <button id="btn-add-block" class="bg-red-600 hover:bg-red-700 text-white font-bold py-1.5 px-3 rounded-lg text-[10px] uppercase">Block</button>
+                        <input type="date" id="admin-block-date" class="w-full px-4 py-3 rounded-lg border border-gray-300 text-xs font-bold shadow-sm focus:border-red-400 outline-none">
+                        <button id="btn-add-block" class="bg-red-600 hover:bg-red-700 text-white font-black py-3 px-5 rounded-lg text-xs uppercase shadow-md border-b-4 border-red-800 active:border-b-0 active:translate-y-1">BLOCK</button>
                     </div>
                 </div>
 
-                <div class="border-t pt-2">
-                    <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Service Allowed Days</label>
-                    <select id="matrix-service-select" class="w-full px-3 py-1.5 rounded-lg border border-gray-300 text-[10px] font-bold mb-2"></select>
-                    <div class="grid grid-cols-7 gap-1 text-center" id="matrix-days-container"></div>
-                    <button id="btn-save-matrix" class="w-full mt-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-1.5 rounded-lg text-[10px] uppercase">Save Matrix</button>
+                <div class="border-t border-gray-200 pt-4 mt-2">
+                    <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Service Allowed Days</label>
+                    <select id="matrix-service-select" class="w-full px-4 py-3 rounded-lg border border-gray-300 text-[10px] font-bold mb-3 shadow-sm focus:border-[#FFD500] outline-none"></select>
+                    <div class="grid grid-cols-7 gap-1.5 text-center mb-3" id="matrix-days-container"></div>
+                    <button id="btn-save-matrix" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-black py-3 rounded-xl text-xs uppercase shadow-sm border-b-2 border-gray-400 active:border-b-0 active:translate-y-px">SAVE MATRIX</button>
                 </div>
             </div>
 
             <div class="bg-white p-5 rounded-2xl shadow-xl flex flex-col gap-4">
-                <h3 class="text-sm font-bold text-[#071c4d] uppercase tracking-widest border-b pb-2">Screen Displays</h3>
+                <h3 class="text-sm font-black text-[#071c4d] uppercase tracking-widest border-b border-gray-200 pb-3">Screen Displays</h3>
                 
                 <div>
-                    <h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Monitor Media Content</h4>
-                    <select id="media-type" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs font-bold mb-2">
+                    <h4 class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Monitor Media Content</h4>
+                    <select id="media-type" class="w-full px-4 py-3 rounded-lg border border-gray-300 text-xs font-bold mb-3 shadow-sm focus:border-[#071c4d] outline-none">
                         <option value="none">None (Blank)</option>
                         <option value="upload">Upload File (MP4/PNG/JPG)</option>
                         <option value="youtube">YouTube Embed URL</option>
                     </select>
-                    <input type="text" id="media-url" placeholder="Paste URL here..." class="hidden w-full px-3 py-2 rounded-lg border border-gray-300 text-xs mb-2">
-                    <input type="file" id="media-file" accept="video/mp4, video/webm, image/jpeg, image/png" class="hidden w-full text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-yellow-400 file:text-[#071c4d] hover:file:bg-yellow-500 mb-2">
-                    <button id="btn-push-media" class="w-full bg-[#071c4d] hover:bg-[#0a2a6e] text-white font-bold py-2 rounded-lg transition-all text-xs uppercase tracking-wider shadow-md">
-                        Push to Screen
+                    
+                    <input type="text" id="media-url" placeholder="Paste URL here..." class="hidden w-full px-4 py-3 rounded-lg border border-gray-300 text-xs mb-3 shadow-sm focus:border-[#071c4d] outline-none">
+                    
+                    <input type="file" id="media-file" accept="video/mp4, video/webm, image/jpeg, image/png" class="hidden w-full text-xs file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-black file:bg-[#FFD500] file:text-[#071c4d] hover:file:bg-[#FFDC2E] mb-3 cursor-pointer">
+                    
+                    <button id="btn-push-media" class="w-full bg-[#071c4d] hover:bg-[#0a2a6e] text-white font-black py-4 rounded-xl transition-all text-xs uppercase tracking-widest shadow-md border-b-4 border-gray-900 active:border-b-0 active:translate-y-1">
+                        PUSH TO SCREEN
                     </button>
                 </div>
 
-                <div class="border-t pt-4">
-                    <h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Scrolling Ticker Text</h4>
-                    <input type="text" id="ticker-input" placeholder="Enter scrolling text..." class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs mb-2">
-                    <button id="btn-update-ticker" class="w-full bg-gray-800 hover:bg-black text-white font-bold py-2 rounded-lg transition-all text-xs uppercase tracking-wider shadow-md">
-                        Update Ticker
+                <div class="border-t border-gray-200 pt-5 mt-2">
+                    <h4 class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Scrolling Ticker Text</h4>
+                    <input type="text" id="ticker-input" placeholder="Enter scrolling text..." class="w-full px-4 py-3 rounded-lg border border-gray-300 text-xs mb-3 shadow-sm focus:border-[#071c4d] outline-none font-medium">
+                    
+                    <button id="btn-update-ticker" class="w-full bg-[#111827] hover:bg-black text-white font-black py-4 rounded-xl transition-all text-xs uppercase tracking-widest shadow-md border-b-4 border-gray-900 active:border-b-0 active:translate-y-1">
+                        UPDATE TICKER
                     </button>
                 </div>
             </div>
 
             <div class="bg-white p-5 rounded-2xl shadow-xl flex flex-col gap-4">
-                <h3 class="text-sm font-bold text-[#071c4d] uppercase tracking-widest border-b pb-2">Quick Links & Reset</h3>
+                <h3 class="text-sm font-black text-[#071c4d] uppercase tracking-widest border-b border-gray-200 pb-3">Quick Links & Reset</h3>
                 
-                <div class="flex flex-col gap-3 mt-2">
-                    <button id="btn-open-monitor" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl shadow-md transition-all text-sm flex justify-between items-center">
-                        <div class="flex items-center gap-2"><i class="fas fa-tv"></i> Queue Monitor</div>
-                        <i class="fas fa-external-link-alt text-xs opacity-70"></i>
+                <div class="flex flex-col gap-4 mt-2">
+                    <button id="btn-open-monitor" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 px-5 rounded-xl shadow-md transition-all text-xs tracking-widest uppercase flex justify-between items-center border-b-4 border-blue-800 active:border-b-0 active:translate-y-1">
+                        <div class="flex items-center gap-3"><i class="fas fa-tv text-lg"></i> Queue Monitor</div>
+                        <i class="fas fa-external-link-alt opacity-70"></i>
                     </button>
-                    <button id="btn-open-analytics" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-xl shadow-md transition-all text-sm flex justify-between items-center">
-                        <div class="flex items-center gap-2"><i class="fas fa-chart-pie"></i> Analytics Dashboard</div>
-                        <i class="fas fa-external-link-alt text-xs opacity-70"></i>
+                    
+                    <button id="btn-open-analytics" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-black py-4 px-5 rounded-xl shadow-md transition-all text-xs tracking-widest uppercase flex justify-between items-center border-b-4 border-purple-800 active:border-b-0 active:translate-y-1">
+                        <div class="flex items-center gap-3"><i class="fas fa-chart-pie text-lg"></i> Analytics Dashboard</div>
+                        <i class="fas fa-external-link-alt opacity-70"></i>
                     </button>
-                    <button id="btn-export-data" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-xl shadow-md transition-all text-sm flex justify-between items-center">
-                        <div class="flex items-center gap-2"><i class="fas fa-download"></i> Download CSV Logs</div>
+                    
+                    <button id="btn-export-data" class="w-full bg-green-600 hover:bg-green-700 text-white font-black py-4 px-5 rounded-xl shadow-md transition-all text-xs tracking-widest uppercase flex justify-between items-center border-b-4 border-green-800 active:border-b-0 active:translate-y-1">
+                        <div class="flex items-center gap-3"><i class="fas fa-download text-lg"></i> Download CSV Logs</div>
                     </button>
                 </div>
 
-                <div class="mt-auto border-t border-red-100 pt-4">
-                    <button id="btn-reset" class="w-full bg-red-50 hover:bg-red-600 text-red-600 hover:text-white font-bold py-3 rounded-xl transition-all text-xs uppercase tracking-widest border border-red-200 hover:border-red-600 shadow-sm flex items-center justify-center gap-2">
-                        <i class="fas fa-exclamation-triangle"></i> Factory Reset Queue
+                <div class="mt-auto border-t border-red-100 pt-5">
+                    <button id="btn-reset" class="w-full bg-red-50 hover:bg-red-600 text-red-600 hover:text-white font-black py-4 rounded-xl transition-all text-xs uppercase tracking-widest border-2 border-red-200 hover:border-red-600 shadow-sm flex items-center justify-center gap-2">
+                        <i class="fas fa-exclamation-triangle"></i> FACTORY RESET QUEUE
                     </button>
                 </div>
             </div>
@@ -290,6 +299,21 @@
         window.toggleCounter = function(id) {
             socket.emit('toggleCounter', { counterId: id });
         }
+
+        // --- TIME-BASED UI LOCKOUT FOR WALK-INS ---
+        function checkSystemTime() {
+            const now = new Date();
+            const currentHour = now.getHours();
+            const btnGenWalkin = document.getElementById('btn-gen-walkin');
+            
+            if (currentHour >= 17) {
+                btnGenWalkin.disabled = true;
+                btnGenWalkin.className = "w-full bg-gray-400 text-white font-black py-4 rounded-xl transition-all text-xs uppercase tracking-widest shadow-inner flex justify-center items-center gap-2 cursor-not-allowed";
+                btnGenWalkin.innerHTML = '<i class="fas fa-lock"></i> SYSTEM CLOSED (PAST 5PM)';
+            }
+        }
+        setInterval(checkSystemTime, 60000);
+        checkSystemTime();
 
         const mediaTypeSelect = document.getElementById('media-type');
         const mediaUrlInput = document.getElementById('media-url');
@@ -377,7 +401,7 @@
                 } catch (error) {
                     alert('Error uploading file: ' + error.message);
                 } finally {
-                    pushBtn.innerText = 'Push to Screen';
+                    pushBtn.innerText = 'PUSH TO SCREEN';
                     pushBtn.classList.remove('opacity-50', 'pointer-events-none');
                 }
             }
@@ -449,6 +473,12 @@
             socket.emit('adminReviewBooking', { id: id, approved: false });
         }
 
+        window.adminCancelTicket = function(ticketNumber) {
+            if(confirm('Are you sure you want to cancel this ticket?')) {
+                socket.emit('cancelTicket', ticketNumber);
+            }
+        }
+
         function renderMatrixDays(serviceName) {
             const container = document.getElementById('matrix-days-container');
             container.innerHTML = '';
@@ -458,9 +488,9 @@
             days.forEach(day => {
                 const isChecked = rules.includes(day.d) ? 'checked' : '';
                 container.innerHTML += `
-                    <label class="flex flex-col items-center bg-gray-50 p-1 rounded border border-gray-200 cursor-pointer hover:bg-gray-100">
-                        <span class="text-[9px] font-bold text-gray-600 uppercase">${day.n}</span>
-                        <input type="checkbox" value="${day.d}" class="matrix-day-chk accent-[#FFD500]" ${isChecked}>
+                    <label class="flex flex-col items-center bg-white p-2 rounded-lg border border-gray-200 cursor-pointer hover:bg-gray-50 hover:border-gray-300 transition-colors shadow-sm">
+                        <span class="text-[9px] font-black text-[#071c4d] uppercase mb-1">${day.n}</span>
+                        <input type="checkbox" value="${day.d}" class="matrix-day-chk accent-[#FFD500] w-4 h-4 cursor-pointer" ${isChecked}>
                     </label>
                 `;
             });
@@ -477,20 +507,20 @@
             const knobAuto = document.getElementById('knob-auto-approve');
             if (currentAutoApproveState) {
                 toggleAutoBtn.classList.replace('bg-gray-400', 'bg-green-500');
-                knobAuto.classList.replace('left-0.5', 'left-[22px]');
+                knobAuto.classList.replace('left-[2px]', 'left-[26px]');
             } else {
                 toggleAutoBtn.classList.replace('bg-green-500', 'bg-gray-400');
-                knobAuto.classList.replace('left-[22px]', 'left-0.5');
+                knobAuto.classList.replace('left-[26px]', 'left-[2px]');
             }
 
             const toggleGlobalBtn = document.getElementById('toggle-global-booking');
             const knobGlobal = document.getElementById('knob-global-booking');
             if (globalBookingEnabled) {
                 toggleGlobalBtn.classList.replace('bg-gray-400', 'bg-green-500');
-                knobGlobal.classList.replace('left-0.5', 'left-[22px]');
+                knobGlobal.classList.replace('left-[2px]', 'left-[26px]');
             } else {
                 toggleGlobalBtn.classList.replace('bg-green-500', 'bg-gray-400');
-                knobGlobal.classList.replace('left-[22px]', 'left-0.5');
+                knobGlobal.classList.replace('left-[26px]', 'left-[2px]');
             }
 
             const pendingList = document.getElementById('admin-pending-list');
@@ -499,29 +529,41 @@
             pendingList.innerHTML = '';
 
             if (engineState.pendingRequests.length === 0) {
-                pendingList.innerHTML = '<div class="text-center py-10 text-gray-400 font-medium uppercase text-xs tracking-widest">No pending requests</div>';
+                pendingList.innerHTML = '<div class="h-full flex items-center justify-center text-gray-400 font-bold uppercase text-xs tracking-widest"><i class="fas fa-hourglass-half mr-2 text-xl opacity-50"></i> No pending requests</div>';
             } else {
                 engineState.pendingRequests.forEach(req => {
                     const el = document.createElement('div');
-                    el.className = 'bg-white p-3 rounded-xl border border-gray-200 shadow-sm flex flex-col gap-2';
+                    el.className = 'bg-white p-5 rounded-2xl border border-gray-200 shadow-sm flex flex-col gap-3 hover:border-[#FFD500] hover:shadow-md transition-all';
                     el.innerHTML = `
                         <div class="flex justify-between items-start">
                             <div>
-                                <div class="font-black text-sm text-gray-900">${req.name}</div>
-                                <div class="text-[10px] text-gray-400 font-medium">${req.contact}</div>
-                                <div class="text-[10px] font-bold text-blue-600 mt-1">${req.requestedDate}</div>
+                                <div class="font-black text-lg text-[#071c4d] mb-1 tracking-tight">${req.name}</div>
+                                <div class="text-[10px] text-gray-500 font-bold"><i class="fas fa-phone mr-1"></i>${req.contact}</div>
+                                <div class="text-[10px] font-bold text-gray-600 mt-1"><i class="fas fa-calendar-alt mr-1"></i>${req.requestedDate}</div>
                             </div>
-                            <div class="text-[9px] font-black uppercase bg-gray-100 text-gray-600 px-2 py-1 rounded border">${req.priority}</div>
+                            <div class="text-[9px] font-black uppercase bg-[#071c4d] text-[#FFD500] px-3 py-1.5 rounded-lg shadow-sm border border-[#071c4d] max-w-[80px] text-center">${req.priority}</div>
                         </div>
-                        <div class="text-[10px] font-bold bg-gray-50 text-gray-500 px-2 py-1 rounded border border-gray-100 uppercase truncate">${req.document}</div>
-                        <div class="flex gap-2 items-center mt-1">
-                            <select id="slot-${req.id}" class="text-[10px] border border-gray-200 rounded p-1 font-bold">
-                                <option value="MORNING">Morning</option>
-                                <option value="AFTERNOON">Afternoon</option>
-                            </select>
-                            <input type="time" id="time-${req.id}" class="text-[10px] border border-gray-200 rounded p-1 w-16 font-bold" title="Leave blank for Auto">
-                            <button class="flex-1 bg-red-100 hover:bg-red-200 text-red-700 text-[10px] font-black py-1.5 rounded uppercase transition-colors" onclick="rejectRequest('${req.id}')">Reject</button>
-                            <button class="flex-1 bg-green-500 hover:bg-green-600 text-white text-[10px] font-black py-1.5 rounded uppercase transition-colors" onclick="approveRequest('${req.id}')">Approve</button>
+                        <div class="text-[10px] font-bold bg-gray-50 text-gray-700 px-4 py-2.5 rounded-xl border border-gray-200 uppercase truncate shadow-inner">
+                            <i class="fas fa-file-alt mr-2 text-gray-400"></i> ${req.document}
+                        </div>
+                        <div class="flex gap-3 items-center mt-2">
+                            <div class="flex flex-col gap-1 w-1/2">
+                                <select id="slot-${req.id}" class="text-xs bg-white border border-gray-300 rounded-lg p-2.5 font-bold focus:border-[#FFD500] outline-none shadow-sm cursor-pointer text-gray-700">
+                                    <option value="MORNING">Morning</option>
+                                    <option value="AFTERNOON">Afternoon</option>
+                                </select>
+                            </div>
+                            <div class="flex flex-col gap-1 w-1/2">
+                                <input type="time" id="time-${req.id}" class="text-xs bg-white border border-gray-300 rounded-lg p-2.5 font-bold w-full focus:border-[#FFD500] outline-none shadow-sm text-gray-700" title="Leave blank for Auto">
+                            </div>
+                        </div>
+                        <div class="flex gap-3 mt-3 pt-3 border-t border-gray-100">
+                            <button class="flex-1 bg-red-50 hover:bg-red-600 text-red-600 hover:text-white border border-red-200 text-xs font-black py-3 rounded-xl uppercase transition-all shadow-sm flex items-center justify-center gap-2" onclick="rejectRequest('${req.id}')">
+                                <i class="fas fa-times-circle"></i> Reject
+                            </button>
+                            <button class="flex-1 bg-green-500 hover:bg-green-600 text-white text-xs font-black py-3 rounded-xl uppercase transition-all shadow-md flex items-center justify-center gap-2 border-b-4 border-green-700 active:border-b-0 active:translate-y-1" onclick="approveRequest('${req.id}')">
+                                <i class="fas fa-check-circle"></i> Approve
+                            </button>
                         </div>
                     `;
                     pendingList.appendChild(el);
@@ -530,25 +572,43 @@
         });
 
         function createTicketCard(item, isLive) {
-            const badgeColor = item.priority === 'PWD / Senior / Pregnant' ? 'bg-black text-[#FFD500] border-gray-800' : 'bg-[#FFF9E2] text-gray-700 border-[#FFE761]';
+            const badgeColor = item.priority === 'PWD / Senior / Pregnant' ? 'bg-[#071c4d] text-[#FFD500] border-[#071c4d]' : 'bg-gray-100 text-gray-700 border-gray-200';
             const dateColor = isLive ? 'text-green-600' : 'text-gray-500';
             
             const el = document.createElement('div');
-            el.className = 'bg-white p-3 rounded-xl border border-gray-200 shadow-sm flex flex-col gap-2 hover:border-[#FFD500] transition-colors';
+            el.className = 'bg-white p-5 rounded-2xl border border-gray-200 shadow-sm flex flex-col gap-3 hover:border-[#FFD500] transition-all hover:shadow-md relative group';
+            
             el.innerHTML = `
                 <div class="flex justify-between items-start">
                     <div>
-                        <div class="font-black text-lg text-gray-900">${formatTicket(item.ticketNumber, item.category)}</div>
-                        <div class="text-xs font-bold text-gray-800">${item.name}</div>
-                        <div class="text-[10px] text-gray-400 font-medium">${item.contact}</div>
-                        <div class="text-[10px] font-bold mt-1 ${dateColor}">${item.date} ${item.timeSlot && !isLive ? '· ' + item.timeSlot : ''} ${item.displayTime ? '· ' + item.displayTime : ''}</div>
+                        <div class="font-black text-2xl text-[#071c4d] mb-1 leading-none tracking-tight">${formatTicket(item.ticketNumber, item.category)}</div>
+                        <div class="text-sm font-bold text-gray-800">${item.name}</div>
+                        <div class="text-[10px] text-gray-500 font-bold mt-1"><i class="fas fa-phone mr-1"></i>${item.contact}</div>
+                        <div class="text-[10px] font-bold mt-1 ${dateColor}"><i class="fas fa-calendar-day mr-1"></i>${item.date} ${item.timeSlot && !isLive ? '· ' + item.timeSlot : ''} ${item.displayTime ? '· ' + item.displayTime : ''}</div>
                     </div>
-                    <div class="text-[9px] font-black uppercase ${badgeColor} px-2 py-1 rounded-md border tracking-tighter text-center max-w-[80px]">
-                        ${item.priority}
+                    <div class="flex flex-col items-end gap-2">
+                        <div class="text-[9px] font-black uppercase ${badgeColor} px-3 py-1.5 rounded-lg border tracking-tighter text-center max-w-[80px] shadow-sm">
+                            ${item.priority}
+                        </div>
                     </div>
                 </div>
-                <div class="text-[10px] font-bold bg-gray-50 text-gray-500 px-2 py-1 rounded-lg border border-gray-100 mt-1 uppercase truncate">
-                    ${item.document}
+                <div class="text-[10px] font-bold bg-gray-50 text-gray-700 px-4 py-2.5 rounded-xl border border-gray-200 uppercase truncate shadow-inner">
+                    <i class="fas fa-file-alt mr-2 text-gray-400"></i> ${item.document}
+                </div>
+                
+                <div class="grid grid-cols-2 gap-3 mt-3 border-t border-gray-100 pt-3">
+                    <button class="bg-red-50 hover:bg-red-600 text-red-600 hover:text-white border border-red-200 text-xs font-black py-3 rounded-xl uppercase transition-all flex justify-center items-center gap-2 shadow-sm" onclick="adminCancelTicket(${item.ticketNumber})">
+                        <i class="fas fa-trash-alt"></i> Cancel
+                    </button>
+                    ${isLive ? `
+                        <button class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-black py-3 rounded-xl uppercase transition-all flex justify-center items-center gap-2 shadow-md border-b-4 border-blue-800 active:border-b-0 active:translate-y-1" onclick="socket.emit('callNext', {counterId: 1});">
+                            <i class="fas fa-bullhorn"></i> Call C1
+                        </button>
+                    ` : `
+                        <button class="bg-gray-100 text-gray-400 text-xs font-black py-3 rounded-xl uppercase flex justify-center items-center gap-2 cursor-not-allowed shadow-inner">
+                            <i class="fas fa-clock"></i> Waiting
+                        </button>
+                    `}
                 </div>
             `;
             return el;
@@ -561,45 +621,45 @@
             const btnCall1 = document.getElementById('btn-call-1');
             const toggleC1 = document.getElementById('btn-toggle-c1');
             if (c1.isActive) {
-                toggleC1.className = "text-sm font-bold bg-white/50 px-3 py-1 rounded-full transition-colors hover:bg-white text-black";
-                toggleC1.innerHTML = '<i class="fas fa-power-off mr-1"></i> Active';
+                toggleC1.className = "text-sm font-bold bg-white/80 px-4 py-1.5 rounded-full transition-colors hover:bg-white text-black shadow-sm flex items-center";
+                toggleC1.innerHTML = '<i class="fas fa-power-off mr-2 text-green-600"></i> Active';
                 btnCall1.disabled = false;
                 btnCall1.classList.remove('opacity-50', 'cursor-not-allowed');
                 document.getElementById('c1-ticket').innerText = c1.currentTicket ? formatTicket(c1.currentTicket, c1.currentCategory) : "----";
                 document.getElementById('c1-name').innerText = c1.currentName ? `Name: ${c1.currentName}` : "Name: ---";
                 document.getElementById('c1-doc').innerText = c1.currentDocument;
-                document.getElementById('c1-doc').className = "text-xs font-bold text-yellow-400 bg-[#071c4d] px-4 py-2 rounded-lg mb-8 uppercase tracking-widest shadow-inner";
+                document.getElementById('c1-doc').className = "text-xs font-bold text-[#071c4d] bg-[#FFD500] px-5 py-2.5 rounded-xl mb-8 uppercase tracking-widest shadow-md";
             } else {
-                toggleC1.className = "text-sm font-bold bg-red-600 text-white px-3 py-1 rounded-full transition-colors hover:bg-red-700 shadow-inner";
-                toggleC1.innerHTML = '<i class="fas fa-power-off mr-1"></i> Offline';
+                toggleC1.className = "text-sm font-bold bg-red-600 text-white px-4 py-1.5 rounded-full transition-colors hover:bg-red-700 shadow-inner flex items-center";
+                toggleC1.innerHTML = '<i class="fas fa-power-off mr-2 text-white"></i> Offline';
                 btnCall1.disabled = true;
                 btnCall1.classList.add('opacity-50', 'cursor-not-allowed');
                 document.getElementById('c1-ticket').innerText = "----";
                 document.getElementById('c1-name').innerText = "Name: ---";
                 document.getElementById('c1-doc').innerText = "OFFLINE";
-                document.getElementById('c1-doc').className = "text-xs font-bold text-white bg-red-600 px-4 py-2 rounded-lg mb-8 uppercase tracking-widest shadow-inner";
+                document.getElementById('c1-doc').className = "text-xs font-bold text-white bg-red-600 px-5 py-2.5 rounded-xl mb-8 uppercase tracking-widest shadow-inner";
             }
 
             const btnCall2 = document.getElementById('btn-call-2');
             const toggleC2 = document.getElementById('btn-toggle-c2');
             if (c2.isActive) {
-                toggleC2.className = "text-sm font-bold bg-white/50 px-3 py-1 rounded-full transition-colors hover:bg-white text-black";
-                toggleC2.innerHTML = '<i class="fas fa-power-off mr-1"></i> Active';
+                toggleC2.className = "text-sm font-bold bg-white/80 px-4 py-1.5 rounded-full transition-colors hover:bg-white text-black shadow-sm flex items-center";
+                toggleC2.innerHTML = '<i class="fas fa-power-off mr-2 text-green-600"></i> Active';
                 btnCall2.disabled = false;
                 btnCall2.classList.remove('opacity-50', 'cursor-not-allowed');
                 document.getElementById('c2-ticket').innerText = c2.currentTicket ? formatTicket(c2.currentTicket, c2.currentCategory) : "----";
                 document.getElementById('c2-name').innerText = c2.currentName ? `Name: ${c2.currentName}` : "Name: ---";
                 document.getElementById('c2-doc').innerText = c2.currentDocument;
-                document.getElementById('c2-doc').className = "text-xs font-bold text-yellow-400 bg-[#071c4d] px-4 py-2 rounded-lg mb-8 uppercase tracking-widest shadow-inner";
+                document.getElementById('c2-doc').className = "text-xs font-bold text-[#071c4d] bg-[#FFD500] px-5 py-2.5 rounded-xl mb-8 uppercase tracking-widest shadow-md";
             } else {
-                toggleC2.className = "text-sm font-bold bg-red-600 text-white px-3 py-1 rounded-full transition-colors hover:bg-red-700 shadow-inner";
-                toggleC2.innerHTML = '<i class="fas fa-power-off mr-1"></i> Offline';
+                toggleC2.className = "text-sm font-bold bg-red-600 text-white px-4 py-1.5 rounded-full transition-colors hover:bg-red-700 shadow-inner flex items-center";
+                toggleC2.innerHTML = '<i class="fas fa-power-off mr-2 text-white"></i> Offline';
                 btnCall2.disabled = true;
                 btnCall2.classList.add('opacity-50', 'cursor-not-allowed');
                 document.getElementById('c2-ticket').innerText = "----";
                 document.getElementById('c2-name').innerText = "Name: ---";
                 document.getElementById('c2-doc').innerText = "OFFLINE";
-                document.getElementById('c2-doc').className = "text-xs font-bold text-white bg-red-600 px-4 py-2 rounded-lg mb-8 uppercase tracking-widest shadow-inner";
+                document.getElementById('c2-doc').className = "text-xs font-bold text-white bg-red-600 px-5 py-2.5 rounded-xl mb-8 uppercase tracking-widest shadow-inner";
             }
             
             document.getElementById('admin-waiting-count').innerText = state.waitingList.length;
@@ -637,15 +697,15 @@
             state.services.forEach(service => {
                 const isOff = state.disabledServices.includes(service.name);
                 const colorClass = isOff ? 'bg-gray-300' : 'bg-green-500';
-                const textClass = isOff ? 'text-gray-400 line-through' : 'text-gray-700';
-                const knobClass = isOff ? 'bg-white left-0.5' : 'bg-white left-4';
+                const textClass = isOff ? 'text-gray-400 line-through' : 'text-[#071c4d]';
+                const knobClass = isOff ? 'bg-white left-[2px]' : 'bg-white left-[22px]';
                 
                 const el = document.createElement('div');
-                el.className = 'flex justify-between items-center p-1 hover:bg-gray-50 rounded shrink-0';
+                el.className = 'flex justify-between items-center p-3 bg-white hover:bg-gray-50 rounded-lg shrink-0 border border-gray-200 transition-colors shadow-sm';
                 el.innerHTML = `
-                    <span class="text-[10px] font-bold ${textClass} truncate pr-2 uppercase">${service.name}</span>
-                    <button class="shrink-0 w-8 h-4 rounded-full ${colorClass} transition-colors relative shadow-inner" onclick="socket.emit('toggleService', '${service.name}')">
-                        <div class="w-3 h-3 rounded-full absolute top-[2px] transition-all ${knobClass} shadow-sm"></div>
+                    <span class="text-[10px] font-black ${textClass} truncate pr-2 uppercase">${service.name}</span>
+                    <button class="shrink-0 w-11 h-6 rounded-full ${colorClass} transition-colors relative shadow-inner" onclick="socket.emit('toggleService', '${service.name}')">
+                        <div class="w-5 h-5 rounded-full absolute top-[2px] transition-all ${knobClass} shadow-md"></div>
                     </button>
                 `;
                 toggleContainer.appendChild(el);
@@ -654,7 +714,7 @@
             const listContainer = document.getElementById('admin-waiting-list');
             listContainer.innerHTML = '';
             if (state.waitingList.length === 0) {
-                listContainer.innerHTML = '<div class="text-center py-10 text-gray-400 font-medium uppercase text-xs tracking-widest">No residents in queue</div>';
+                listContainer.innerHTML = '<div class="h-full flex items-center justify-center text-gray-400 font-bold uppercase text-xs tracking-widest"><i class="fas fa-inbox mr-2 text-xl opacity-50"></i> Queue is empty</div>';
             } else {
                 state.waitingList.forEach(item => listContainer.appendChild(createTicketCard(item, true)));
             }
@@ -664,7 +724,7 @@
             const apptContainer = document.getElementById('admin-appointment-list');
             apptContainer.innerHTML = '';
             if (appointmentList.length === 0) {
-                apptContainer.innerHTML = '<div class="text-center py-10 text-gray-400 font-medium uppercase text-xs tracking-widest">No future appointments</div>';
+                apptContainer.innerHTML = '<div class="h-full flex items-center justify-center text-gray-400 font-bold uppercase text-xs tracking-widest"><i class="fas fa-calendar-times mr-2 text-xl opacity-50"></i> No future appointments</div>';
             } else {
                 appointmentList.forEach(item => apptContainer.appendChild(createTicketCard(item, false)));
             }
