@@ -44,7 +44,50 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
+const cookieParser = require('cookie-parser');
+
+app.use(express.json());
+app.use(cookieParser());
+
+app.post('/api/admin-login', (req, res) => {
+    const { username, password } = req.body;
+    const correctPassword = process.env.ADMIN_PASS || 'Padayon2026!';
+    
+    if (username === 'admin' && password === correctPassword) {
+        res.cookie('baliwasanAdminAuth', 'secure_auth_token', { httpOnly: true });
+        res.json({ success: true });
+    } else {
+        res.status(401).json({ success: false });
+    }
+});
+
+const protectedRoutes = [
+    '/admin.html', 
+    '/admin-queue.html', 
+    '/homepage-admin.html', 
+    '/news&update-admin.html', 
+    '/garbage-admin.html', 
+    '/citizen-profiling.html'
+];
+
+app.use((req, res, next) => {
+    const isProtected = protectedRoutes.some(route => req.path.includes(route));
+    if (isProtected) {
+        if (req.cookies.baliwasanAdminAuth === 'secure_auth_token') {
+            next();
+        } else {
+            res.redirect('/admin-login.html');
+        }
+    } else {
+        next();
+    }
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'homepage.html'));
+});
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'homepage.html'));

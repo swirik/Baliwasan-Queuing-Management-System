@@ -55,13 +55,7 @@
     </div>
 
     <script>
-
-        const validCredentials = {
-            username: 'admin',
-            password: 'admin123'
-        };
-
-        function handleLogin(event) {
+        async function handleLogin(event) {
             event.preventDefault();
             
             const username = document.getElementById('username').value.trim();
@@ -73,16 +67,27 @@
                 return;
             }
             
+            try {
+                const response = await fetch('/api/admin-login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
 
-            if (username === validCredentials.username && password === validCredentials.password) {
-                errorDiv.classList.add('hidden');
-                sessionStorage.setItem('isLoggedIn', 'true');
-                sessionStorage.setItem('username', username);
-                window.location.href = 'admin.html';
-            } else {
-                showError('Invalid username or password. Please try again.');
-                document.getElementById('password').value = '';
-                document.getElementById('password').focus();
+                const data = await response.json();
+
+                if (data.success) {
+                    errorDiv.classList.add('hidden');
+                    window.location.href = 'admin.html';
+                } else {
+                    showError('Invalid username or password. Please try again.');
+                    document.getElementById('password').value = '';
+                    document.getElementById('password').focus();
+                }
+            } catch (error) {
+                showError('Server error. Please try again later.');
             }
         }
         
@@ -96,13 +101,6 @@
             }, 3000);
         }
         
-        document.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                handleLogin(e);
-            }
-        });
-
-
         window.addEventListener('load', function() {
             document.getElementById('username').focus();
         });

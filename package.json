@@ -8,6 +8,7 @@
     "build:css": "tailwindcss -i ./public/input.css -o ./public/output.css --watch"
   },
   "dependencies": {
+    "cookie-parser": "^1.4.7",
     "express": "^5.2.1",
     "mongoose": "^9.3.1",
     "multer": "^2.1.1",
