@@ -131,7 +131,8 @@ let bookingEngine = {
     blockedDates: [], 
     serviceRules: {},
     pendingRequests: [],
-    dailyLoad: {}
+    dailyLoad: {},
+    ignoreTimeLock: false // Experimental 5 PM override
 };
 
 let queueState = { 
@@ -148,7 +149,7 @@ let queueState = {
     waitingList: [],
     appointments: [],
     dailyCounters: {},
-    media: { type: 'none', url: '' },
+    media: { type: 'none', url: '', muted: false }, // Muted state added
     tickerText: 'WELCOME TO BARANGAY BALIWASAN. PLEASE WAIT FOR YOUR NUMBER TO BE CALLED.',
     disabledServices: [],
     services: [
@@ -222,6 +223,7 @@ function getTodayDate() {
 }
 
 function isSystemClosed() {
+    if (bookingEngine.ignoreTimeLock) return false;
     return getPhDateObj().getUTCHours() >= 17;
 }
 
@@ -240,7 +242,7 @@ function generateAutoTime(position, isOnline = false) {
     let hours = phNow.getUTCHours();
     let mins = phNow.getUTCMinutes();
     
-    if (hours >= 17) {
+    if (hours >= 17 && !bookingEngine.ignoreTimeLock) {
         return "5:00 PM";
     }
 
@@ -342,6 +344,12 @@ io.on('connection', (socket) => {
             saveState();
             io.emit('queueUpdated', queueState);
         }
+    });
+
+    socket.on('toggleTimeLock', () => {
+        bookingEngine.ignoreTimeLock = !bookingEngine.ignoreTimeLock;
+        saveState();
+        io.emit('bookingEngineUpdated', bookingEngine);
     });
 
     socket.on('cancelTicket', (ticketNumber) => {
@@ -623,6 +631,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('updateMedia', (data) => {
+        // data expects { type, url, muted }
         queueState.media = data;
         saveState();
         io.emit('queueUpdated', queueState);
