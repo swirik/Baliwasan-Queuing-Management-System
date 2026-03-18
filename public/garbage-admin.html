@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barangay Baliwasan | Admin - Garbage Schedule</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body class="bg-gray-50 font-sans text-gray-900">
+
+    <header class="bg-white border-b-2 border-yellow-400 flex flex-col w-full fixed top-0 z-50 shadow-md">
+        <div class="flex justify-between items-center px-6 py-3">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full bg-cover bg-center border-2 border-yellow-400 shadow-sm" style="background-image: url('resources/logo.png');">
+                </div>
+                <h1 class="text-xl md:text-2xl font-bold text-black tracking-wide uppercase">ADMIN</h1>
+                <p class="text-xs text-yellow-500">GARBAGE SCHEDULE</p>
+            </div>
+            <nav class="flex gap-2 flex-wrap justify-end">
+                    <a href="admin.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase   transition-all hover:shadow-md">DASHBOARD</a>
+                    <a href="homepage-admin.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">HOMEPAGE</a>
+                    <a href="citizen-profiling.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">CITIZEN PROFILING</a>
+                    <a href="news&update-admin.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">NEWS & UPDATES</a>
+                    <a href="garbage-admin.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase  ring-2 ring-offset-2 ring-yellow-400 transition-all">GARBAGE SCHEDULE</a>
+                    <a href="queue.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">QUEUING SYSTEM</a>
+            </nav>
+        </div>
+        
+        <div class="bg-yellow-100 py-1.5 flex flex-col sm:flex-row justify-between items-center px-4 md:px-8 border-t border-yellow-300">
+            <div id="portal-clock" class="text-xs font-medium text-yellow-800 mb-1 sm:mb-0">Loading Date & Time...</div>
+            <div class="flex gap-2 w-full sm:w-auto">
+                <input type="text" placeholder="Search schedules..." class="flex-1 sm:flex-none p-1 px-3 rounded text-xs border border-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:border-transparent">
+                <button class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-1 px-4 rounded text-xs transition-all hover:shadow-md">Search</button>
+            </div>
+        </div>
+
+        <div class="bg-[#0a2a6e] px-6 py-2 flex flex-wrap gap-6 text-white">
+            
+            <div class="flex items-center gap-2">
+                <i class="fas fa-clock text-yellow-400"></i>
+                <span>Next Collection: <strong>Tomorrow 6:00 AM</strong></span>
+            </div>
+        </div>
+    </header>
+
+    <main class="mt-[160px] md:mt-[144px] pb-10 px-4 md:px-6 max-w-7xl mx-auto ">
+
+        <div class="bg-white rounded-2xl shadow-xl p-6 mb-8 border-2 border-yellow-400 pt-6">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 bg-[#071c4d] rounded-full flex items-center justify-center text-yellow-400 text-2xl">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-[#071c4d]">Schedule Management</h2>
+                        <p class="text-gray-500">Toggle dates on/off and manage collection schedules</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <button class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-medium transition-all flex items-center gap-2 shadow-lg">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-medium transition-all flex items-center gap-2 shadow-lg">
+                        <i class="fas fa-plus-circle"></i> Add New
+                    </button>
+                </div>
+            </div>
+            
+
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mt-6">
+                <div class="bg-green-100 border-2 border-green-500 rounded-xl p-3 text-center relative">
+                    <div class="absolute top-2 right-2">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" class="sr-only peer" checked>
+                            <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
+                        </label>
+                    </div>
+                    <p class="font-bold text-green-800 mt-2">Atis</p>
+                    <p class="text-xs text-green-600">Mon, Thu</p>
+                </div>
+                <div class="bg-green-100 border-2 border-green-500 rounded-xl p-3 text-center relative">
+                    <div class="absolute top-2 right-2">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" class="sr-only peer" checked>
+                            <div class="w-9 h-5 bg-gray-300 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
+                        </label>
+                    </div>
+                    <p class="font-bold text-green-800 mt-2">Seaside</p>
+                    <p class="text-xs text-green-600">Tue, Fri</p>
+                </div>
+                <div class="bg-green-100 border-2 border-green-500 rounded-xl p-3 text-center relative">
+                    <div class="absolute top-2 right-2">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" class="sr-only peer" checked>
+                            <div class="w-9 h-5 bg-gray-300 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
+                        </label>
+                    </div>
+                    <p class="font-bold text-green-800 mt-2">Baliwasan Grande</p>
+                    <p class="text-xs text-green-600">Wed, Sat</p>
+                </div>
+                <div class="bg-green-100 border-2 border-green-500 rounded-xl p-3 text-center relative">
+                    <div class="absolute top-2 right-2">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" class="sr-only peer" checked>
+                            <div class="w-9 h-5 bg-gray-300 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
+                        </label>
+                    </div>
+                    <p class="font-bold text-green-800 mt-2">San Jose Road</p>
+                    <p class="text-xs text-green-600">Mon, Thu</p>
+                </div>
+                <div class="bg-green-100 border-2 border-green-500 rounded-xl p-3 text-center relative">
+                    <div class="absolute top-2 right-2">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" class="sr-only peer" checked>
+                            <div class="w-9 h-5 bg-gray-300 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
+                        </label>
+                    </div>
+                    <p class="font-bold text-green-800 mt-2">Tabuk</p>
+                    <p class="text-xs text-green-600">Tue, Fri</p>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden border-2 border-yellow-400 sticky top-40">
+                    <div class="bg-gradient-to-r from-[#071c4d] to-[#0a2a6e] text-white p-4">
+                        <h3 class="text-xl font-bold flex items-center gap-2">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Collection Calendar</span>
+                        </h3>
+                    </div>
+                    
+                    <div class="p-4">
+
+                        <div class="flex justify-between items-center mb-4">
+                            <button class="w-8 h-8 rounded-full hover:bg-gray-200 flex items-center justify-center">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <h4 class="font-bold text-lg">March 2026</h4>
+                            <button class="w-8 h-8 rounded-full hover:bg-gray-200 flex items-center justify-center">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                        
+
+                        <div class="grid grid-cols-7 gap-1 text-center text-xs font-bold text-gray-500 mb-2">
+                            <div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div>
+                        </div>
+                        
+
+                        <div class="grid grid-cols-7 gap-1">
+
+                            <div class="h-10"></div><div class="h-10"></div><div class="h-10"></div><div class="h-10"></div><div class="h-10"></div><div class="h-10"></div><div class="h-10">1</div>
+                            
+
+                            <div class="h-10 flex items-center justify-center rounded-full hover:bg-gray-100 cursor-pointer">2</div>
+                            <div class="h-10 flex items-center justify-center rounded-full bg-green-200 text-green-800 font-bold cursor-pointer relative group">
+                                3
+            
+                            </div>
+                            <div class="h-10 flex items-center justify-center rounded-full hover:bg-gray-100 cursor-pointer">4</div>
+                            <div class="h-10 flex items-center justify-center rounded-full hover:bg-gray-100 cursor-pointer">5</div>
+                            <div class="h-10 flex items-center justify-center rounded-full hover:bg-gray-100 cursor-pointer">6</div>
+                            <div class="h-10 flex items-center justify-center rounded-full hover:bg-gray-100 cursor-pointer">7</div>
+                            <div class="h-10 flex items-center justify-center rounded-full hover:bg-gray-100 cursor-pointer">8</div>
+                            
+
+                            <div class="h-10 flex items-center justify-center rounded-full hover:bg-gray-100 cursor-pointer">9</div>
+                            <div class="h-10 flex items-center justify-center rounded-full bg-blue-200 text-blue-800 font-bold cursor-pointer">10</div>
+                            <div class="h-10 flex items-center justify-center rounded-full hover:bg-gray-100 cursor-pointer">11</div>
+                            <div class="h-10 flex items-center justify-center rounded-full hover:bg-gray-100 cursor-pointer">12</div>
+                            <div class="h-10 flex items-center justify-center rounded-full bg-green-200 text-green-800 font-bold cursor-pointer">13</div>
+                            <div class="h-10 flex items-center justify-center rounded-full hover:bg-gray-100 cursor-pointer">14</div>
+                            <div class="h-10 flex items-center justify-center rounded-full hover:bg-gray-100 cursor-pointer">15</div>
+                            
+
+                            <div class="h-10 flex items-center justify-center rounded-full hover:bg-gray-100 cursor-pointer">16</div>
+                            <div class="h-10 flex items-center justify-center rounded-full hover:bg-gray-100 cursor-pointer">17</div>
+                            <div class="h-10 flex items-center justify-center rounded-full bg-blue-200 text-blue-800 font-bold cursor-pointer">18</div>
+                            <div class="h-10 flex items-center justify-center rounded-full hover:bg-gray-100 cursor-pointer">19</div>
+                            <div class="h-10 flex items-center justify-center rounded-full hover:bg-gray-100 cursor-pointer">20</div>
+                            <div class="h-10 flex items-center justify-center rounded-full bg-green-200 text-green-800 font-bold cursor-pointer">21</div>
+                            <div class="h-10 flex items-center justify-center rounded-full hover:bg-gray-100 cursor-pointer">22</div>
+                            
+
+                            <div class="h-10 flex items-center justify-center rounded-full hover:bg-gray-100 cursor-pointer">23</div>
+                            <div class="h-10 flex items-center justify-center rounded-full hover:bg-gray-100 cursor-pointer">24</div>
+                            <div class="h-10 flex items-center justify-center rounded-full hover:bg-gray-100 cursor-pointer">25</div>
+                            <div class="h-10 flex items-center justify-center rounded-full bg-blue-200 text-blue-800 font-bold cursor-pointer">26</div>
+                            <div class="h-10 flex items-center justify-center rounded-full hover:bg-gray-100 cursor-pointer">27</div>
+                            <div class="h-10 flex items-center justify-center rounded-full hover:bg-gray-100 cursor-pointer">28</div>
+                            <div class="h-10 flex items-center justify-center rounded-full bg-green-200 text-green-800 font-bold cursor-pointer">29</div>
+                            
+
+                            <div class="h-10 flex items-center justify-center rounded-full hover:bg-gray-100 cursor-pointer">30</div>
+                            <div class="h-10 flex items-center justify-center rounded-full hover:bg-gray-100 cursor-pointer">31</div>
+                            <div class="h-10"></div><div class="h-10"></div><div class="h-10"></div><div class="h-10"></div><div class="h-10"></div>
+                        </div>
+                        
+
+                       
+                        <div class="mt-4 pt-4 border-t">
+                            <button class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 rounded-lg text-sm font-medium transition-all">
+                                <i class="fas fa-power-off mr-2"></i> Toggle All Collections
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden border-2 border-yellow-400">
+                    <div class="bg-gradient-to-r from-yellow-500 to-yellow-400 p-4 text-white flex justify-between items-center">
+                        <h3 class="text-xl font-bold flex items-center gap-2">
+                            <i class="fas fa-edit"></i>
+                            <span>Edit Schedule</span>
+                        </h3>
+                        <span class="bg-white text-yellow-600 px-3 py-1 rounded-full text-sm font-bold">March 3, 2026</span>
+                    </div>
+                    
+                    <div class="p-6">
+                        <div class="flex gap-4 mb-6">
+                            <div class="flex-1">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Select Date</label>
+                                <input type="date" value="2026-03-20" class="w-full border rounded-lg px-4 py-2">
+                            </div>
+                            <div class="flex-1">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Collection Day</label>
+                                <select class="w-full border rounded-lg px-4 py-2">
+                                    <option>Monday</option>
+                                    <option>Tuesday</option>
+                                    <option>Wednesday</option>
+                                    <option>Thursday</option>
+                                    <option>Friday</option>
+                                    <option>Saturday</option>
+                                    <option>Sunday (No Collection)</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <h4 class="font-bold text-gray-700 mb-3">Collection Zones</h4>
+                        <div class="space-y-3 mb-6">
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white font-bold">1</div>
+                                    <div>
+                                        <p class="font-medium">Atis</p>
+                                    </div>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                                </label>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">2</div>
+                                    <div>
+                                        <p class="font-medium">Seaside</p>
+                                    </div>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                                </label>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center text-white font-bold">3</div>
+                                    <div>
+                                        <p class="font-medium">Baliwasan Grande</p>
+                                    </div>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                                </label>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold">4</div>
+                                    <div>
+                                        <p class="font-medium">San Jose Road</p>
+                                    </div>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                                </label>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-white font-bold">5</div>
+                                    <div>
+                                        <p class="font-medium">Tabuk</p>
+                                    </div>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                                </label>
+                            </div>
+                        </div>
+                        
+                       
+                        
+                        <h4 class="font-bold text-gray-700 mb-3">Collection Time</h4>
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">Start Time</label>
+                                <input type="time" value="06:00" class="w-full border rounded-lg px-4 py-2">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">End Time</label>
+                                <input type="time" value="10:00" class="w-full border rounded-lg px-4 py-2">
+                            </div>
+                        </div>
+                        
+                        <h4 class="font-bold text-gray-700 mb-3">Special Notes</h4>
+                        <textarea rows="2" class="w-full border rounded-lg px-4 py-2 mb-4" placeholder="Add notes for this collection..."></textarea>
+                        
+                        <div class="flex justify-end gap-3">
+                            <button class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-medium transition-all flex items-center gap-2">
+                                <i class="fas fa-ban"></i> Disable Date
+                            </button>
+                            <button class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition-all flex items-center gap-2">
+                                <i class="fas fa-check"></i> Apply to Date
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden border-2 border-yellow-400 mt-8">
+                    <div class="bg-gradient-to-r from-blue-600 to-blue-500 p-4 text-white">
+                        <h3 class="text-xl font-bold flex items-center gap-2">
+                            <i class="fas fa-calendar-week"></i>
+                            <span>Bulk Schedule Management</span>
+                        </h3>
+                    </div>
+                    
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="font-bold mb-3">Apply to Multiple Dates</h4>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label class="block text-sm text-gray-600 mb-1">From Date</label>
+                                        <input type="date" class="w-full border rounded-lg px-4 py-2">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm text-gray-600 mb-1">To Date</label>
+                                        <input type="date" class="w-full border rounded-lg px-4 py-2">
+                                    </div>
+                                    <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition-all">
+                                        Apply Schedule to Range
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h4 class="font-bold mb-3">Preset Templates</h4>
+                                <div class="space-y-2">
+                                    <button class="w-full bg-gray-100 hover:bg-gray-200 text-left p-3 rounded-lg flex items-center gap-3">
+                                        <i class="fas fa-leaf text-green-600"></i>
+                                        <div>
+                                            <p class="font-medium">Regular Week Schedule</p>
+                                            <p class="text-xs text-gray-500">Mon/Wed/Fri - Biodegradable, Tue/Thu/Sat - Non-Bio</p>
+                                        </div>
+                                    </button>
+                                    <button class="w-full bg-gray-100 hover:bg-gray-200 text-left p-3 rounded-lg flex items-center gap-3">
+                                        <i class="fas fa-calendar-times text-red-600"></i>
+                                        <div>
+                                            <p class="font-medium">Holiday Schedule</p>
+                                            <p class="text-xs text-gray-500">No collection on holidays</p>
+                                        </div>
+                                    </button>
+                                    <button class="w-full bg-gray-100 hover:bg-gray-200 text-left p-3 rounded-lg flex items-center gap-3">
+                                        <i class="fas fa-exclamation-triangle text-yellow-600"></i>
+                                        <div>
+                                            <p class="font-medium">Emergency Suspension</p>
+                                            <p class="text-xs text-gray-500">Temporarily suspend all collections</p>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            <div class="fixed bottom-8 right-8 z-50">
+            <button class="bg-green-600 hover:bg-green-700 text-white w-16 h-16 rounded-full shadow-2xl transition-all flex items-center justify-center text-2xl border-2 border-white">
+                <i class="fas fa-check"></i>
+            </button>
+        </div>
+
+    </main>
+
+    <script>
+        function updatePortalClock() {
+            const now = new Date();
+            const options = { 
+                month: 'long', 
+                day: 'numeric', 
+                year: 'numeric',
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit',
+                hour12: true
+            };
+            const clockElement = document.getElementById('portal-clock');
+            if (clockElement) {
+                clockElement.innerText = now.toLocaleString('en-US', options);
+            }
+            
+            const todayElement = document.getElementById('today-date');
+            if (todayElement) {
+                todayElement.innerText = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updatePortalClock();
+            setInterval(updatePortalClock, 1000);
+        });
+    </script>
+
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        .hover-scale {
+            transition: transform 0.3s ease;
+        }
+        .hover-scale:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</body>
+</html>

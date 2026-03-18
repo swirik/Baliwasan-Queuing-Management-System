@@ -4,12 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barangay Baliwasan | Official Portal</title>
-    <link href="output.css" rel="stylesheet">
-
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="bg-gray-50 font-sans text-gray-900">
-    <!-- Header -->
+
     <header class="bg-white border-b-2 border-yellow-400 flex flex-col w-full fixed top-0 z-50 shadow-md">
         <div class="flex justify-between items-center px-6 py-3">
             <div class="flex items-center gap-3">
@@ -19,10 +18,12 @@
             </div>
             <nav class="flex gap-2 flex-wrap justify-end">
                 <a href="homepage.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">HOME</a>
-                <a href="#contact" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">OUR BARANGAY</a>
+                <a href="our-barangay.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase ring-2 ring-offset-2 ring-yellow-400 transition-all hover:shadow-md">OUR BARANGAY</a>
                 <a href="our-vision.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">VISION</a>
                 <a href="news-updates.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">NEWS & UPDATES</a>
-                <a href="login.html" class="bg-yellow-500 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-600 uppercase ring-2 ring-offset-2 ring-yellow-400 transition-all">Queuing System</a>
+                <a href="garbage.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase  transition-all hover:shadow-md">GARBAGE SCHEDULE</a>
+                <a href="queue.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase  transition-all hover:shadow-md">QUEUING SYSTEM</a>
+
             </nav>
         </div>
         
@@ -34,9 +35,9 @@
             </div>
         </div>
     </header>
-<!-- Main Content -->
+
     <main class="mt-[132px] md:mt-[116px]">
-        <!-- Hero Section -->
+
         <section class="relative bg-gradient-to-r from-[#071c4d] to-[#0a2a6e] text-white py-16 overflow-hidden">
             <div class="absolute inset-0 opacity-10">
                 <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E'); background-repeat: repeat;">
@@ -66,33 +67,23 @@
             </div>
         </section>
 
-        <!-- Map Section -->
         <section class="py-16 px-4 bg-white">
            <div class="max-w-7xl mx-auto">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Map Column -->
+
         <div class="lg:col-span-2">
             <div class="bg-gray-100 rounded-2xl overflow-hidden shadow-2xl border-4 border-yellow-400 relative group h-[500px]">
                 <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126267.42190791327!2d122.03295385!3d6.921103449999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3250414b4b4b4b4b%3A0x4b4b4b4b4b4b4b!2sBaliwasan%2C%20Zamboanga%20City!5e0!3m2!1sen!2sph!4v1234567890" 
-                    width="100%" 
-                    height="100%" 
-                    style="border:0; min-height: 500px;" 
-                    allowfullscreen="" 
-                    loading="lazy" 
-                    referrerpolicy="no-referrer-when-downgrade"
-                    class="w-full h-full">
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126267.42190791327!2d122.03295385!3d6.921103449999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3250414b4b4b4b4b%3A0x4b4b4b4b4b4b4b!2sBaliwasan%2C%20Zamboanga%20City!5e0!3m2!1sen!2sph!4v1234567890" 
+                        width="100%" 
+                        height="100%" 
+                        style="border:0;" 
+                        allowfullscreen="" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer-when-downgrade"
+                        class="w-full h-full">
                 </iframe>
-                
-                <!-- Map Marker -->
-                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-                    <div class="relative">
-                        <div class="w-8 h-8 bg-red-500 rounded-full opacity-75 animate-ping"></div>
-                        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-red-600 rounded-full border-2 border-white"></div>
-                    </div>
-                </div>
-                
-                <!-- Map Controls -->
+
                 <div class="absolute bottom-4 right-4 flex gap-2">
                     <button class="bg-white hover:bg-gray-100 text-gray-800 px-4 py-2 rounded-lg shadow-lg font-medium text-sm transition-all hover:scale-105">
                         🗺️ Satellite
@@ -104,7 +95,7 @@
             </div>
         </div>
 
-        <!-- Landmarks Sidebar - Now same height as map -->
+
         <div class="lg:col-span-1">
             <div class="bg-gradient-to-br from-[#071c4d] to-[#0a2a6e] text-white p-6 rounded-2xl shadow-xl sticky top-32 h-[500px] flex flex-col">
                 <h2 class="text-2xl font-bold mb-6 flex items-center flex-shrink-0">
@@ -117,9 +108,9 @@
                         class="w-full px-4 py-2 rounded-lg text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400">
                 </div>
                 
-                <!-- Scrollable area takes remaining height -->
+
                 <div id="landmarks-list" class="space-y-2 overflow-y-auto pr-2 custom-scrollbar flex-1">
-                    <!-- Dynamically populated by JavaScript -->
+
                 </div>
 
                 <div class="mt-6 grid grid-cols-2 gap-2 flex-shrink-0">
@@ -136,10 +127,10 @@
 </div>
         </section>
 
-        <!-- History Section - Clean Design -->
+
         <section class="py-20 px-4 bg-gray-50">
             <div class="max-w-4xl mx-auto">
-                <!-- Section Header -->
+
                 <div class="text-center mb-16">
                     <h2 class="text-5xl md:text-6xl font-black text-[#071c4d] mb-4 relative inline-block">
                         HISTORY
@@ -148,12 +139,12 @@
                     <p class="text-gray-600 text-lg mt-8">The rich heritage of Barangay Baliwasan</p>
                 </div>
 
-                <!-- Timeline Container -->
+
                 <div class="relative">
-                    <!-- Vertical Line (for desktop) -->
+
                     <div class="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-0.5 h-full bg-gray-300"></div>
                     
-                    <!-- Era 1 -->
+
                     <div class="history-card relative mb-12 md:mb-16">
                         <div class="flex flex-col md:flex-row items-center md:items-start gap-8">
                             <div class="md:w-1/2 md:text-right md:pr-12">
@@ -173,7 +164,7 @@
                         </div>
                     </div>
 
-                    <!-- Era 2 -->
+
                     <div class="history-card relative mb-12 md:mb-16">
                         <div class="flex flex-col md:flex-row items-center md:items-start gap-8">
                             <div class="md:w-1/2 md:text-right md:pr-12 md:order-2">
@@ -193,7 +184,7 @@
                         </div>
                     </div>
 
-                    <!-- Era 3 -->
+
                     <div class="history-card relative mb-12 md:mb-16">
                         <div class="flex flex-col md:flex-row items-center md:items-start gap-8">
                             <div class="md:w-1/2 md:text-right md:pr-12">
@@ -216,7 +207,7 @@
                         </div>
                     </div>
 
-                    <!-- Era 4 -->
+
                     <div class="history-card relative mb-12">
                         <div class="flex flex-col md:flex-row items-center md:items-start gap-8">
                             <div class="md:w-1/2 md:text-right md:pr-12 md:order-2">
@@ -237,7 +228,7 @@
                     </div>
                 </div>
 
-                <!-- Timeline Footer -->
+
                 <div class="mt-16 text-center">
                     <div class="inline-flex items-center gap-2 bg-white px-6 py-3 rounded-full shadow-md">
                         <span class="text-2xl">📜</span>
@@ -247,10 +238,10 @@
                 </div>
             </div>
         </section>
-        <!-- Population Statistics Section -->
+
         <section class="py-20 px-4 bg-white">
             <div class="max-w-6xl mx-auto">
-                <!-- Section Header -->
+
                 <div class="text-center mb-16">
                     <h2 class="text-5xl md:text-6xl font-black text-[#071c4d] mb-4 relative inline-block">
                         POPULATION
@@ -259,24 +250,24 @@
                     <p class="text-gray-600 text-lg mt-8">Population growth and demographics of Barangay Baliwasan</p>
                 </div>
 
-                <!-- Main Stats Card -->
+
                 <div class="bg-gradient-to-br from-[#071c4d] to-[#0a2a6e] text-white rounded-3xl p-8 md:p-12 shadow-2xl mb-12">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-                        <!-- Current Population -->
+
                         <div>
                             <div class="text-6xl font-black text-yellow-400 mb-2">19,806</div>
                             <p class="text-xl font-medium mb-1">Current Population</p>
                             <p class="text-sm text-gray-300">2024 Census</p>
                         </div>
                         
-                        <!-- Land Area -->
+
                         <div>
                             <div class="text-6xl font-black text-yellow-400 mb-2">1.27</div>
                             <p class="text-xl font-medium mb-1">Land Area (km²)</p>
                             <p class="text-sm text-gray-300">Total barangay area</p>
                         </div>
                         
-                        <!-- Population Density -->
+
                         <div>
                             <div class="text-6xl font-black text-yellow-400 mb-2">15,550</div>
                             <p class="text-xl font-medium mb-1">Population Density</p>
@@ -284,7 +275,7 @@
                         </div>
                     </div>
                     
-                    <!-- Annual Change Badge -->
+
                     <div class="mt-8 text-center">
                         <span class="inline-block bg-yellow-400 text-[#071c4d] px-6 py-3 rounded-full font-bold text-lg">
                             📈 2.4% Annual Population Change (2020-2024)
@@ -292,13 +283,13 @@
                     </div>
                 </div>
 
-                <!-- Historical Population Table -->
+
                 <div class="bg-gray-50 rounded-2xl p-8 shadow-xl">
                     <h3 class="text-3xl font-bold text-[#071c4d] mb-8 text-center">Historical Population Data</h3>
                     
                     <div class="overflow-x-auto">
                         <table class="w-full text-center">
-                            <!-- Table Header -->
+
                             <thead class="bg-[#071c4d] text-white">
                                 <tr>
                                     <th class="px-6 py-4 rounded-tl-lg">Census Year</th>
@@ -306,7 +297,7 @@
                                     <th class="px-6 py-4 rounded-tr-lg">Change</th>
                                 </tr>
                             </thead>
-                            <!-- Table Body -->
+
                             <tbody class="divide-y divide-gray-200">
                                 <tr class="hover:bg-gray-100 transition-colors">
                                     <td class="px-6 py-4 font-medium">2000</td>
@@ -337,15 +328,15 @@
                         </table>
                     </div>
                     
-                    <!-- Data Source -->
+
                     <p class="text-sm text-gray-500 mt-6 text-center">
                         Source: Philippine Statistics Authority (Census Data 2000-2024)
                     </p>
                 </div>
 
-                <!-- Comparison with Zamboanga City -->
+
                 <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- City Card -->
+
                     <div class="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
                         <h4 class="text-xl font-bold text-[#071c4d] mb-4 flex items-center">
                             <span class="text-2xl mr-2">🏙️</span> Zamboanga City
@@ -357,7 +348,7 @@
                         </div>
                     </div>
                     
-                    <!-- Barangay Card -->
+
                     <div class="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
                         <h4 class="text-xl font-bold text-[#071c4d] mb-4 flex items-center">
                             <span class="text-2xl mr-2">📊</span> Key Insights
@@ -374,19 +365,17 @@
     
     </main>
 
-    <!-- Footer -->
+
     <footer id="contact" class="bg-white w-full border-t border-gray-200">
         <div class="w-full px-4 md:px-8 lg:px-12 py-12">
             <div class="max-w-7xl mx-auto">
-                <!-- Top Section -->
+
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
                     <div class="flex items-center gap-4 flex-wrap">
                         <div class="w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-[#0f442b] hover-scale">
                             <img src="resources/logo.png" alt="Barangay Logo" class="w-full h-full object-cover">
                         </div>
-                        <div class="w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-[#0f442b] hover-scale">
-                            <img src="resources/logo2.png" alt="Barangay Logo 2" class="w-full h-full object-cover">
-                        </div>
+                       
                         <h2 class="text-2xl md:text-3xl font-bold text-[#0f442b] tracking-wide">BARANGAY BALIWASAN</h2>
                     </div>
                     <button class="bg-[#0f442b] hover:bg-green-800 text-white px-8 py-3 rounded-lg font-medium tracking-wide transition-all duration-300 shadow-md hover:shadow-xl hover-scale">
@@ -394,7 +383,7 @@
                     </button>
                 </div>
 
-                <!-- Contact Grid -->
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
                     <div class="bg-gray-50 p-6 rounded-xl hover:shadow-lg transition-shadow">
                         <h3 class="text-xl font-bold text-[#0f442b] mb-4 flex items-center">
@@ -420,7 +409,7 @@
                     </div>
                 </div>
 
-                <!-- Emergency Section -->
+
                 <div class="bg-gradient-to-br from-[#f5f6f5] to-gray-100 rounded-2xl p-6 md:p-10 mb-8">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div>
@@ -467,7 +456,7 @@
                     </div>
                 </div>
 
-                <!-- Bottom Bar -->
+
                 <div class="flex flex-col md:flex-row justify-between items-center pt-6 text-gray-500 text-sm border-t border-gray-200">
                     <p>© 2026 Barangay Baliwasan. All Rights Reserved</p>
                     <div class="flex gap-4 md:gap-6 mt-3 md:mt-0">

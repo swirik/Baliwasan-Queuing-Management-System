@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barangay Baliwasan | Garbage Collection Schedule</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body class="bg-gray-50 font-sans text-gray-900" id="garbage">
+
+    <header class="bg-white border-b-2 border-yellow-400 flex flex-col w-full fixed top-0 z-50 shadow-md">
+        <div class="flex justify-between items-center px-6 py-3">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full bg-cover bg-center border-2 border-yellow-400 shadow-sm" style="background-image: url('resources/logo.png');">
+                </div>
+                <h1 class="text-xl md:text-2xl font-bold text-black tracking-wide uppercase">ONE BALIWASAN</h1>
+            </div>
+            <nav class="flex gap-2 flex-wrap justify-end">
+                <a href="homepage.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">HOME</a>
+                <a href="our-barangay.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">OUR BARANGAY</a>
+                <a href="our-vision.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">VISION</a>
+                <a href="news-updates.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">NEWS & UPDATES</a>
+                <a href="#garbage" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase ring-2 ring-offset-2 ring-yellow-400 transition-all hover:shadow-md">GARBAGE SCHEDULE</a>
+                <a href="queue.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase ring-2  transition-all hover:shadow-md">QUEUING SYSTEM</a>
+
+            </nav>
+        </div>
+        
+        <div class="bg-yellow-100 py-1.5 flex flex-col sm:flex-row justify-between items-center px-4 md:px-8 border-t border-yellow-300">
+            <div id="portal-clock" class="text-xs font-medium text-yellow-800 mb-1 sm:mb-0">Loading Date & Time...</div>
+            <div class="flex gap-2 w-full sm:w-auto">
+                <input type="text" placeholder="Search..." class="flex-1 sm:flex-none p-1 px-3 rounded text-xs border border-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:border-transparent">
+                <button class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-1 px-4 rounded text-xs transition-all hover:shadow-md">Search</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="mt-[132px] md:mt-[116px]" >
+
+
+        <section class="relative bg-gradient-to-r from-[#0f442b] to-[#1a5a38] text-white py-16 overflow-hidden">
+            <div class="absolute inset-0 opacity-10">
+                <i class="fas fa-recycle absolute text-8xl -rotate-12 -top-10 -right-10"></i>
+                <i class="fas fa-trash absolute text-8xl rotate-12 -bottom-10 -left-10"></i>
+            </div>
+            
+            <div class="max-w-7xl mx-auto px-4 text-center relative z-10">
+                <h1 class="text-5xl md:text-7xl font-black mb-4 animate-fadeIn">
+                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-yellow-200">GARBAGE COLLECTION</span>
+                </h1>
+                <p class="text-xl md:text-2xl max-w-3xl mx-auto text-gray-200">Proper waste management for a cleaner, greener Baliwasan</p>
+                
+                <div class="flex flex-wrap justify-center gap-8 mt-12">
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-yellow-400">Mon - Sat</div>
+                        <div class="text-sm uppercase tracking-wide">Collection Days</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-yellow-400">6:00 AM</div>
+                        <div class="text-sm uppercase tracking-wide">Start Time</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <section class="py-8 px-4">
+            <div class="max-w-7xl mx-auto">
+                <div class="bg-yellow-400 rounded-2xl shadow-xl p-6 text-[#071c4d]">
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-16 h-16 bg-[#071c4d] rounded-full flex items-center justify-center text-yellow-400 text-3xl">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold">Today's Collection</h3>
+                                <p class="text-lg">Atis, Seaside, and Baliwasan Grande • Biodegradable and Recyclable</p>
+                            </div>
+                        </div>
+                        <div class="bg-[#071c4d] text-white px-8 py-4 rounded-xl text-center">
+                            <span class="text-3xl font-bold">8:00 PM</span>
+                            <p class="text-sm">Sharp</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <section class="py-12 px-4 bg-white">
+            <div class="max-w-7xl mx-auto">
+                <h2 class="text-4xl md:text-5xl font-black text-[#071c4d] mb-8 text-center">Weekly Collection Schedule</h2>
+                <p class="text-gray-600 text-center mb-12 max-w-2xl mx-auto">Follow your place's schedule to ensure proper waste disposal. </p>
+                
+                <div class="overflow-x-auto rounded-2xl shadow-2xl">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-[#071c4d] text-white">
+                                <th class="px-6 py-4 text-left text-lg">Zone</th>
+                                <th class="px-6 py-4 text-left text-lg">Collection Day</th>
+                                <th class="px-6 py-4 text-left text-lg">Time</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr class="hover:bg-yellow-50 transition-colors">
+                                <td class="px-6 py-5 font-bold text-lg text-[#071c4d]">Atis</td>
+                                <td class="px-6 py-5"><span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-bold">Monday</span></td>
+                                <td class="px-6 py-5 font-medium">8:00 PM - 10:00 PM</td>
+                            </tr>
+                            <tr class="hover:bg-yellow-50 transition-colors">
+                                <td class="px-6 py-5 font-bold text-lg text-[#071c4d]">Atis</td>
+                                <td class="px-6 py-5"><span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-bold">Thursday</span></td>
+                                <td class="px-6 py-5 font-medium">8:00 PM - 10:00 PM</td>
+                            </tr>
+                            <tr class="hover:bg-yellow-50 transition-colors">
+                                <td class="px-6 py-5 font-bold text-lg text-[#071c4d]">Seaside</td>
+                                <td class="px-6 py-5"><span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-bold">Tuesday</span></td>
+                                <td class="px-6 py-5 font-medium">8:00 PM - 10:00 PM</td>
+                            </tr>
+                            <tr class="hover:bg-yellow-50 transition-colors">
+                                <td class="px-6 py-5 font-bold text-lg text-[#071c4d]">Seaside</td>
+                                <td class="px-6 py-5"><span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-bold">Friday</span></td>
+                                <td class="px-6 py-5 font-medium">8:00 PM - 10:00 PM</td>
+                            </tr>
+                            <tr class="hover:bg-yellow-50 transition-colors">
+                                <td class="px-6 py-5 font-bold text-lg text-[#071c4d]">Baliwasan Grande</td>
+                                <td class="px-6 py-5"><span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-bold">Wednesday</span></td>
+                                <td class="px-6 py-5 font-medium">8:00 PM - 10:00 PM</td>
+                            </tr>
+                            <tr class="hover:bg-yellow-50 transition-colors">
+                                <td class="px-6 py-5 font-bold text-lg text-[#071c4d]">Baliwasan Grande</td>
+                                <td class="px-6 py-5"><span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-bold">Saturday</span></td>
+                                <td class="px-6 py-5 font-medium">8:00 PM - 10:00 PM</td>
+                            </tr>
+                            <tr class="hover:bg-yellow-50 transition-colors">
+                                <td class="px-6 py-5 font-bold text-lg text-[#071c4d]">San Jose Road</td>
+                                <td class="px-6 py-5"><span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-bold">Monday</span></td>
+                                <td class="px-6 py-5 font-medium">8:00 PM - 10:00 PM</td>
+                            </tr>
+                            <tr class="hover:bg-yellow-50 transition-colors">
+                                <td class="px-6 py-5 font-bold text-lg text-[#071c4d]">San Jose Road</td>
+                                <td class="px-6 py-5"><span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-bold">Thursday</span></td>
+                                <td class="px-6 py-5 font-medium">8:00 PM - 10:00 PM</td>
+                            </tr>
+                            <tr class="hover:bg-yellow-50 transition-colors">
+                                <td class="px-6 py-5 font-bold text-lg text-[#071c4d]">Tabuk</td>
+                                <td class="px-6 py-5"><span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-bold">Tuesday</span></td>
+                                <td class="px-6 py-5 font-medium">8:00 PM - 10:00 PM</td>
+                            </tr>
+                            <tr class="hover:bg-yellow-50 transition-colors border-b-2 border-[#071c4d]">
+                                <td class="px-6 py-5 font-bold text-lg text-[#071c4d]">Tabuk</td>
+                                <td class="px-6 py-5"><span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-bold">Friday</span></td>
+                                <td class="px-6 py-5 font-medium">8:00 PM - 10:00 PM</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <p class="text-sm text-gray-500 mt-4 text-center">No collection on Sundays. Please keep your area clean.</p>
+            </div>
+        </section>
+
+        <section class="py-16 px-4 bg-gray-100">
+            <div class="max-w-7xl mx-auto">
+                <h2 class="text-4xl md:text-5xl font-black text-[#071c4d] mb-12 text-center">Waste Segregation Guide</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-white rounded-2xl shadow-xl overflow-hidden transform hover:scale-105 transition-all duration-300">
+                        <div class="h-4 bg-green-500"></div>
+                        <div class="p-8 text-center">
+                            <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center text-5xl mx-auto mb-6">
+                                <i class="fas fa-leaf text-green-600"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-green-700 mb-3">Biodegradable</h3>
+                            <p class="text-gray-600 mb-4">Food scraps, yard waste, paper, wood</p>
+                            <div class="bg-green-50 p-4 rounded-xl text-left">
+                                <p class="text-sm font-medium text-green-800 mb-2">✓ Examples:</p>
+                                <ul class="text-xs text-gray-600 space-y-1">
+                                    <li>• Leftover food, fruits, vegetables</li>
+                                    <li>• Grass clippings, leaves, branches</li>
+                                    <li>• Paper towels, cardboard</li>
+                                    <li>• Eggshells, coffee grounds</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+
+                    <div class="bg-white rounded-2xl shadow-xl overflow-hidden transform hover:scale-105 transition-all duration-300">
+                        <div class="h-4 bg-blue-500"></div>
+                        <div class="p-8 text-center">
+                            <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center text-5xl mx-auto mb-6">
+                                <i class="fas fa-trash text-blue-600"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-blue-700 mb-3">Non-Biodegradable</h3>
+                            <p class="text-gray-600 mb-4">Plastics, styrofoam, textiles, rubber</p>
+                            <div class="bg-blue-50 p-4 rounded-xl text-left">
+                                <p class="text-sm font-medium text-blue-800 mb-2">✓ Examples:</p>
+                                <ul class="text-xs text-gray-600 space-y-1">
+                                    <li>• Plastic bags, bottles, containers</li>
+                                    <li>• Styrofoam cups, packaging</li>
+                                    <li>• Old clothing, fabric scraps</li>
+                                    <li>• Tires, rubber materials</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+
+                    <div class="bg-white rounded-2xl shadow-xl overflow-hidden transform hover:scale-105 transition-all duration-300">
+                        <div class="h-4 bg-yellow-500"></div>
+                        <div class="p-8 text-center">
+                            <div class="w-24 h-24 bg-yellow-100 rounded-full flex items-center justify-center text-5xl mx-auto mb-6">
+                                <i class="fas fa-recycle text-yellow-600"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-yellow-700 mb-3">Recyclable</h3>
+                            <p class="text-gray-600 mb-4">Glass, metals, paper, certain plastics</p>
+                            <div class="bg-yellow-50 p-4 rounded-xl text-left">
+                                <p class="text-sm font-medium text-yellow-800 mb-2">✓ Examples:</p>
+                                <ul class="text-xs text-gray-600 space-y-1">
+                                    <li>• Glass bottles, jars</li>
+                                    <li>• Aluminum cans, tin cans</li>
+                                    <li>• Newspapers, magazines</li>
+                                    <li>• Plastic bottles</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-12 px-4 bg-yellow-50">
+            <div class="max-w-7xl mx-auto">
+                <div class="bg-white rounded-2xl shadow-xl p-8">
+                    <h3 class="text-3xl font-bold text-[#071c4d] mb-6 flex items-center">
+                        <i class="fas fa-exclamation-triangle text-yellow-500 mr-3"></i>
+                        Important Reminders
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="flex gap-4">
+                            <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center text-red-600 text-xl flex-shrink-0">
+                                <i class="fas fa-times-circle"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg mb-1">DO NOT MIX</h4>
+                                <p class="text-gray-600">Keep biodegradable and non-biodegradable waste in separate containers.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-4">
+                            <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center text-red-600 text-xl flex-shrink-0">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg mb-1">BE ON TIME</h4>
+                                <p class="text-gray-600">Place your garbage out by 6:00 AM on your scheduled day.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-4">
+                            <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center text-red-600 text-xl flex-shrink-0">
+                                <i class="fas fa-water"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg mb-1">SECURE WASTE</h4>
+                                <p class="text-gray-600">Ensure garbage bags are tied securely to prevent spills and stray animals.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-4">
+                            <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center text-red-600 text-xl flex-shrink-0">
+                                <i class="fas fa-ban"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg mb-1">NO SUNDAY COLLECTION</h4>
+                                <p class="text-gray-600">Garbage collection is not available on Sundays.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+
+    <footer class="bg-white w-full border-t border-gray-200">
+        <div class="w-full px-4 md:px-8 lg:px-12 py-12">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
+                    <div class="flex items-center gap-4 flex-wrap">
+                        <div class="w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-[#0f442b] hover-scale">
+                            <img src="resources/logo.png" alt="Barangay Logo" class="w-full h-full object-cover">
+                        </div>
+                       
+                        <h2 class="text-2xl md:text-3xl font-bold text-[#0f442b] tracking-wide">BARANGAY BALIWASAN</h2>
+                    </div>
+                    <button class="bg-[#0f442b] hover:bg-green-800 text-white px-8 py-3 rounded-lg font-medium tracking-wide transition-all duration-300 shadow-md hover:shadow-xl hover-scale">
+                        Connect with Us
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                    <div class="bg-gray-50 p-6 rounded-xl hover:shadow-lg transition-shadow">
+                        <h3 class="text-xl font-bold text-[#0f442b] mb-4 flex items-center">
+                            <span class="mr-2 text-2xl">📞</span> Contact Information
+                        </h3>
+                        <p class="text-gray-600 mb-2">Telephone: <span class="font-medium">0915 324 2171</span></p>
+                        <p class="text-gray-600">Email: 
+                            <a href="mailto:iannaellis.mg@gmail.com" class="text-[#0f442b] font-medium hover:underline">
+                                iannaellis.mg@gmail.com
+                            </a>
+                        </p>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-xl hover:shadow-lg transition-shadow">
+                        <h3 class="text-xl font-bold text-[#0f442b] mb-4 flex items-center">
+                            <span class="mr-2 text-2xl">📍</span> Our Location
+                        </h3>
+                        <p class="text-gray-600 mb-3">Baliwasan Barangay Hall, Zamboanga City</p>
+                        <button onclick="openDirections()" 
+                            class="inline-flex items-center gap-2 text-sm bg-[#0f442b] hover:bg-green-800 text-white px-4 py-2 rounded-lg font-medium transition-all hover:shadow-md hover:scale-105">
+                            <span>🚗</span> Get Directions
+                            <span class="text-lg">→</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-[#f5f6f5] to-gray-100 rounded-2xl p-6 md:p-10 mb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="text-xl md:text-2xl font-bold text-[#0f442b] mb-6 flex items-center">
+                                <span class="mr-2">🚨</span> CITY EMERGENCY HOTLINE
+                            </h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between border-b border-gray-300 pb-2">
+                                    <span class="font-bold text-[#0f442b]">ZCDRRMO</span>
+                                    <span class="text-[#0f442b] font-medium bg-white px-3 py-1 rounded-full">926-1848</span>
+                                </div>
+                                <div class="flex items-center justify-between border-b border-gray-300 pb-2">
+                                    <span class="font-bold text-[#0f442b]">EMS</span>
+                                    <span class="text-[#0f442b] font-medium bg-white px-3 py-1 rounded-full">926-1849</span>
+                                </div>
+                                <div class="flex items-center justify-between border-b border-gray-300 pb-2">
+                                    <span class="font-bold text-[#0f442b]">ZCPO / ZCPO HQ</span>
+                                    <span class="text-[#0f442b] font-medium bg-white px-3 py-1 rounded-full">0977-855-8138</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-xl md:text-2xl font-bold text-[#0f442b] mb-6 flex items-center">
+                                <span class="mr-2">🌐</span> Connect With Us
+                            </h3>
+                            <div class="space-y-4">
+                                <a href="#" class="flex items-center gap-3 p-3 bg-white rounded-lg hover:shadow-md transition-all">
+                                    <div class="w-10 h-10 bg-[#0f442b] rounded-full flex items-center justify-center text-white font-bold text-lg">f</div>
+                                    <div>
+                                        <p class="font-medium text-[#0f442b]">Facebook</p>
+                                        <p class="text-sm text-gray-600">@ONEBALIWASAN</p>
+                                    </div>
+                                </a>
+                                <a href="mailto:iannaellis.mg@gmail.com" class="flex items-center gap-3 p-3 bg-white rounded-lg hover:shadow-md transition-all">
+                                    <div class="w-10 h-10 bg-[#0f442b] rounded-full flex items-center justify-center text-white text-lg">✉</div>
+                                    <div>
+                                        <p class="font-medium text-[#0f442b]">Email Us</p>
+                                        <p class="text-sm text-gray-600">iannaellis.mg@gmail.com</p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row justify-between items-center pt-6 text-gray-500 text-sm border-t border-gray-200">
+                    <p>© 2026 Barangay Baliwasan. All Rights Reserved</p>
+                    <div class="flex gap-4 md:gap-6 mt-3 md:mt-0">
+                        <a href="#" class="hover:text-[#0f442b] transition-colors">Privacy Policy</a>
+                        <a href="#" class="hover:text-[#0f442b] transition-colors">Terms & Conditions</a>
+                        <a href="#" class="hover:text-[#0f442b] transition-colors">Sitemap</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function updatePortalClock() {
+            const now = new Date();
+            const options = { 
+                month: 'long', 
+                day: 'numeric', 
+                year: 'numeric',
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit',
+                hour12: true
+            };
+            const clockElement = document.getElementById('portal-clock');
+            if (clockElement) {
+                clockElement.innerText = now.toLocaleString('en-US', options);
+            }
+        }
+
+        function openDirections() {
+            const latitude = 6.9157146;
+            const longitude = 122.0600172;
+            window.open(
+                `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}&travelmode=driving`,
+                '_blank'
+            );
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updatePortalClock();
+            setInterval(updatePortalClock, 1000);
+        });
+    </script>
+
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 1s ease-out;
+        }
+        .hover-scale {
+            transition: transform 0.3s ease;
+        }
+        .hover-scale:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</body>
+</html>
