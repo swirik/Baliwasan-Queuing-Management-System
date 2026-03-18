@@ -8,259 +8,334 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
-        .flatpickr-calendar { font-family: inherit; border-radius: 1rem; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        .flatpickr-day.selected { background: #FFD500 !important; border-color: #FFD500 !important; color: black !important; font-weight: 900; }
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .flatpickr-calendar { font-family: inherit; border-radius: 1.5rem; border: none; box-shadow: 0 20px 40px rgba(0,0,0,0.15); border: 1px solid #e5e7eb; }
+        .flatpickr-day.selected { background: #071c4d !important; border-color: #071c4d !important; color: white !important; font-weight: 900; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #E5E7EB; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-up {
+            animation: slideUpFade 0.4s ease-out forwards;
+        }
     </style>
 </head>
-<body class="bg-[#FFF9E2] min-h-screen flex flex-col items-center justify-center font-sans text-gray-900 p-4 md:p-6 overflow-y-auto">
+<body class="bg-gray-50 min-h-screen flex flex-col items-center justify-center font-sans text-gray-900 p-4 md:p-6 overflow-y-auto bg-[url('resources/home-picture.png')] bg-cover bg-center bg-fixed bg-blend-overlay bg-white/95">
 
-    <div id="sms-toast" class="hidden fixed top-4 left-1/2 -translate-x-1/2 bg-white border-l-8 border-[#FFD500] p-5 rounded-2xl shadow-2xl w-[90%] max-w-sm z-50 transform transition-all duration-500 -translate-y-[150%]">
+    <div id="sms-toast" class="hidden fixed top-4 left-1/2 -translate-x-1/2 bg-white border-l-8 border-[#071c4d] p-5 rounded-2xl shadow-2xl w-[90%] max-w-sm z-50 transform transition-all duration-500 -translate-y-[150%]">
         <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-2">
-                <div class="bg-black text-[#FFD500] text-[10px] px-2 py-1 rounded font-black tracking-widest uppercase">Messages</div>
+                <div class="bg-[#FFD500] text-[#071c4d] text-[10px] px-2 py-1 rounded font-black tracking-widest uppercase"><i class="fas fa-bell mr-1"></i> Update</div>
                 <span class="text-xs text-gray-400 font-bold">now</span>
             </div>
         </div>
-        <div class="text-sm font-black text-gray-900 tracking-wide">Barangay Baliwasan</div>
-        <div class="text-sm text-gray-600 mt-1 font-medium" id="sms-message"></div>
+        <div class="text-sm font-black text-[#071c4d] tracking-wide">Barangay Baliwasan</div>
+        <div class="text-sm text-gray-600 mt-1 font-medium leading-relaxed" id="sms-message"></div>
     </div>
 
-    <button id="btn-show-my-ticket" class="hidden fixed bottom-24 right-6 bg-black text-[#FFD500] px-6 py-4 rounded-full font-black shadow-lg z-40 uppercase tracking-widest text-xs border-2 border-[#FFD500] hover:scale-105 transition-transform">
-        MY TICKETS
+    <button id="btn-show-my-ticket" class="hidden fixed bottom-24 right-6 bg-[#071c4d] text-white px-6 py-4 rounded-full font-black shadow-xl z-40 uppercase tracking-widest text-xs hover:scale-105 transition-transform hover:shadow-2xl border-2 border-[#071c4d] flex items-center gap-2">
+        <i class="fas fa-ticket-alt text-[#FFD500]"></i> MY TICKETS
     </button>
 
-    <button id="btn-show-queue" class="fixed bottom-6 right-6 bg-[#FFD500] text-black px-6 py-4 rounded-full font-black shadow-lg z-40 uppercase tracking-widest text-xs border-2 border-black hover:scale-105 transition-transform">
-        LIVE QUEUE
+    <button id="btn-show-queue" class="fixed bottom-6 right-6 bg-[#FFD500] text-[#071c4d] px-6 py-4 rounded-full font-black shadow-xl z-40 uppercase tracking-widest text-xs hover:scale-105 transition-transform hover:shadow-2xl border-2 border-[#FFD500] flex items-center gap-2">
+        <i class="fas fa-users"></i> LIVE QUEUE
     </button>
 
-    <div id="mobile-queue-screen" class="hidden fixed inset-0 bg-[#FFF9E2] z-[100] flex-col overflow-y-auto">
-        <div class="bg-black p-6 flex justify-between items-center shrink-0 border-b-4 border-[#FFD500] sticky top-0 z-10">
-            <h1 class="text-[#FFD500] font-black text-lg tracking-widest uppercase">Queue Status</h1>
-            <button id="btn-hide-queue" class="text-white font-bold uppercase text-[10px] tracking-wider bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition-colors">&times; CLOSE</button>
+    <div id="mobile-queue-screen" class="hidden fixed inset-0 bg-gray-50 z-[100] flex-col overflow-y-auto">
+        <div class="bg-[#071c4d] p-6 flex justify-between items-center shrink-0 border-b-4 border-[#FFD500] sticky top-0 z-10 shadow-md">
+            <h1 class="text-white font-black text-lg tracking-widest uppercase"><i class="fas fa-desktop mr-2 text-[#FFD500]"></i> Queue Status</h1>
+            <button id="btn-hide-queue" class="text-white font-bold uppercase text-[10px] tracking-wider bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition-colors"><i class="fas fa-times mr-1"></i> CLOSE</button>
         </div>
         
         <div class="p-6 flex-1 flex flex-col gap-6 max-w-md mx-auto w-full">
-            <div class="bg-white rounded-3xl shadow-lg border-t-8 border-[#FFD500] p-6 text-center shrink-0">
-                <h2 class="text-gray-500 font-black tracking-widest uppercase mb-4 text-xs">Now Serving</h2>
+            <div class="bg-white rounded-3xl shadow-xl border-t-8 border-[#FFD500] p-8 text-center shrink-0">
+                <h2 class="text-[#071c4d] font-black tracking-widest uppercase mb-4 text-xs">Now Serving</h2>
                 <div id="mobile-serving-ticket" class="text-[5rem] font-black text-gray-900 leading-none mb-4 tracking-tighter drop-shadow-sm">----</div>
-                <div id="mobile-serving-counter" class="text-lg font-black text-black bg-[#FFD500] px-6 py-2 rounded-xl uppercase tracking-widest inline-block mb-3 border-2 border-[#FFDC2E]">--</div>
-                <div id="mobile-serving-doc" class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">SYSTEM STANDBY</div>
+                <div class="text-[10px] font-bold text-gray-400 mb-2 uppercase tracking-widest">PROCEED TO</div>
+                <div id="mobile-serving-counter" class="text-xl font-black text-white bg-[#071c4d] px-6 py-3 rounded-xl uppercase tracking-widest inline-block mb-4 shadow-inner">--</div>
+                <div id="mobile-serving-doc" class="text-[10px] font-bold text-gray-600 bg-gray-100 border border-gray-200 px-4 py-2 rounded-lg uppercase tracking-widest w-full truncate">SYSTEM STANDBY</div>
             </div>
             
-            <div class="bg-white rounded-3xl shadow-lg border-t-8 border-gray-900 flex flex-col flex-1 overflow-hidden shrink-0">
-                <div class="bg-gray-50 p-5 border-b border-gray-100 flex justify-between items-center shrink-0">
-                    <h2 class="text-xs font-black text-gray-800 tracking-widest uppercase">Up Next</h2>
-                    <span id="mobile-waiting-count" class="bg-[#FFD500] text-black font-black px-3 py-1 rounded-md text-xs shadow-sm">0</span>
+            <div class="bg-white rounded-3xl shadow-xl border-t-8 border-[#071c4d] flex flex-col flex-1 overflow-hidden shrink-0">
+                <div class="bg-gray-50 p-5 border-b border-gray-200 flex justify-between items-center shrink-0">
+                    <h2 class="text-xs font-black text-[#071c4d] tracking-widest uppercase"><i class="fas fa-list-ul mr-2"></i>Up Next</h2>
+                    <span id="mobile-waiting-count" class="bg-[#FFD500] text-[#071c4d] font-black px-3 py-1 rounded-full text-xs shadow-sm border border-yellow-400">0</span>
                 </div>
                 <div id="mobile-waiting-list" class="p-4 flex flex-col gap-3">
-                    <div class="text-center py-10 text-gray-300 font-bold uppercase text-xs tracking-wider">Queue is empty</div>
+                    <div class="text-center py-10 text-gray-400 font-bold uppercase text-xs tracking-wider">Queue is empty</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="my-tickets-screen" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-md border-t-8 border-black my-8 relative z-10">
-        <h2 class="text-xl md:text-2xl font-black uppercase tracking-widest text-gray-900 mb-6 text-center">My Tickets</h2>
+    <div id="my-tickets-screen" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-2xl w-full max-w-md border-t-8 border-[#071c4d] my-8 relative z-10 animate-slide-up">
+        <h2 class="text-2xl md:text-3xl font-black uppercase tracking-widest text-[#071c4d] mb-6 text-center">My Tickets</h2>
         
-        <div id="tickets-container" class="space-y-3 max-h-[50vh] overflow-y-auto custom-scrollbar pr-2 mb-6">
-        </div>
-
-        <button onclick="goToStep1()" class="w-full bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-4 px-4 rounded-xl shadow-lg transition-all uppercase tracking-wide text-sm flex justify-center items-center gap-2 mb-3">
-            <span>+</span> Add Another Transaction
-        </button>
-
-        <button onclick="window.location.href='homepage.html'" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-black py-4 px-4 rounded-xl shadow-sm transition-all uppercase tracking-wide text-sm flex justify-center items-center gap-2">
-            &larr; Return to Homepage
-        </button>
-    </div>
-
-    <div id="offline-screen" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-md border-t-8 border-red-600 text-center my-8 relative z-10">
-        <div class="text-center mb-6">
-            <h1 class="text-xl md:text-2xl font-black uppercase tracking-widest text-gray-900">SYSTEM OFFLINE</h1>
-            <p class="text-red-500 font-bold text-xs md:text-sm mt-2 uppercase tracking-wide">Online Booking Disabled</p>
-        </div>
-        <p class="text-sm md:text-base text-gray-600 mb-8">The barangay is currently not accepting online booking requests. Please try again later.</p>
-    </div>
-
-    <div id="step-1" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-4xl border-t-8 border-[#FFD500] my-8 relative z-10">
-        <div class="flex items-center justify-between mb-8">
-            <button onclick="window.location.href='homepage.html'" class="text-gray-400 hover:text-black font-bold uppercase text-xs md:text-sm tracking-wide shrink-0">&larr; Home</button>
-            <div class="flex-1 text-center px-2">
-                <h1 class="text-xl md:text-2xl font-black uppercase tracking-widest text-gray-900">Step 1: Transaction</h1>
-                <p class="text-gray-500 text-xs md:text-sm mt-1">Select the service you need</p>
+        <div id="tickets-container" class="space-y-4 max-h-[50vh] overflow-y-auto custom-scrollbar pr-2 mb-8">
             </div>
-            <div class="w-12 shrink-0"></div>
+
+        <div class="flex flex-col gap-3">
+            <button onclick="goToStep1()" class="w-full bg-[#FFD500] hover:bg-[#FFDC2E] hover:-translate-y-1 text-[#071c4d] font-black py-4 px-4 rounded-xl shadow-lg transition-all uppercase tracking-wide text-sm flex justify-center items-center gap-2">
+                <i class="fas fa-plus"></i> Add Transaction
+            </button>
+            <button onclick="window.location.href='homepage.html'" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-600 font-black py-4 px-4 rounded-xl shadow-sm transition-all uppercase tracking-wide text-sm flex justify-center items-center gap-2">
+                <i class="fas fa-home"></i> Return to Homepage
+            </button>
         </div>
+    </div>
+
+    <div id="offline-screen" class="hidden bg-white p-8 md:p-12 rounded-3xl shadow-2xl w-full max-w-md border-t-8 border-red-600 text-center my-8 relative z-10 animate-slide-up">
+        <div class="w-20 h-20 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-4xl mx-auto mb-6">
+            <i class="fas fa-ban"></i>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-black uppercase tracking-widest text-gray-900 mb-2">System Offline</h1>
+        <p class="text-red-500 font-bold text-xs md:text-sm uppercase tracking-wide mb-6">Online Booking Disabled</p>
+        <p class="text-sm md:text-base text-gray-600 leading-relaxed">The barangay is currently not accepting online booking requests. Please visit the barangay hall in person or try again later.</p>
+    </div>
+
+    <div id="step-1" class="bg-white p-6 md:p-10 rounded-3xl shadow-2xl w-full max-w-4xl border-t-8 border-[#FFD500] my-8 relative z-10 animate-slide-up">
+        <div class="flex items-center justify-between mb-8 border-b border-gray-100 pb-6">
+            <button onclick="window.location.href='homepage.html'" class="text-gray-400 hover:text-[#071c4d] font-bold uppercase text-xs tracking-widest transition-colors flex items-center gap-2">
+                <i class="fas fa-arrow-left"></i> Home
+            </button>
+            <div class="text-center px-2">
+                <div class="text-[10px] font-black text-[#071c4d] uppercase tracking-widest mb-1 opacity-70">Step 1 of 5</div>
+                <h1 class="text-xl md:text-2xl font-black uppercase tracking-widest text-gray-900">Select Service</h1>
+            </div>
+            <div class="w-16"></div> </div>
+        
         <div id="dynamic-services-container" class="space-y-8">
-            <div class="text-center py-10 text-gray-400 font-bold uppercase text-xs tracking-widest">Loading Services...</div>
+            <div class="flex justify-center py-12">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#071c4d]"></div>
+            </div>
         </div>
     </div>
 
-    <div id="step-2" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-md border-t-8 border-[#FFD500] transition-all my-8 relative z-10">
-        <div class="flex items-center justify-between mb-8">
-            <button id="btn-back-to-1" class="text-gray-400 hover:text-black font-bold uppercase text-xs md:text-sm tracking-wide shrink-0">&larr; Back</button>
-            <div class="flex-1 text-center px-2">
-                <h1 class="text-xl md:text-2xl font-black uppercase tracking-widest text-gray-900">Step 2: Schedule</h1>
+    <div id="step-2" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-2xl w-full max-w-md border-t-8 border-[#FFD500] my-8 relative z-10 animate-slide-up">
+        <div class="flex items-center justify-between mb-8 border-b border-gray-100 pb-6">
+            <button id="btn-back-to-1" class="text-gray-400 hover:text-[#071c4d] font-bold uppercase text-xs tracking-widest transition-colors flex items-center gap-2">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+            <div class="text-center px-2">
+                <div class="text-[10px] font-black text-[#071c4d] uppercase tracking-widest mb-1 opacity-70">Step 2 of 5</div>
+                <h1 class="text-xl md:text-2xl font-black uppercase tracking-widest text-gray-900">Schedule</h1>
             </div>
-            <div class="w-12 shrink-0"></div>
+            <div class="w-16"></div>
         </div>
-        <form id="step-2-form" class="space-y-5 md:space-y-6">
+        
+        <form id="step-2-form" class="space-y-6">
             <div>
-                <label class="block text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wide mb-2 flex justify-between items-center">
-                    <span>Select Available Date</span>
-                    <button type="button" id="btn-select-today" class="hidden bg-black hover:bg-gray-800 text-[#FFD500] text-[9px] px-2 py-1 rounded shadow-sm uppercase font-black tracking-widest transition-colors">Select Today</button>
+                <label class="block text-xs font-black text-[#071c4d] uppercase tracking-wide mb-3 flex justify-between items-center">
+                    <span>Select Appointment Date</span>
+                    <button type="button" id="btn-select-today" class="hidden bg-[#071c4d] hover:bg-[#0a2a6e] text-white text-[9px] px-3 py-1 rounded shadow-sm uppercase font-black tracking-widest transition-colors">Select Today</button>
                 </label>
-                <input type="text" id="user-date" placeholder="Loading calendar..." disabled class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] focus:ring-0 outline-none transition-colors bg-gray-50 text-sm md:text-base font-bold text-gray-800 disabled:opacity-50">
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400"><i class="fas fa-calendar-alt"></i></span>
+                    <input type="text" id="user-date" placeholder="Loading calendar..." disabled class="w-full pl-10 pr-4 py-4 rounded-xl border-2 border-gray-200 focus:border-[#071c4d] focus:ring-0 outline-none transition-all bg-gray-50 hover:bg-white text-sm md:text-base font-bold text-gray-900 disabled:opacity-50 cursor-pointer shadow-inner">
+                </div>
             </div>
-            <button type="submit" class="w-full bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-4 px-4 rounded-xl shadow-lg text-base md:text-lg transition-all uppercase tracking-wide mt-4 flex justify-between items-center">
+            <button type="submit" class="w-full bg-[#FFD500] hover:bg-[#FFDC2E] hover:-translate-y-1 text-[#071c4d] font-black py-4 px-6 rounded-xl shadow-lg text-base md:text-lg transition-all uppercase tracking-wide mt-4 flex justify-between items-center group">
                 <span>Continue</span>
-                <span>&rarr;</span>
+                <i class="fas fa-arrow-right transform group-hover:translate-x-1 transition-transform"></i>
             </button>
         </form>
     </div>
 
-    <div id="step-3" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-4xl border-t-8 border-[#FFD500] transition-all my-8 relative z-10">
-        <div class="flex items-center justify-between mb-8">
-            <button id="btn-back-to-2" class="text-gray-400 hover:text-black font-bold uppercase text-xs md:text-sm tracking-wide shrink-0">&larr; Back</button>
-            <div class="flex-1 text-center px-2">
-                <h1 class="text-xl md:text-2xl font-black uppercase tracking-widest text-gray-900">Step 3: Details</h1>
+    <div id="step-3" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-2xl w-full max-w-4xl border-t-8 border-[#FFD500] my-8 relative z-10 animate-slide-up">
+        <div class="flex items-center justify-between mb-8 border-b border-gray-100 pb-6">
+            <button id="btn-back-to-2" class="text-gray-400 hover:text-[#071c4d] font-bold uppercase text-xs tracking-widest transition-colors flex items-center gap-2">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+            <div class="text-center px-2">
+                <div class="text-[10px] font-black text-[#071c4d] uppercase tracking-widest mb-1 opacity-70">Step 3 of 5</div>
+                <h1 class="text-xl md:text-2xl font-black uppercase tracking-widest text-gray-900">Your Details</h1>
             </div>
-            <div class="w-12 shrink-0"></div>
+            <div class="w-16"></div>
         </div>
 
-        <form id="step-3-form" class="space-y-5 md:space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
-                <div>
-                    <label class="block text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">First Name</label>
-                    <input type="text" id="user-fname" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] focus:ring-0 outline-none transition-colors bg-gray-50 text-sm md:text-base">
-                </div>
-                <div>
-                    <label class="block text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">Middle Name <span class="text-[9px] text-gray-400 font-normal tracking-normal">(Optional)</span></label>
-                    <input type="text" id="user-mname" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] focus:ring-0 outline-none transition-colors bg-gray-50 text-sm md:text-base">
-                </div>
-                <div>
-                    <label class="block text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">Last Name</label>
-                    <input type="text" id="user-lname" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] focus:ring-0 outline-none transition-colors bg-gray-50 text-sm md:text-base">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-                <div>
-                    <label class="block text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">Contact Number</label>
-                    <input type="tel" id="user-contact" required pattern="^(09|\+639)\d{9}$" placeholder="09XXXXXXXXX" title="Format must be a valid 11-digit Philippine mobile number" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] focus:ring-0 outline-none transition-colors bg-gray-50 text-sm md:text-base">
-                </div>
-                <div>
-                    <label class="block text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">Queue Priority</label>
-                    <select id="user-priority" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#FFD500] focus:ring-0 outline-none transition-colors bg-gray-50 text-sm md:text-base">
-                        <option value="REGULAR" selected>Regular</option>
-                        <option value="PWD / Senior / Pregnant">PWD / Senior / Pregnant</option>
-                    </select>
+        <form id="step-3-form" class="space-y-6">
+            <div class="bg-blue-50/50 p-6 rounded-2xl border border-blue-100 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div>
+                        <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">First Name <span class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400"><i class="fas fa-user"></i></span>
+                            <input type="text" id="user-fname" required placeholder="Juan" class="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#071c4d] focus:ring-0 outline-none transition-colors bg-white text-sm font-bold text-gray-900 shadow-sm placeholder-gray-300">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Middle Name <span class="font-medium normal-case opacity-70">(Optional)</span></label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400"><i class="fas fa-user-tag"></i></span>
+                            <input type="text" id="user-mname" placeholder="Dela" class="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#071c4d] focus:ring-0 outline-none transition-colors bg-white text-sm font-bold text-gray-900 shadow-sm placeholder-gray-300">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Last Name <span class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400"><i class="fas fa-user"></i></span>
+                            <input type="text" id="user-lname" required placeholder="Cruz" class="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#071c4d] focus:ring-0 outline-none transition-colors bg-white text-sm font-bold text-gray-900 shadow-sm placeholder-gray-300">
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="flex justify-center w-full">
-                <button type="submit" class="w-full max-w-md bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-4 px-4 rounded-xl shadow-lg text-base md:text-lg transition-all uppercase tracking-wide mt-4 flex justify-between items-center">
-                    <span>Review</span>
-                    <span>&rarr;</span>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                    <label class="block text-[10px] font-black text-[#071c4d] uppercase tracking-widest mb-2">Contact Number <span class="text-red-500">*</span></label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400"><i class="fas fa-mobile-alt"></i></span>
+                        <input type="tel" id="user-contact" required pattern="^(09|\+639)\d{9}$" placeholder="09XXXXXXXXX" title="Format must be exactly 11 digits starting with 09" class="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#071c4d] focus:ring-0 outline-none transition-colors bg-white text-sm font-bold text-gray-900 shadow-sm placeholder-gray-300">
+                    </div>
+                    <p class="text-[10px] text-gray-500 mt-1.5 font-bold tracking-wide"><i class="fas fa-info-circle text-blue-500 mr-1"></i>Format: 11 digits starting with 09</p>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-[#071c4d] uppercase tracking-widest mb-2">Queue Priority <span class="text-red-500">*</span></label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400"><i class="fas fa-wheelchair"></i></span>
+                        <select id="user-priority" required class="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#071c4d] focus:ring-0 outline-none transition-colors bg-white text-sm font-bold text-gray-900 shadow-sm appearance-none cursor-pointer">
+                            <option value="REGULAR" selected>Standard Citizen</option>
+                            <option value="PWD / Senior / Pregnant">PWD / Senior Citizen / Pregnant</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-center w-full pt-4">
+                <button type="submit" class="w-full max-w-md bg-[#FFD500] hover:bg-[#FFDC2E] hover:-translate-y-1 text-[#071c4d] font-black py-4 px-6 rounded-xl shadow-lg text-base md:text-lg transition-all uppercase tracking-wide flex justify-between items-center group">
+                    <span>Review Details</span>
+                    <i class="fas fa-arrow-right transform group-hover:translate-x-1 transition-transform"></i>
                 </button>
             </div>
         </form>
     </div>
 
-    <div id="step-4" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-md border-t-8 border-[#FFD500] text-center my-8 relative z-10">
-        <h2 class="text-xl md:text-2xl font-black uppercase tracking-widest text-gray-900 mb-2">Confirm Request</h2>
-        <p class="text-gray-500 text-sm md:text-base mb-8">Please review your transaction details.</p>
+    <div id="step-4" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-2xl w-full max-w-md border-t-8 border-[#FFD500] my-8 relative z-10 animate-slide-up">
+        <div class="text-center mb-8 border-b border-gray-100 pb-6">
+            <div class="text-[10px] font-black text-[#071c4d] uppercase tracking-widest mb-1 opacity-70">Step 4 of 5</div>
+            <h2 class="text-2xl font-black uppercase tracking-widest text-gray-900">Confirm Request</h2>
+            <p class="text-gray-500 text-xs mt-2 font-medium">Verify your transaction before proceeding.</p>
+        </div>
 
-        <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 mb-8 text-left space-y-4">
-            <div>
-                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Selected Service</p>
-                <p id="confirm-doc-name" class="text-base font-black text-black">---</p>
-            </div>
-            <div>
-                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Scheduled Date</p>
-                <p id="confirm-date" class="text-sm font-bold text-gray-900">---</p>
-            </div>
-            <div>
-                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Queue Priority</p>
-                <p id="confirm-priority" class="text-xs font-bold text-gray-700 bg-white inline-block px-2 py-1 rounded border border-gray-200">---</p>
+        <div class="bg-[#FFF9E2] p-6 rounded-2xl border-2 border-dashed border-[#FFD500] mb-8 relative shadow-inner">
+            <div class="absolute -top-3 -left-3 w-6 h-6 bg-white rounded-full border-b-2 border-r-2 border-dashed border-[#FFD500] rotate-45"></div>
+            <div class="absolute -bottom-3 -right-3 w-6 h-6 bg-white rounded-full border-t-2 border-l-2 border-dashed border-[#FFD500] rotate-45"></div>
+            
+            <div class="space-y-5">
+                <div>
+                    <p class="text-[9px] text-[#071c4d] font-black uppercase tracking-widest mb-1 opacity-70">Selected Service</p>
+                    <p id="confirm-doc-name" class="text-base font-black text-gray-900 leading-tight">---</p>
+                </div>
+                <div class="w-full h-px bg-yellow-200/50"></div>
+                <div>
+                    <p class="text-[9px] text-[#071c4d] font-black uppercase tracking-widest mb-1 opacity-70">Scheduled Date</p>
+                    <p id="confirm-date" class="text-sm font-black text-gray-900">---</p>
+                </div>
+                <div class="w-full h-px bg-yellow-200/50"></div>
+                <div>
+                    <p class="text-[9px] text-[#071c4d] font-black uppercase tracking-widest mb-1 opacity-70">Queue Category</p>
+                    <p id="confirm-priority" class="text-xs font-bold text-[#071c4d] bg-white inline-block px-3 py-1 rounded-md border border-yellow-300 shadow-sm mt-1">---</p>
+                </div>
             </div>
         </div>
 
-        <div class="flex gap-4">
-            <button id="btn-cancel-confirm" class="flex-1 border-2 border-gray-200 text-gray-500 hover:text-gray-800 hover:border-gray-400 font-bold py-4 rounded-xl transition-all uppercase tracking-wide text-sm">Back</button>
-            <button id="btn-proceed-consent" class="flex-1 bg-black hover:bg-gray-800 text-[#FFD500] font-black py-4 rounded-xl shadow-md transition-all uppercase tracking-wide text-sm">Continue</button>
+        <div class="flex gap-3">
+            <button id="btn-cancel-confirm" class="w-1/3 bg-gray-100 hover:bg-gray-200 text-gray-600 font-black py-4 rounded-xl transition-all uppercase tracking-wide text-xs">Back</button>
+            <button id="btn-proceed-consent" class="w-2/3 bg-[#071c4d] hover:bg-[#0a2a6e] hover:-translate-y-1 text-white font-black py-4 rounded-xl shadow-lg transition-all uppercase tracking-wide text-sm flex items-center justify-center gap-2">
+                Continue <i class="fas fa-check"></i>
+            </button>
         </div>
     </div>
 
-    <div id="step-5" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-md border-t-8 border-gray-900 transition-all my-8 relative z-10">
-        <div class="flex items-center justify-between mb-8">
-            <button id="btn-back-to-4" class="text-gray-400 hover:text-black font-bold uppercase text-xs md:text-sm tracking-wide shrink-0">&larr; Back</button>
-            <div class="flex-1 text-center px-2"></div>
-            <div class="w-12 shrink-0"></div>
+    <div id="step-5" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-2xl w-full max-w-md border-t-8 border-[#071c4d] my-8 relative z-10 animate-slide-up">
+        <div class="flex items-center justify-between mb-6 border-b border-gray-100 pb-4">
+            <button id="btn-back-to-4" class="text-gray-400 hover:text-[#071c4d] font-bold uppercase text-xs tracking-widest transition-colors flex items-center gap-2">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+            <div class="text-[10px] font-black text-[#071c4d] uppercase tracking-widest opacity-70">Final Step</div>
+            <div class="w-16"></div>
         </div>
+        
         <div class="text-center mb-6">
-            <img src="resources/logo.png" alt="Logo" class="w-16 h-16 rounded-full mx-auto mb-4 shadow-md object-contain">
-            <h1 class="text-xl md:text-2xl font-black uppercase tracking-widest text-gray-900">DATA PRIVACY ACT OF 2012</h1>
-            <p class="text-gray-500 font-bold text-xs md:text-sm mt-2 uppercase tracking-wide">Consent Agreement</p>
+            <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-100">
+                <i class="fas fa-shield-alt text-3xl text-[#071c4d]"></i>
+            </div>
+            <h1 class="text-xl md:text-2xl font-black uppercase tracking-widest text-[#071c4d] leading-tight">Data Privacy<br>Agreement</h1>
         </div>
-        <div class="text-xs md:text-sm text-gray-600 mb-8 h-40 overflow-y-auto bg-gray-50 p-4 rounded-xl border border-gray-200">
-            By proceeding, you explicitly consent to the collection, processing, and storage of your personal data (Name and Contact Number) by Barangay Baliwasan for the sole purpose of facilitating your queue transaction and administrative documentation. Your data will be kept strictly confidential in compliance with Republic Act No. 10173 (Data Privacy Act of 2012) and will not be shared with unauthorized third parties.
+        
+        <div class="text-[11px] md:text-xs text-gray-600 mb-8 h-48 overflow-y-auto custom-scrollbar bg-gray-50 p-5 rounded-2xl border border-gray-200 shadow-inner leading-relaxed text-justify">
+            <p class="mb-3">By proceeding and clicking "I Agree & Submit", you explicitly consent to the collection, processing, and storage of your personal data (including Name and Contact Number) by Barangay Baliwasan.</p>
+            <p class="mb-3">This data is collected solely for the purpose of facilitating your queue transaction, service scheduling, and administrative documentation.</p>
+            <p>Your data will be kept strictly confidential in full compliance with Republic Act No. 10173 (Data Privacy Act of 2012) and will not be shared, sold, or distributed to any unauthorized third parties without your explicit consent.</p>
         </div>
-        <button id="btn-submit-queue" class="w-full bg-[#FFD500] hover:bg-[#FFDC2E] text-black font-black py-4 px-4 rounded-xl shadow-lg text-base md:text-lg transition-all uppercase tracking-wide">
-            I AGREE & SUBMIT
+        
+        <button id="btn-submit-queue" class="w-full bg-[#FFD500] hover:bg-[#FFDC2E] hover:-translate-y-1 text-[#071c4d] font-black py-5 px-4 rounded-xl shadow-xl transition-all uppercase tracking-widest text-sm flex items-center justify-center gap-2">
+            <i class="fas fa-lock"></i> I AGREE & SUBMIT
         </button>
     </div>
 
-    <div id="pending-approval-screen" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-md border-t-8 border-gray-900 text-center my-8 relative z-10">
-        <div class="text-center mb-6">
-            <h1 class="text-xl md:text-2xl font-black uppercase tracking-widest text-gray-900">Request Pending</h1>
-            <p class="text-gray-500 font-bold text-xs md:text-sm mt-2 uppercase tracking-wide">Awaiting Barangay Review</p>
+    <div id="pending-approval-screen" class="hidden bg-white p-8 md:p-12 rounded-3xl shadow-2xl w-full max-w-md border-t-8 border-[#071c4d] text-center my-8 relative z-10 animate-slide-up">
+        <div class="animate-pulse mb-6 flex justify-center">
+            <div class="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center border-4 border-[#071c4d] border-t-transparent animate-spin"></div>
         </div>
-        <p class="text-sm md:text-base text-gray-600 mb-8">Your transaction request has been sent to the barangay staff for review and scheduling.</p>
-        <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 mb-8">
-            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Tracking ID</p>
-            <p id="pending-track-id" class="text-2xl font-black text-black tracking-widest">---</p>
+        <h1 class="text-2xl font-black uppercase tracking-widest text-[#071c4d] mb-2">Request Pending</h1>
+        <p class="text-gray-500 font-bold text-xs uppercase tracking-wide mb-6 border-b border-gray-100 pb-6">Awaiting Staff Review</p>
+        
+        <div class="bg-gray-50 p-6 rounded-2xl border border-gray-200 mb-8 shadow-inner">
+            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-2">Tracking ID</p>
+            <p id="pending-track-id" class="text-2xl font-black text-gray-900 tracking-wider">---</p>
         </div>
-        <p class="text-xs md:text-sm text-gray-500 mb-8 font-medium leading-relaxed bg-[#FFF9E2] p-4 rounded-xl border border-[#FFE761]">
-            Please wait on this screen or check back later to see your approved queue number.
+        <p class="text-xs text-gray-500 leading-relaxed font-medium bg-yellow-50 p-4 rounded-xl border border-yellow-200">
+            Please wait on this screen. A staff member is reviewing your appointment request right now.
         </p>
     </div>
 
-    <div id="rejected-screen" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-md border-t-8 border-red-600 text-center my-8 relative z-10">
-        <div class="text-center mb-6">
-            <h1 class="text-xl md:text-2xl font-black uppercase tracking-widest text-red-600">Request Declined</h1>
-            <p class="text-gray-500 font-bold text-xs md:text-sm mt-2 uppercase tracking-wide">Action Required</p>
+    <div id="rejected-screen" class="hidden bg-white p-8 md:p-12 rounded-3xl shadow-2xl w-full max-w-md border-t-8 border-red-600 text-center my-8 relative z-10 animate-slide-up">
+        <div class="w-20 h-20 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-4xl mx-auto mb-6">
+            <i class="fas fa-times-circle"></i>
         </div>
-        <p class="text-sm md:text-base text-gray-600 mb-8" id="rejected-reason">We are sorry, but your booking request could not be approved at this time. Please visit the barangay hall in person for further assistance.</p>
-        <button onclick="window.location.reload()" class="w-full bg-black hover:bg-gray-800 text-white font-black py-4 px-4 rounded-xl shadow-lg text-base md:text-lg transition-all uppercase tracking-wide">
-            Start Over
+        <h1 class="text-2xl font-black uppercase tracking-widest text-red-600 mb-2">Request Declined</h1>
+        <p class="text-gray-500 font-bold text-xs uppercase tracking-wide mb-6 border-b border-gray-100 pb-6">Action Required</p>
+        
+        <p class="text-sm md:text-base text-gray-700 mb-8 bg-red-50 p-5 rounded-xl border border-red-100 font-medium leading-relaxed" id="rejected-reason">We are sorry, but your booking request could not be approved at this time. Please visit the barangay hall in person.</p>
+        
+        <button onclick="window.location.reload()" class="w-full bg-[#071c4d] hover:bg-[#0a2a6e] hover:-translate-y-1 text-white font-black py-4 px-4 rounded-xl shadow-xl transition-all uppercase tracking-wide flex justify-center items-center gap-2">
+            <i class="fas fa-redo"></i> Start Over
         </button>
     </div>
 
-    <div id="ticket-result" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-xl w-full max-w-md border-2 border-[#FFD500] text-center my-8 relative z-10">
-        <h2 class="text-lg md:text-xl font-bold text-gray-500 uppercase tracking-wider mb-2">Your Ticket Number</h2>
-        <div id="my-ticket-number" class="text-6xl md:text-7xl font-black text-gray-900 mb-2 drop-shadow-sm">---</div>
-        <div id="my-time-slot" class="text-sm font-black text-white bg-black px-4 py-1 rounded-md inline-block mb-6 tracking-widest uppercase">---</div>
+    <div id="ticket-result" class="hidden bg-white p-6 md:p-10 rounded-3xl shadow-2xl w-full max-w-md border-t-8 border-b-8 border-y-[#FFD500] text-center my-8 relative z-10 animate-slide-up overflow-hidden">
+        <div class="absolute top-1/2 -left-4 w-8 h-8 bg-gray-50 rounded-full shadow-inner transform -translate-y-1/2"></div>
+        <div class="absolute top-1/2 -right-4 w-8 h-8 bg-gray-50 rounded-full shadow-inner transform -translate-y-1/2"></div>
+
+        <div class="mb-8 border-b-2 border-dashed border-gray-200 pb-8">
+            <h2 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">Your Ticket Number</h2>
+            <div id="my-ticket-number" class="text-6xl md:text-7xl font-black text-[#071c4d] mb-4 drop-shadow-sm leading-none tracking-tighter">---</div>
+            <div id="my-time-slot" class="text-[10px] font-black text-[#FFD500] bg-[#071c4d] px-4 py-1.5 rounded-full inline-block tracking-widest uppercase shadow-sm">---</div>
+        </div>
         
-        <div id="display-time-container" class="bg-gray-50 border border-gray-200 rounded-xl p-4 mb-6">
-            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Expected Time</p>
-            <p id="display-time" class="text-2xl font-black text-black">--:--</p>
+        <div id="display-time-container" class="bg-gray-50 border border-gray-200 rounded-2xl p-6 mb-8 shadow-inner">
+            <p class="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-2"><i class="fas fa-clock mr-1"></i> Expected Time</p>
+            <p id="display-time" class="text-3xl font-black text-gray-900">--:--</p>
         </div>
 
-        <p id="afternoon-notice" class="hidden text-sm md:text-base text-red-600 bg-red-50 p-3 rounded-lg border border-red-200 mb-8 font-black uppercase tracking-wide">Please come in the afternoon.</p>
+        <p id="afternoon-notice" class="hidden text-xs md:text-sm text-red-600 bg-red-50 p-4 rounded-xl border border-red-200 mb-8 font-black uppercase tracking-wide"><i class="fas fa-exclamation-triangle mr-1"></i> Please come in the afternoon.</p>
 
-        <p id="appt-message" class="hidden text-sm md:text-base text-gray-600 mb-8 font-medium leading-relaxed">Please save this ticket. Present this number upon arrival on your scheduled date.</p>
-        <p id="live-message" class="text-sm md:text-base text-gray-600 mb-8 font-medium leading-relaxed">Monitor the Live Queue to track your position.</p>
+        <p id="appt-message" class="hidden text-xs md:text-sm text-gray-500 mb-8 font-medium leading-relaxed px-4"><i class="fas fa-save mr-1 text-[#071c4d]"></i> Screenshot or save this ticket. Present it upon arrival on your scheduled date.</p>
+        <p id="live-message" class="text-xs md:text-sm text-gray-500 mb-8 font-medium leading-relaxed px-4"><i class="fas fa-mobile-alt mr-1 text-[#071c4d]"></i> Please wait. Monitor the Live Queue screen to track your position.</p>
 
-        <div class="flex gap-2">
-            <button id="btn-cancel-active-ticket" class="w-1/3 bg-red-50 hover:bg-red-100 text-red-600 font-black py-4 px-4 rounded-xl shadow-sm transition-all uppercase tracking-wide text-xs border border-red-200">
-                CANCEL
+        <div class="flex gap-3 relative z-10">
+            <button id="btn-cancel-active-ticket" class="w-[30%] bg-white hover:bg-red-50 text-red-500 font-black py-4 px-2 rounded-xl transition-all uppercase tracking-wider text-[10px] border-2 border-red-100 flex flex-col items-center justify-center gap-1">
+                <i class="fas fa-times text-sm"></i> Void
             </button>
-            <button id="btn-ticket-done" class="w-2/3 bg-black hover:bg-gray-800 text-[#FFD500] font-black py-4 px-4 rounded-xl shadow-lg transition-all uppercase tracking-wide">
-                DONE
+            <button id="btn-ticket-done" class="w-[70%] bg-[#071c4d] hover:bg-[#0a2a6e] hover:-translate-y-1 text-white font-black py-4 px-4 rounded-xl shadow-xl transition-all uppercase tracking-widest flex items-center justify-center gap-2 text-sm">
+                Finish <i class="fas fa-check-circle text-[#FFD500]"></i>
             </button>
         </div>
     </div>
@@ -399,20 +474,21 @@
                 const dateColor = tick.date === localISOTime ? 'text-green-600' : 'text-gray-500';
 
                 const el = document.createElement('div');
-                el.className = 'bg-gray-50 border border-gray-200 p-4 rounded-xl cursor-pointer hover:border-[#FFD500] hover:shadow-md transition-all flex justify-between items-center';
+                el.className = 'bg-white border border-gray-200 p-5 rounded-2xl cursor-pointer hover:border-[#071c4d] hover:shadow-lg transition-all flex justify-between items-center group relative overflow-hidden';
                 el.onclick = () => renderTicketResultScreen(t.res, false);
                 el.innerHTML = `
-                    <div class="flex-1" onclick="renderTicketResultScreen(mySavedTickets[${index}].res, false)">
-                        <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest truncate max-w-[150px]">${tick.document}</p>
-                        <p class="text-2xl font-black text-black tracking-tighter">${formatTicket(tick.ticketNumber, tick.category)}</p>
-                        <p class="text-xs font-bold mt-1 ${dateColor}">${tick.date} • ${tick.timeSlot || 'WALK-IN'}</p>
+                    <div class="absolute left-0 top-0 bottom-0 w-2 bg-[#071c4d]"></div>
+                    <div class="flex-1 pl-4" onclick="renderTicketResultScreen(mySavedTickets[${index}].res, false)">
+                        <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest truncate max-w-[150px] mb-1">${tick.document}</p>
+                        <p class="text-3xl font-black text-[#071c4d] tracking-tighter leading-none">${formatTicket(tick.ticketNumber, tick.category)}</p>
+                        <p class="text-[10px] font-bold mt-2 ${dateColor}"><i class="fas fa-calendar-day mr-1"></i>${tick.date} &nbsp;&bull;&nbsp; ${tick.timeSlot || 'WALK-IN'}</p>
                     </div>
                     <div class="text-right shrink-0 ml-2 flex flex-col items-end justify-between h-full">
                         <div>
-                            <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest mb-1">Expected</p>
-                            <p class="text-sm md:text-base font-black text-[#FFD500] bg-black px-2 py-1 rounded shadow-sm">${dTime}</p>
+                            <p class="text-[8px] text-gray-400 font-black uppercase tracking-widest mb-1 opacity-70">Expected</p>
+                            <p class="text-sm font-black text-[#071c4d] bg-gray-100 px-3 py-1.5 rounded-lg border border-gray-200">${dTime}</p>
                         </div>
-                        <button onclick="cancelMyTicket(${tick.ticketNumber}, event)" class="mt-2 text-[10px] text-red-500 font-bold uppercase tracking-widest hover:text-red-700 bg-red-50 px-2 py-1 rounded-md border border-red-100 transition-colors"><i class="fas fa-times-circle"></i> Cancel</button>
+                        <button onclick="cancelMyTicket(${tick.ticketNumber}, event)" class="mt-3 text-[9px] text-red-500 font-bold uppercase tracking-widest hover:text-white hover:bg-red-500 bg-red-50 px-3 py-1.5 rounded-md transition-colors shadow-sm"><i class="fas fa-trash-alt mr-1"></i> Cancel</button>
                     </div>
                 `;
                 container.appendChild(el);
@@ -627,22 +703,27 @@
 
         socket.on('queueUpdated', (state) => {
             dynamicServicesContainer.innerHTML = '';
+            
             const specialServices = state.services.filter(s => s.category === 'S');
             if(specialServices.length > 0) {
                 const specialHTML = specialServices.map(s => {
-                    const disabledClass = state.disabledServices.includes(s.name) ? 'opacity-30 cursor-not-allowed bg-gray-200' : 'bg-[#FFF394] hover:bg-[#FFD500] hover:border-[#FFD500]';
-                    const newBadge = s.isNew ? '<span class="bg-red-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded absolute -top-2 -right-2 tracking-widest shadow-sm">NEW</span>' : '';
+                    const disabledClass = state.disabledServices.includes(s.name) ? 'opacity-40 cursor-not-allowed bg-gray-100 border-gray-200 text-gray-400' : 'bg-gradient-to-r from-[#FFD500] to-yellow-400 hover:to-yellow-500 border-[#FFD500] text-[#071c4d] hover:shadow-lg hover:-translate-y-1';
+                    const newBadge = s.isNew ? '<span class="bg-red-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full absolute -top-3 -right-2 tracking-widest shadow-md border-2 border-white animate-pulse">NEW</span>' : '';
                     return `
-                        <button ${state.disabledServices.includes(s.name) ? 'disabled' : ''} class="doc-btn ${disabledClass} relative border-2 border-[#FFD500] text-black font-black py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-sm tracking-wide w-full" data-doc="${s.name}">
+                        <button ${state.disabledServices.includes(s.name) ? 'disabled' : ''} class="doc-btn ${disabledClass} relative border-2 font-black py-5 px-6 rounded-2xl shadow-sm transition-all uppercase text-sm tracking-widest w-full flex items-center justify-between group" data-doc="${s.name}">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-star text-lg opacity-70"></i>
+                                <span>${s.name}</span>
+                            </div>
+                            <i class="fas fa-chevron-right opacity-0 group-hover:opacity-100 transition-opacity"></i>
                             ${newBadge}
-                            ⭐ ${s.name}
                         </button>
                     `;
                 }).join('');
                 dynamicServicesContainer.innerHTML += `
-                    <div>
-                        <h3 class="text-xs md:text-sm font-bold text-gray-400 uppercase tracking-widest mb-3 text-center md:text-left">Special Events</h3>
-                        <div class="grid grid-cols-1 gap-4">${specialHTML}</div>
+                    <div class="mb-8">
+                        <h3 class="text-[10px] font-black text-[#071c4d] uppercase tracking-widest mb-3 border-b border-gray-200 pb-2"><i class="fas fa-bolt mr-1 text-[#FFD500]"></i> Priority & Special Events</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">${specialHTML}</div>
                     </div>
                 `;
             }
@@ -650,24 +731,26 @@
             const standardServices = state.services.filter(s => s.category !== 'S');
             if(standardServices.length > 0) {
                 const standardHTML = standardServices.map(s => {
-                    const disabledClass = state.disabledServices.includes(s.name) ? 'opacity-30 cursor-not-allowed bg-gray-200' : 'bg-gray-50 hover:bg-[#FFD500] hover:border-[#FFD500]';
-                    const newBadge = s.isNew ? '<span class="bg-red-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded absolute -top-2 -right-2 tracking-widest shadow-sm">NEW</span>' : '';
+                    const disabledClass = state.disabledServices.includes(s.name) ? 'opacity-40 cursor-not-allowed bg-gray-50 border-gray-200 text-gray-400' : 'bg-white hover:bg-[#071c4d] hover:text-white border-gray-200 hover:border-[#071c4d] text-gray-800 hover:shadow-lg hover:-translate-y-1';
+                    const newBadge = s.isNew ? '<span class="bg-red-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full absolute -top-3 -right-2 tracking-widest shadow-md border-2 border-white animate-pulse">NEW</span>' : '';
                     return `
-                        <button ${state.disabledServices.includes(s.name) ? 'disabled' : ''} class="doc-btn ${disabledClass} relative border-2 border-gray-200 text-gray-800 font-bold py-5 md:py-6 px-4 rounded-xl shadow-sm transition-all uppercase text-xs md:text-sm w-full" data-doc="${s.name}">
+                        <button ${state.disabledServices.includes(s.name) ? 'disabled' : ''} class="doc-btn ${disabledClass} relative border-2 font-bold py-4 md:py-5 px-5 rounded-2xl shadow-sm transition-all uppercase text-xs md:text-sm w-full flex items-center justify-between group" data-doc="${s.name}">
+                            <span>${s.name}</span>
+                            <i class="fas fa-chevron-right opacity-0 group-hover:opacity-100 transition-opacity text-[#FFD500]"></i>
                             ${newBadge}
-                            ${s.name}
                         </button>
                     `;
                 }).join('');
                 dynamicServicesContainer.innerHTML += `
                     <div>
-                        <h3 class="text-xs md:text-sm font-bold text-gray-400 uppercase tracking-widest mb-3 text-center md:text-left">Standard Documents</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">${standardHTML}</div>
+                        <h3 class="text-[10px] font-black text-[#071c4d] uppercase tracking-widest mb-3 border-b border-gray-200 pb-2"><i class="fas fa-file-alt mr-1 text-gray-400"></i> Standard Documents</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">${standardHTML}</div>
                     </div>
                 `;
             }
             setupDocButtons();
 
+            // Mobile Queue Screen logic
             document.getElementById('mobile-serving-ticket').innerText = state.lastCalled && state.lastCalled.ticket ? formatTicket(state.lastCalled.ticket, state.lastCalled.category) : "----";
             document.getElementById('mobile-serving-counter').innerText = state.lastCalled && state.lastCalled.counter ? `COUNTER ${state.lastCalled.counter}` : "--";
             document.getElementById('mobile-serving-doc').innerText = state.lastCalled && state.lastCalled.document ? state.lastCalled.document : "SYSTEM STANDBY";
@@ -680,12 +763,12 @@
                 mobileList.innerHTML = '<div class="text-center py-10 text-gray-300 font-bold uppercase text-xs tracking-wider">Queue is empty</div>';
             } else {
                 state.waitingList.forEach(item => {
-                    const badgeColor = item.priority === 'PWD / Senior / Pregnant' ? 'bg-black text-[#FFD500] border-gray-800' : 'bg-white text-gray-600 border-gray-200';
+                    const badgeColor = item.priority === 'PWD / Senior / Pregnant' ? 'bg-[#071c4d] text-[#FFD500] border-[#071c4d]' : 'bg-white text-gray-600 border-gray-200';
                     const el = document.createElement('div');
-                    el.className = 'flex justify-between items-center p-4 border border-gray-100 rounded-2xl bg-gray-50 shadow-sm';
+                    el.className = 'flex justify-between items-center p-4 border border-gray-200 rounded-2xl bg-white shadow-sm';
                     el.innerHTML = `
                         <div class="font-black text-3xl text-gray-900">${formatTicket(item.ticketNumber, item.category)}</div>
-                        <div class="text-[9px] font-black uppercase ${badgeColor} px-2 py-1 rounded border tracking-widest">${item.priority}</div>
+                        <div class="text-[9px] font-black uppercase ${badgeColor} px-2 py-1 rounded-md border tracking-widest shadow-sm">${item.priority}</div>
                     `;
                     mobileList.appendChild(el);
                 });
