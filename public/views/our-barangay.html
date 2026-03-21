@@ -4,8 +4,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barangay Baliwasan | Official Portal</title>
+
     <link href="/css/output.css" rel="stylesheet">
+    <script src="/js/our-barangay.js" defer></script>
     <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        .blend-screen {
+            mix-blend-mode: screen;
+        }
+        /* Custom animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 1s ease-out;
+        }
+        .hover-scale {
+            transition: transform 0.3s ease;
+        }
+        .hover-scale:hover {
+            transform: scale(1.05);
+        }
+        /* History card animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .history-card {
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+        }
+        .history-card:nth-child(1) { animation-delay: 0.2s; }
+        .history-card:nth-child(2) { animation-delay: 0.4s; }
+        .history-card:nth-child(3) { animation-delay: 0.6s; }
+        .history-card:nth-child(4) { animation-delay: 0.8s; }
+
+        /* Custom scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.5);
+        }
+        
+        /* Marquee animation */
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        .animate-marquee {
+            animation: marquee 15s linear infinite;
+        }
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -21,7 +87,7 @@
     <header class="bg-white border-b-2 border-yellow-400 flex flex-col w-full fixed top-0 z-50 shadow-md">
         <div class="flex flex-col md:flex-row justify-between items-center px-4 md:px-6 py-3 gap-3 md:gap-0 w-full overflow-hidden">
             <div class="flex items-center gap-3 w-full md:w-auto justify-center md:justify-start shrink-0">
-                <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-cover bg-center border-2 border-yellow-400 shadow-sm" style="background-image: url('resources/logo.png');">
+                <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-cover bg-center border-2 border-yellow-400 shadow-sm" style="background-image: url('/resources/logo.png');">
                 </div>
                 <h1 class="text-lg md:text-2xl font-bold text-black tracking-wide uppercase">ONE BALIWASAN</h1>
             </div>
@@ -382,7 +448,7 @@
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
                     <div class="flex items-center gap-4 flex-wrap">
                         <div class="w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-[#0f442b] hover-scale">
-                            <img src="resources/logo.png" alt="Barangay Logo" class="w-full h-full object-cover">
+                            <img src="/resources/logo.png" alt="Barangay Logo" class="w-full h-full object-cover">
                         </div>
                        
                         <h2 class="text-2xl md:text-3xl font-bold text-[#0f442b] tracking-wide">BARANGAY BALIWASAN</h2>
@@ -477,156 +543,5 @@
             </div>
         </div>
     </footer>
-
-    <script>
-        // Landmarks data
-        const locations = [
-            { name: "San Jose Road", category: "road", icon: "🛣️", description: "Major thoroughfare" },
-            { name: "Ranches Drive", category: "road", icon: "🏘️", description: "Residential area" },
-            { name: "Aquino Drive", category: "road", icon: "🛣️", description: "Main road" },
-            { name: "Arizonas Drive", category: "road", icon: "🛣️", description: "Residential area" },
-            { name: "Zamboanga International Airport Rd", category: "airport", icon: "✈️", description: "Airport access road" },
-            { name: "Garden Orchid Hotel & Resort Corp.", category: "hotel", icon: "🏨", description: "Hotel and resort" },
-            { name: "Claret School of Zamboanga City", category: "school", icon: "📚", description: "Educational institution" },
-            { name: "Marcian Gar", category: "business", icon: "⛽", description: "Gas station" },
-            { name: "Denni's Coffee Garden", category: "food", icon: "☕", description: "Coffee shop" }
-        ];
-
-        // Populate landmarks
-        function populateLandmarks() {
-            const landmarksList = document.getElementById('landmarks-list');
-            if (landmarksList) {
-                landmarksList.innerHTML = locations.map(loc => `
-                    <div class="flex items-center gap-3 p-3 bg-white/10 rounded-lg hover:bg-white/20 transition-all cursor-pointer landmark-item" data-name="${loc.name}">
-                        <span class="text-yellow-400 text-xl">${loc.icon}</span>
-                        <div>
-                            <span class="font-medium">${loc.name}</span>
-                            <p class="text-xs text-gray-300">${loc.description}</p>
-                        </div>
-                    </div>
-                `).join('');
-            }
-        }
-
-        // Search functionality
-        function setupSearch() {
-            const searchInput = document.getElementById('landmark-search');
-            if (searchInput) {
-                searchInput.addEventListener('input', (e) => {
-                    const searchTerm = e.target.value.toLowerCase();
-                    const items = document.querySelectorAll('.landmark-item');
-                    
-                    items.forEach(item => {
-                        const name = item.dataset.name.toLowerCase();
-                        item.style.display = name.includes(searchTerm) ? 'flex' : 'none';
-                    });
-                });
-            }
-        }
-
-        // Clock
-        function updatePortalClock() {
-            const now = new Date();
-            const options = { 
-                month: 'long', 
-                day: 'numeric', 
-                year: 'numeric',
-                hour: '2-digit', 
-                minute: '2-digit', 
-                second: '2-digit',
-                hour12: true
-            };
-            const clockElement = document.getElementById('portal-clock');
-            if (clockElement) {
-                clockElement.innerText = now.toLocaleString('en-US', options);
-            }
-        }
-
-        // Directions
-        function openDirections() {
-            const latitude = 6.9157146;
-            const longitude = 122.0600172;
-            window.open(
-                `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}&travelmode=driving`,
-                '_blank'
-            );
-        }
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            populateLandmarks();
-            setupSearch();
-            updatePortalClock();
-            setInterval(updatePortalClock, 1000);
-        });
-    </script>
-
-     <style>
-        html {
-            scroll-behavior: smooth;
-        }
-        .blend-screen {
-            mix-blend-mode: screen;
-        }
-        /* Custom animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fadeIn {
-            animation: fadeIn 1s ease-out;
-        }
-        .hover-scale {
-            transition: transform 0.3s ease;
-        }
-        .hover-scale:hover {
-            transform: scale(1.05);
-        }
-        /* History card animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        .history-card {
-            animation: fadeInUp 0.6s ease-out forwards;
-            opacity: 0;
-        }
-        .history-card:nth-child(1) { animation-delay: 0.2s; }
-        .history-card:nth-child(2) { animation-delay: 0.4s; }
-        .history-card:nth-child(3) { animation-delay: 0.6s; }
-        .history-card:nth-child(4) { animation-delay: 0.8s; }
-
-        /* Custom scrollbar */
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: rgba(255,255,255,0.1);
-            border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.3);
-            border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: rgba(255,255,255,0.5);
-        }
-        
-        /* Marquee animation */
-        @keyframes marquee {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
-        .animate-marquee {
-            animation: marquee 15s linear infinite;
-        }
-    </style>
-
 </body>
 </html>

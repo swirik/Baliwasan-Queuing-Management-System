@@ -10,7 +10,7 @@ const displayDoc = document.getElementById('current-doc');
 const tickerDisplay = document.getElementById('scrolling-ticker');
 const servingRow = document.getElementById('currently-serving-row');
 
-const chimeSound = new Audio('/media/chime.mp3');
+const chimeSound = new Audio('/resources/chime.mp3');
 let currentMediaUrl = '';
 let currentMediaMuted = null;
 let currentlyServingTicket = null;
