@@ -11,27 +11,6 @@
     <script src="/socket.io/socket.io.js" defer></script>
     <script src="/js/utility.js" defer></script>
     <script src="/js/queue-monitor.js" defer></script>
-    
-    <style>
-        @keyframes marquee {
-            from { left: 100%; transform: translateX(0); }
-            to { left: 0; transform: translateX(-100%); }
-        }
-        .animate-marquee {
-            animation: marquee 25s linear infinite;
-        }
-        @keyframes flashText {
-            0%, 100% { color: #071c4d; transform: scale(1); text-shadow: none; }
-            50% { color: #ffffff; transform: scale(1.1); text-shadow: 0 0 30px rgba(255, 255, 255, 1); }
-        }
-        .is-blinking {
-            animation: flashText 0.5s ease-in-out 6;
-            display: inline-block;
-        }
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-    </style>
 </head>
 <body class="bg-gray-100 h-screen w-screen overflow-hidden flex flex-col font-sans text-gray-900">
 
