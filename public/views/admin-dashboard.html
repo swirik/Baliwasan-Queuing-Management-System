@@ -4,8 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barangay Baliwasan | Official Portal</title>
-    <link href="output.css" rel="stylesheet">
+
+    <link href="/css/output.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <script src="/js/admin-dashboard.js" defer> </script>
+
+    <style>
+        @keyframes pulse-emergency {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .emergency-pulse {
+            animation: pulse-emergency 2s infinite;
+        }
+        .hover-scale {
+            transition: transform 0.2s ease;
+        }
+        .hover-scale:hover {
+            transform: scale(1.02);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #a1a1a1;
+        }
+    </style>
 </head>
 
 <body class="bg-gray-50 font-sans text-gray-900 ">
@@ -19,11 +52,11 @@
                     <p class=" text-xs text-yellow-500">ONE BALIWASAN</p>
                 </div>
                 <nav class="flex gap-2 flex-wrap justify-end">
-                    <a href="#home" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase  ring-2 ring-offset-2 ring-yellow-400 transition-all hover:shadow-md">DASHBOARD</a>
-                    <a href="homepage-admin.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">HOMEPAGE</a>
-                    <a href="citizen-profiling.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">CITIZEN PROFILING</a>
-                    <a href="news&update-admin.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">NEWS & UPDATES</a>
-                    <a href="garbage-admin.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase  uppercase transition-all">GARBAGE SCHEDULE</a>
+                    <a href="admin-dashboard.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase  ring-2 ring-offset-2 ring-yellow-400 transition-all hover:shadow-md">DASHBOARD</a>
+                    <a href="admin-homepage.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">HOMEPAGE</a>
+                    <a href="admin-citizen-profiling.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">CITIZEN PROFILING</a>
+                    <a href="admin-news-and-updates.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">NEWS & UPDATES</a>
+                    <a href="admin-garbage.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase  uppercase transition-all">GARBAGE SCHEDULE</a>
                     <a href="admin-queue.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">QUEUING SYSTEM</a>
                 </nav>
         </div>
@@ -359,119 +392,5 @@
         </div>
     </div>
 
-    <script>
-    function logout() {
-        if (confirm('Are you sure you want to logout?')) {
-           
-            window.location.href = 'admin-login.html'; }
-    }
-
-    function updatePortalClock() {
-        const now = new Date();
-        const options = { 
-            month: 'long', 
-            day: 'numeric', 
-            year: 'numeric',
-            hour: '2-digit', 
-            minute: '2-digit', 
-            second: '2-digit',
-            hour12: true
-        };
-        const clockElement = document.getElementById('portal-clock');
-        if (clockElement) {
-            clockElement.innerText = now.toLocaleString('en-US', options);
-        }
-    }
-
-
-    document.addEventListener('DOMContentLoaded', function() {
-        updatePortalClock();
-        setInterval(updatePortalClock, 1000);
-        
-        const emergencyBtn = document.querySelector('.bg-gradient-to-r.from-red-600 .bg-white');
-        if (emergencyBtn) {
-            emergencyBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                if(confirm('Send emergency alert to all citizens?')) {
-                    alert('Emergency alert sent!');
-                }
-            });
-        }
-
-        const downloadButtons = document.querySelectorAll('.bg-red-500, .bg-green-600');
-        downloadButtons.forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                alert('Downloading transaction logs...');
-            });
-        });
-
-        const ticketSection = document.querySelector('[class*="from-yellow-500"]')?.closest('.bg-white');
-        if (ticketSection) {
-            const serveButtons = ticketSection.querySelectorAll('.bg-green-500');
-            const holdButtons = ticketSection.querySelectorAll('.bg-gray-200');
-            const callButtons = ticketSection.querySelectorAll('.bg-yellow-400');
-            
-            serveButtons.forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    alert('Serving ticket...');
-                });
-            });
-            
-            holdButtons.forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    alert('Holding ticket...');
-                });
-            });
-            
-            callButtons.forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    alert('Calling ticket...');
-                });
-            });
-        }
-
-        const generateBtn = document.querySelector('.bg-\\[\\#071c4d\\]');
-        if (generateBtn) {
-            generateBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                alert('Generating new ticket...');
-            });
-        }
-    });
-    </script>
-
-    <style>
-        @keyframes pulse-emergency {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-        .emergency-pulse {
-            animation: pulse-emergency 2s infinite;
-        }
-        .hover-scale {
-            transition: transform 0.2s ease;
-        }
-        .hover-scale:hover {
-            transform: scale(1.02);
-        }
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #c1c1c1;
-            border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #a1a1a1;
-        }
-    </style>
 </body>
 </html>

@@ -4,9 +4,225 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barangay Baliwasan | Official Portal</title>
-    <link href="output.css" rel="stylesheet">
- 
+
+    <link href="/css/output.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <script src="/js/admin-news-and-updates.js" defer> </script>
+
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 1s ease-out;
+        }
+        
+        .carousel-slide, .carousel-slide2, .carousel-slide3 {
+            transition: opacity 1s ease-in-out;
+        }
+        
+        .admin-login-bar {
+            background: #071c4d;
+            color: white;
+            padding: 8px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10000;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .admin-login-bar.show {
+            transform: translateY(0);
+        }
+        
+        .admin-login-bar input {
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: none;
+            margin: 0 5px;
+            color: #333;
+        }
+        
+        .admin-login-bar button {
+            background: #eab308;
+            color: #071c4d;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .edit-mode .editable {
+            position: relative;
+            border: 2px dashed transparent;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .edit-mode .editable:hover {
+            border-color: #eab308;
+            background-color: rgba(234, 179, 8, 0.05);
+        }
+        
+        .edit-mode .editable::after {
+            content: '✎';
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #eab308;
+            color: #071c4d;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            z-index: 100;
+        }
+        
+        .edit-mode .editable:hover::after {
+            opacity: 1;
+        }
+        
+        .edit-mode .editable-image {
+            position: relative;
+            border: 3px solid transparent;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .edit-mode .editable-image:hover {
+            border-color: #eab308;
+            filter: brightness(0.9);
+        }
+        
+        .edit-mode .editable-image::after {
+            content: '📷 Change Image';
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #071c4d;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            font-size: 14px;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            white-space: nowrap;
+            z-index: 100;
+        }
+        
+        .edit-mode .editable-image:hover::after {
+            opacity: 1;
+        }
+        
+        .admin-toolbar {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .admin-toolbar-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #071c4d;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.2s ease;
+            border: 2px solid #eab308;
+        }
+        
+        .admin-toolbar-btn:hover {
+            transform: scale(1.1);
+            background: #0a2a6e;
+        }
+        
+        .admin-toolbar-btn.active {
+            background: #eab308;
+            color: #071c4d;
+        }
+        
+        .edit-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            z-index: 10000;
+            width: 90%;
+            max-width: 500px;
+            display: none;
+        }
+        
+        .edit-modal.show {
+            display: block;
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            display: none;
+        }
+        
+        .modal-overlay.show {
+            display: block;
+        }
+        
+        .image-preview {
+            width: 100%;
+            height: 200px;
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            background-size: cover;
+            background-position: center;
+            margin-bottom: 15px;
+        }
+        
+        .hover-scale {
+            transition: transform 0.3s ease;
+        }
+        .hover-scale:hover {
+            transform: scale(1.05);
+        }
+    </style>
 </head>
 <body class="bg-gray-50 font-sans text-gray-900">
     
@@ -19,12 +235,12 @@
                     <p class=" text-xs text-yellow-500">ONE BALIWASAN</p>
                 </div>
                 <nav class="flex gap-2 flex-wrap justify-end">
-                    <a href="admin.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase   transition-all hover:shadow-md">DASHBOARD</a>
-                    <a href="homepage-admin.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">HOMEPAGE</a>
-                    <a href="citizen-profiling.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">CITIZEN PROFILING</a>
-                    <a href="news&update-admin.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase ring-2 ring-offset-2 ring-yellow-400 transition-all hover:shadow-md">NEWS & UPDATES</a>
-                    <a href="garbage-admin.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase  uppercase transition-all">GARBAGE SCHEDULE</a>
-                    <a href="admin-queue.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">QUEUING SYSTEM</a>               
+                    <a href="admin-dashboard.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase  ring-2 ring-offset-2 ring-yellow-400 transition-all hover:shadow-md">DASHBOARD</a>
+                    <a href="admin-homepage.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">HOMEPAGE</a>
+                    <a href="admin-citizen-profiling.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">CITIZEN PROFILING</a>
+                    <a href="admin-news-and-updates.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">NEWS & UPDATES</a>
+                    <a href="admin-garbage.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase  uppercase transition-all">GARBAGE SCHEDULE</a>
+                    <a href="admin-queue.html" class="bg-yellow-400 text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs hover:bg-yellow-500 uppercase transition-all hover:shadow-md">QUEUING SYSTEM</a>
                 </nav>
         </div>
         
@@ -496,9 +712,6 @@
             </div>
         </section>
     </main>
-
-    
-
     
     <div class="admin-toolbar">
         <button class="admin-toolbar-btn" onclick="toggleEditMode()" id="editModeBtn" title="Toggle Edit Mode">
@@ -537,504 +750,5 @@
         </div>
     </div>
 
-    <script>
-        let isAdmin = false;
-        let currentEditElement = null;
-        let currentEditType = 'text';
-
-        function checkAdminPassword() {
-            const password = document.getElementById('adminPassword').value;
-            if (password === 'admin123') {
-                isAdmin = true;
-                document.body.classList.add('edit-mode');
-                document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'block');
-                hideAdminBar();
-                alert('Admin mode activated! You can now edit content by hovering and clicking on elements.');
-            } else {
-                alert('Incorrect password');
-            }
-        }
-
-        function showAdminLogin() {
-            document.getElementById('adminLoginBar').classList.add('show');
-        }
-
-        function hideAdminBar() {
-            document.getElementById('adminLoginBar').classList.remove('show');
-        }
-
-        function toggleEditMode() {
-            if (!isAdmin) {
-                showAdminLogin();
-                return;
-            }
-            
-            document.body.classList.toggle('edit-mode');
-            const btn = document.getElementById('editModeBtn');
-            if (document.body.classList.contains('edit-mode')) {
-                btn.style.background = '#eab308';
-                btn.style.color = '#071c4d';
-            } else {
-                btn.style.background = '#071c4d';
-                btn.style.color = 'white';
-            }
-        }
-
-        document.addEventListener('click', function(e) {
-            if (!isAdmin || !document.body.classList.contains('edit-mode')) return;
-            
-            const editable = e.target.closest('.editable, .editable-image');
-            if (editable) {
-                e.preventDefault();
-                openEditModal(editable);
-            }
-        });
-
-        function openEditModal(element) {
-            currentEditElement = element;
-            
-            if (element.classList.contains('editable-image') || element.dataset.type === 'image') {
-                currentEditType = 'image';
-                document.getElementById('textEditSection').classList.add('hidden');
-                document.getElementById('imageEditSection').classList.remove('hidden');
-                
-                let imgSrc = '';
-                if (element.tagName === 'IMG') {
-                    imgSrc = element.src;
-                } else if (element.style.backgroundImage) {
-                    imgSrc = element.style.backgroundImage.slice(5, -2);
-                }
-                
-                document.getElementById('imagePreview').style.backgroundImage = `url('${imgSrc}')`;
-                document.getElementById('editImageInput').value = imgSrc;
-                
-            } else {
-                currentEditType = 'text';
-                document.getElementById('textEditSection').classList.remove('hidden');
-                document.getElementById('imageEditSection').classList.add('hidden');
-                
-                const currentText = element.innerText;
-                
-                if (element.dataset.type === 'textarea' || element.tagName === 'P' || element.tagName === 'DIV') {
-                    document.getElementById('editTextInput').classList.add('hidden');
-                    document.getElementById('editTextareaInput').classList.remove('hidden');
-                    document.getElementById('editTextareaInput').value = currentText;
-                } else {
-                    document.getElementById('editTextInput').classList.remove('hidden');
-                    document.getElementById('editTextareaInput').classList.add('hidden');
-                    document.getElementById('editTextInput').value = currentText;
-                }
-            }
-            
-            document.getElementById('modalOverlay').classList.add('show');
-            document.getElementById('editModal').classList.add('show');
-        }
-
-        function closeModal() {
-            document.getElementById('modalOverlay').classList.remove('show');
-            document.getElementById('editModal').classList.remove('show');
-            currentEditElement = null;
-        }
-
-        function saveEdit() {
-            if (!currentEditElement) return;
-            
-            if (currentEditType === 'image') {
-                const newImageUrl = document.getElementById('editImageInput').value;
-                
-                if (currentEditElement.tagName === 'IMG') {
-                    currentEditElement.src = newImageUrl;
-                } else if (currentEditElement.style) {
-                    currentEditElement.style.backgroundImage = `url('${newImageUrl}')`;
-                }
-                
-            } else {
-                let newText;
-                if (document.getElementById('editTextInput').classList.contains('hidden')) {
-                    newText = document.getElementById('editTextareaInput').value;
-                } else {
-                    newText = document.getElementById('editTextInput').value;
-                }
-                
-                if (currentEditElement.querySelector('span') && !newText.includes('<span')) {
-                    const span = currentEditElement.querySelector('span');
-                    if (span) {
-                        const spanHTML = span.outerHTML;
-                        currentEditElement.innerHTML = newText + ' ' + spanHTML;
-                    } else {
-                        currentEditElement.innerText = newText;
-                    }
-                } else {
-                    currentEditElement.innerHTML = newText;
-                }
-            }
-            
-            closeModal();
-        }
-
-        function previewImage(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('imagePreview').style.backgroundImage = `url('${e.target.result}')`;
-                    document.getElementById('editImageInput').value = e.target.result;
-                }
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        function editNewsItem(index) {
-            alert('Edit news item ' + index);
-        }
-
-        function deleteNewsItem(index) {
-            if (confirm('Are you sure you want to delete this news item?')) {
-                event.target.closest('.bg-white.rounded-3xl').remove();
-            }
-        }
-
-        function addImageToNews(index) {
-            alert('Add image to news item ' + index);
-        }
-
-        function editRelatedCard(index) {
-            alert('Edit related card ' + index);
-        }
-
-        function deleteRelatedCard(index) {
-            if (confirm('Are you sure you want to delete this card?')) {
-                event.target.closest('.bg-white.rounded-xl').remove();
-            }
-        }
-
-        function addNewNews() {
-            alert('Add new news item - This would open a form to create new content');
-        }
-
-        function saveAllChanges() {
-            const editedData = {};
-            
-            document.querySelectorAll('[data-field]').forEach(el => {
-                const field = el.dataset.field;
-                if (el.tagName === 'IMG') {
-                    editedData[field] = el.src;
-                } else if (el.style.backgroundImage) {
-                    editedData[field] = el.style.backgroundImage;
-                } else {
-                    editedData[field] = el.innerText;
-                }
-            });
-            
-            localStorage.setItem('barangayContent', JSON.stringify(editedData));
-            alert('Changes saved locally!');
-        }
-
-        function updatePortalClock() {
-            const now = new Date();
-            const options = { 
-                month: 'long', 
-                day: 'numeric', 
-                year: 'numeric',
-                hour: '2-digit', 
-                minute: '2-digit', 
-                second: '2-digit',
-                hour12: true
-            };
-            
-            document.getElementById('portal-clock').innerText = now.toLocaleString('en-US', options);
-        }
-
-        let carousels = [
-            { slides: [], indicators: [], currentIndex: 0 },
-            { slides: [], indicators: [], currentIndex: 0 },
-            { slides: [], indicators: [], currentIndex: 0 }
-        ];
-
-        document.addEventListener('DOMContentLoaded', function() {
-            carousels[0].slides = document.querySelectorAll('.carousel-slide');
-            carousels[0].indicators = document.querySelectorAll('.carousel-indicator');
-            
-            carousels[1].slides = document.querySelectorAll('.carousel-slide2');
-            carousels[1].indicators = document.querySelectorAll('.carousel-indicator2');
-            
-            carousels[2].slides = document.querySelectorAll('.carousel-slide3');
-            carousels[2].indicators = document.querySelectorAll('.carousel-indicator3');
-            
-            showSlide(0, 0);
-            showSlide(1, 0);
-            showSlide(2, 0);
-            
-            setInterval(() => {
-                changeSlide(0, 1);
-                changeSlide(1, 1);
-                changeSlide(2, 1);
-            }, 5000);
-            
-            const savedContent = localStorage.getItem('barangayContent');
-            if (savedContent) {
-                const data = JSON.parse(savedContent);
-                Object.keys(data).forEach(field => {
-                    const el = document.querySelector(`[data-field="${field}"]`);
-                    if (el) {
-                        if (el.tagName === 'IMG') {
-                            el.src = data[field];
-                        } else if (el.style) {
-                            el.innerText = data[field];
-                        }
-                    }
-                });
-            }
-        });
-
-        function showSlide(carouselId, index) {
-            let slides = carousels[carouselId].slides;
-            let indicators = carousels[carouselId].indicators;
-            
-            if (!slides.length) return;
-            
-            if (index >= slides.length) index = 0;
-            if (index < 0) index = slides.length - 1;
-            
-            slides.forEach(slide => slide.style.opacity = '0');
-            slides[index].style.opacity = '1';
-            
-            indicators.forEach((indicator, i) => {
-                if (i === index) {
-                    indicator.classList.add('bg-white');
-                    indicator.classList.remove('bg-white/50');
-                } else {
-                    indicator.classList.remove('bg-white');
-                    indicator.classList.add('bg-white/50');
-                }
-            });
-            
-            carousels[carouselId].currentIndex = index;
-        }
-
-        function changeSlide(carouselId, direction) {
-            showSlide(carouselId, carousels[carouselId].currentIndex + direction);
-        }
-
-        function currentSlide(carouselId, index) {
-            showSlide(carouselId, index);
-        }
-
-        setInterval(updatePortalClock, 1000);
-        updatePortalClock();
-    </script>
-
-    <style>
-        html {
-            scroll-behavior: smooth;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fadeIn {
-            animation: fadeIn 1s ease-out;
-        }
-        
-        .carousel-slide, .carousel-slide2, .carousel-slide3 {
-            transition: opacity 1s ease-in-out;
-        }
-        
-        .admin-login-bar {
-            background: #071c4d;
-            color: white;
-            padding: 8px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 14px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 10000;
-            transform: translateY(-100%);
-            transition: transform 0.3s ease;
-        }
-        
-        .admin-login-bar.show {
-            transform: translateY(0);
-        }
-        
-        .admin-login-bar input {
-            padding: 5px 10px;
-            border-radius: 5px;
-            border: none;
-            margin: 0 5px;
-            color: #333;
-        }
-        
-        .admin-login-bar button {
-            background: #eab308;
-            color: #071c4d;
-            border: none;
-            padding: 5px 15px;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        
-        .edit-mode .editable {
-            position: relative;
-            border: 2px dashed transparent;
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-        
-        .edit-mode .editable:hover {
-            border-color: #eab308;
-            background-color: rgba(234, 179, 8, 0.05);
-        }
-        
-        .edit-mode .editable::after {
-            content: '✎';
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: #eab308;
-            color: #071c4d;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            font-weight: bold;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-            z-index: 100;
-        }
-        
-        .edit-mode .editable:hover::after {
-            opacity: 1;
-        }
-        
-        .edit-mode .editable-image {
-            position: relative;
-            border: 3px solid transparent;
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-        
-        .edit-mode .editable-image:hover {
-            border-color: #eab308;
-            filter: brightness(0.9);
-        }
-        
-        .edit-mode .editable-image::after {
-            content: '📷 Change Image';
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #071c4d;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 9999px;
-            font-size: 14px;
-            font-weight: bold;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-            white-space: nowrap;
-            z-index: 100;
-        }
-        
-        .edit-mode .editable-image:hover::after {
-            opacity: 1;
-        }
-        
-        .admin-toolbar {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .admin-toolbar-btn {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: #071c4d;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            transition: all 0.2s ease;
-            border: 2px solid #eab308;
-        }
-        
-        .admin-toolbar-btn:hover {
-            transform: scale(1.1);
-            background: #0a2a6e;
-        }
-        
-        .admin-toolbar-btn.active {
-            background: #eab308;
-            color: #071c4d;
-        }
-        
-        .edit-modal {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            z-index: 10000;
-            width: 90%;
-            max-width: 500px;
-            display: none;
-        }
-        
-        .edit-modal.show {
-            display: block;
-        }
-        
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 9999;
-            display: none;
-        }
-        
-        .modal-overlay.show {
-            display: block;
-        }
-        
-        .image-preview {
-            width: 100%;
-            height: 200px;
-            border: 2px dashed #ccc;
-            border-radius: 10px;
-            background-size: cover;
-            background-position: center;
-            margin-bottom: 15px;
-        }
-        
-        .hover-scale {
-            transition: transform 0.3s ease;
-        }
-        .hover-scale:hover {
-            transform: scale(1.05);
-        }
-    </style>
 </body>
 </html>

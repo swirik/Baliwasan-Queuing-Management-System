@@ -4,8 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barangay Baliwasan | Admin Login</title>
-    <link href="output.css" rel="stylesheet">
+
+    <link href="/css/output.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <script src="/js/admin-login.js" defer> </script>
 </head>
 <body class="bg-gradient-to-br from-[#071c4d] to-[#0a2a6e] font-sans min-h-screen flex items-center justify-center p-4">
     
@@ -54,56 +57,5 @@
         </p>
     </div>
 
-    <script>
-        async function handleLogin(event) {
-            event.preventDefault();
-            
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value.trim();
-            const errorDiv = document.getElementById('errorMessage');
-            
-            if (!username || !password) {
-                showError('Please enter both username and password');
-                return;
-            }
-            
-            try {
-                const response = await fetch('/api/admin-login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ username, password })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    errorDiv.classList.add('hidden');
-                    window.location.href = 'admin.html';
-                } else {
-                    showError('Invalid username or password. Please try again.');
-                    document.getElementById('password').value = '';
-                    document.getElementById('password').focus();
-                }
-            } catch (error) {
-                showError('Server error. Please try again later.');
-            }
-        }
-        
-        function showError(message) {
-            const errorDiv = document.getElementById('errorMessage');
-            errorDiv.innerHTML = message;
-            errorDiv.classList.remove('hidden');
-            
-            setTimeout(() => {
-                errorDiv.classList.add('hidden');
-            }, 3000);
-        }
-        
-        window.addEventListener('load', function() {
-            document.getElementById('username').focus();
-        });
-    </script>
 </body>
 </html>
