@@ -6,6 +6,8 @@
     <title>Barangay Baliwasan | Official Portal</title>
 
     <link href="/css/output.css" rel="stylesheet">
+    
+    <script src="js/utility.js" defer></script>
     <script src="/js/our-barangay.js" defer></script>
     <style>
         html {
@@ -14,7 +16,6 @@
         .blend-screen {
             mix-blend-mode: screen;
         }
-        /* Custom animations */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -28,7 +29,6 @@
         .hover-scale:hover {
             transform: scale(1.05);
         }
-        /* History card animations */
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -48,7 +48,6 @@
         .history-card:nth-child(3) { animation-delay: 0.6s; }
         .history-card:nth-child(4) { animation-delay: 0.8s; }
 
-        /* Custom scrollbar */
         .custom-scrollbar::-webkit-scrollbar {
             width: 6px;
         }
@@ -63,8 +62,6 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background: rgba(255,255,255,0.5);
         }
-        
-        /* Marquee animation */
         @keyframes marquee {
             0% { transform: translateX(100%); }
             100% { transform: translateX(-100%); }

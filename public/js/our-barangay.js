@@ -1,4 +1,4 @@
-// Landmarks data
+
 const locations = [
     { name: "San Jose Road", category: "road", icon: "🛣️", description: "Major thoroughfare" },
     { name: "Ranches Drive", category: "road", icon: "🏘️", description: "Residential area" },
@@ -11,7 +11,7 @@ const locations = [
     { name: "Denni's Coffee Garden", category: "food", icon: "☕", description: "Coffee shop" }
 ];
 
-// Populate landmarks
+
 function populateLandmarks() {
     const landmarksList = document.getElementById('landmarks-list');
     if (landmarksList) {
@@ -27,7 +27,7 @@ function populateLandmarks() {
     }
 }
 
-// Search functionality
+
 function setupSearch() {
     const searchInput = document.getElementById('landmark-search');
     if (searchInput) {
@@ -43,38 +43,7 @@ function setupSearch() {
     }
 }
 
-// Clock
-function updatePortalClock() {
-    const now = new Date();
-    const options = { 
-        month: 'long', 
-        day: 'numeric', 
-        year: 'numeric',
-        hour: '2-digit', 
-        minute: '2-digit', 
-        second: '2-digit',
-        hour12: true
-    };
-    const clockElement = document.getElementById('portal-clock');
-    if (clockElement) {
-        clockElement.innerText = now.toLocaleString('en-US', options);
-    }
-}
-
-// Directions
-function openDirections() {
-    const latitude = 6.9157146;
-    const longitude = 122.0600172;
-    window.open(
-        `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}&travelmode=driving`,
-        '_blank'
-    );
-}
-
-// Initialize
 document.addEventListener('DOMContentLoaded', () => {
     populateLandmarks();
     setupSearch();
-    updatePortalClock();
-    setInterval(updatePortalClock, 1000);
 });

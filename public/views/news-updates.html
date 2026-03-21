@@ -5,7 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barangay Baliwasan | Official Portal</title>
     <link href="/css/output.css" rel="stylesheet">
-        <style>
+
+    <script src="js/utility.js" defer></script>
+    <script src="js/news-updates.js" defer></script>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        .blend-screen {
+            mix-blend-mode: screen;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 1s ease-out;
+        }
+        .hover-scale {
+            transition: transform 0.3s ease;
+        }
+        .hover-scale:hover {
+            transform: scale(1.05);
+        }
+
+        .carousel-slide {
+            transition: opacity 1s ease-in-out;
+        }
+        .carousel-slide img {
+            animation: fadeIn 0.5s ease-out;
+        }
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -446,143 +476,5 @@
             </div>
         </div>
     </footer>
-
-
-    <script>
-
-            function updatePortalClock() {
-            const now = new Date();
-            const options = { 
-                month: 'long', 
-                day: 'numeric', 
-                year: 'numeric',
-                hour: '2-digit', 
-                minute: '2-digit', 
-                second: '2-digit',
-                hour12: true
-            };
-            
-            document.getElementById('portal-clock').innerText = now.toLocaleString('en-US', options);
-        }
-
-
-        function openDirections() {
-            const latitude = 6.9157146;
-            const longitude = 122.0600172;
-            const locationName = "Barangay Baliwasan, 550 San Jose Road, Zamboanga City";
-            
-            window.open(
-                `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}&destination_place_id=${encodeURIComponent(locationName)}&travelmode=driving`,
-                '_blank'
-            );
-        }
-
-
-        let carousels = [
-            { slides: [], indicators: [], currentIndex: 0 },
-            { slides: [], indicators: [], currentIndex: 0 },
-            { slides: [], indicators: [], currentIndex: 0 }
-        ];
-
-
-        document.addEventListener('DOMContentLoaded', function() {
-
-            carousels[0].slides = document.querySelectorAll('.carousel-slide');
-            carousels[0].indicators = document.querySelectorAll('.carousel-indicator');
-            
-
-            carousels[1].slides = document.querySelectorAll('.carousel-slide2');
-            carousels[1].indicators = document.querySelectorAll('.carousel-indicator2');
-            
-
-            carousels[2].slides = document.querySelectorAll('.carousel-slide3');
-            carousels[2].indicators = document.querySelectorAll('.carousel-indicator3');
-            
-
-            showSlide(0, 0);
-            showSlide(1, 0);
-            showSlide(2, 0);
-            
-
-            setInterval(() => {
-                changeSlide(0, 1);
-                changeSlide(1, 1);
-                changeSlide(2, 1);
-            }, 5000);
-        });
-
-        function showSlide(carouselId, index) {
-            let slides = carousels[carouselId].slides;
-            let indicators = carousels[carouselId].indicators;
-            
-            if (!slides.length) return;
-            
-
-            if (index >= slides.length) index = 0;
-            if (index < 0) index = slides.length - 1;
-            
-
-            slides.forEach(slide => {
-                slide.style.opacity = '0';
-            });
-            
-
-            slides[index].style.opacity = '1';
-            
-
-            indicators.forEach((indicator, i) => {
-                if (i === index) {
-                    indicator.classList.add('bg-white');
-                    indicator.classList.remove('bg-white/50');
-                } else {
-                    indicator.classList.remove('bg-white');
-                    indicator.classList.add('bg-white/50');
-                }
-            });
-            
-            carousels[carouselId].currentIndex = index;
-        }
-
-        function changeSlide(carouselId, direction) {
-            showSlide(carouselId, carousels[carouselId].currentIndex + direction);
-        }
-
-        function currentSlide(carouselId, index) {
-            showSlide(carouselId, index);
-        }
-
-
-        setInterval(updatePortalClock, 1000);
-        updatePortalClock();
-    </script>
-     <style>
-        html {
-            scroll-behavior: smooth;
-        }
-        .blend-screen {
-            mix-blend-mode: screen;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fadeIn {
-            animation: fadeIn 1s ease-out;
-        }
-        .hover-scale {
-            transition: transform 0.3s ease;
-        }
-        .hover-scale:hover {
-            transform: scale(1.05);
-        }
-
-        .carousel-slide {
-            transition: opacity 1s ease-in-out;
-        }
-        .carousel-slide img {
-            animation: fadeIn 0.5s ease-out;
-        }
-    </style>
 </body>
 </html>

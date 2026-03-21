@@ -4,9 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barangay Baliwasan | Garbage Collection Schedule</title>
+
     <link href="/css/output.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <script src="/js/utility.js" defer></script>
     <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 1s ease-out;
+        }
+        .hover-scale {
+            transition: transform 0.3s ease;
+        }
+        .hover-scale:hover {
+            transform: scale(1.05);
+        }
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -397,57 +416,5 @@
             </div>
         </div>
     </footer>
-
-    <script>
-        function updatePortalClock() {
-            const now = new Date();
-            const options = { 
-                month: 'long', 
-                day: 'numeric', 
-                year: 'numeric',
-                hour: '2-digit', 
-                minute: '2-digit', 
-                second: '2-digit',
-                hour12: true
-            };
-            const clockElement = document.getElementById('portal-clock');
-            if (clockElement) {
-                clockElement.innerText = now.toLocaleString('en-US', options);
-            }
-        }
-
-        function openDirections() {
-            const latitude = 6.9157146;
-            const longitude = 122.0600172;
-            window.open(
-                `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}&travelmode=driving`,
-                '_blank'
-            );
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            updatePortalClock();
-            setInterval(updatePortalClock, 1000);
-        });
-    </script>
-
-    <style>
-        html {
-            scroll-behavior: smooth;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fadeIn {
-            animation: fadeIn 1s ease-out;
-        }
-        .hover-scale {
-            transition: transform 0.3s ease;
-        }
-        .hover-scale:hover {
-            transform: scale(1.05);
-        }
-    </style>
 </body>
 </html>

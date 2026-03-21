@@ -1,8 +1,5 @@
 const socket = io();
 
-const dateOptions = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
-document.getElementById('current-date-display').innerText = new Date().toLocaleDateString('en-US', dateOptions);
-
 document.getElementById('btn-export-data').addEventListener('click', () => {
     window.open('/export', '_blank');
 });

@@ -1,12 +1,3 @@
-function updatePortalClock() {
-    const now = new Date();
-    const options = { month: 'long', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
-    const clockElement = document.getElementById('portal-clock');
-    if (clockElement) { clockElement.innerText = now.toLocaleString('en-US', options); }
-}
-setInterval(updatePortalClock, 1000);
-updatePortalClock();
-
 const socket = io();
 let currentAutoApproveState = false;
 let globalBookingEnabled = true;
@@ -14,11 +5,6 @@ let ignoreTimeLock = false;
 let blockedDatesList = [];
 let engineRulesData = {};
 
-function formatTicket(num, cat) {
-    if (!num) return "----";
-    const prefix = cat ? cat : "M";
-    return `${prefix}-${num.toString().padStart(3, '0')}`;
-}
 
 window.toggleCounter = function(id) {
     socket.emit('toggleCounter', { counterId: id });

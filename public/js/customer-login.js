@@ -65,12 +65,6 @@ function goToStep1() {
     window.scrollTo(0, 0);
 }
 
-function formatTicket(num, cat) {
-    if (!num) return "----";
-    const prefix = cat ? cat : "M";
-    return `${prefix}-${num.toString().padStart(3, '0')}`;
-}
-
 function saveTicketLocally(res) {
     const ticketData = { 
         res: res, 

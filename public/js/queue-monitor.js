@@ -15,17 +15,10 @@ let currentMediaUrl = '';
 let currentMediaMuted = null;
 let currentlyServingTicket = null;
 
-// Async Queue State
+
 let isAnnouncing = false;
 let announcementQueue = [];
 
-function formatTicket(num, cat) {
-    if (!num) return "----";
-    const prefix = cat ? cat : "M";
-    return `${prefix}-${num.toString().padStart(3, '0')}`;
-}
-
-// Initial interaction to unlock browser autoplay audio policies
 document.body.addEventListener('click', () => {
     chimeSound.play().then(() => {
         chimeSound.pause();
@@ -33,7 +26,6 @@ document.body.addEventListener('click', () => {
     }).catch(err => console.log(err));
 }, { once: true });
 
-// --- ASYNC AUDIO ENGINE ---
 
 function queueAnnouncement(ticketData) {
     announcementQueue.push(ticketData);
@@ -54,7 +46,7 @@ async function processAnnouncementQueue() {
     }
 
     isAnnouncing = false;
-    processAnnouncementQueue(); // Trigger next in queue if any
+    processAnnouncementQueue();
 }
 
 function playChime() {
@@ -62,7 +54,7 @@ function playChime() {
         chimeSound.currentTime = 0;
         chimeSound.onended = resolve;
         chimeSound.onerror = resolve; // Prevent queue freeze if audio file fails
-        chimeSound.play().catch(() => resolve()); // Resolve instantly if browser blocks autoplay
+        chimeSound.play().catch(() => resolve()); 
     });
 }
 
@@ -197,13 +189,3 @@ socket.on('queueUpdated', (state) => {
         }
     }
 });
-
-function updateClock() {
-    const now = new Date();
-    const dateOptions = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
-    dateDisplay.innerText = now.toLocaleDateString('en-US', dateOptions);
-    timeDisplay.innerText = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-}
-
-setInterval(updateClock, 1000);
-updateClock();
