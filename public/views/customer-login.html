@@ -325,6 +325,19 @@
         <p id="appt-message" class="hidden text-xs md:text-sm text-gray-500 mb-8 font-medium leading-relaxed px-4"><i class="fas fa-save mr-1 text-[#071c4d]"></i> Screenshot or save this ticket. Present it upon arrival on your scheduled date.</p>
         <p id="live-message" class="text-xs md:text-sm text-gray-500 mb-8 font-medium leading-relaxed px-4"><i class="fas fa-mobile-alt mr-1 text-[#071c4d]"></i> Please wait. Monitor the Live Queue screen to track your position.</p>
 
+
+        <div class="grid grid-cols-2 gap-3 mb-3 relative z-10">
+            <button type="button" class="bg-gray-100 text-gray-500 font-black py-3 rounded-xl uppercase tracking-wider text-[10px] flex items-center justify-center gap-2 border border-gray-200 cursor-not-allowed opacity-70" title="Coming Soon: Generate QR">
+                <i class="fas fa-qrcode text-lg"></i> Generate QR
+            </button>
+            <button type="button" class="bg-blue-50 text-blue-500 font-black py-3 rounded-xl uppercase tracking-wider text-[10px] flex items-center justify-center gap-2 border border-blue-200 cursor-not-allowed opacity-70" title="Coming Soon: Reschedule">
+                <i class="fas fa-calendar-alt text-lg"></i> Reschedule
+            </button>
+        </div>
+
+
+
+
         <div class="flex gap-3 relative z-10">
             <button id="btn-cancel-active-ticket" class="w-[30%] bg-white hover:bg-red-50 text-red-500 font-black py-4 px-2 rounded-xl transition-all uppercase tracking-wider text-[10px] border-2 border-red-100 flex flex-col items-center justify-center gap-1">
                 <i class="fas fa-times text-sm"></i> Void

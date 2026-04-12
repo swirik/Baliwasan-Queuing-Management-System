@@ -1,6 +1,31 @@
 const State = require('../models/State');
 const TicketLog = require('../models/TicketLog');
 
+async function sendIprogSms(targetNumber, messageText) {
+    const apiToken = 'f55a945baa03e8ed6b3fd85ba12e0e686cf15338';
+    const endpoint = 'https://www.iprogsms.com/api/v1/sms_messages';
+
+    const payload = {
+        api_token: apiToken,
+        phone_number: targetNumber,
+        message: messageText
+    };
+
+    try {
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        return await response.json();
+    } catch (error) {
+        console.error('IPROG API Failure:', error.message);
+    }
+}
+
 module.exports = function(io, useMongo) {
     let bookingEngine = {
         globalOnlineBookingEnabled: true,
@@ -499,6 +524,11 @@ module.exports = function(io, useMongo) {
                         document: next.document,
                         category: next.category
                     };
+                    if (next.contact && next.contact !== 'N/A') {
+                        const formattedTicket = `${next.category}-${next.ticketNumber.toString().padStart(3, '0')}`;
+                        const smsBody = `Barangay Baliwasan: Ticket ${formattedTicket} is now serving at Counter ${data.counterId}. Please proceed.`;
+                        sendIprogSms(next.contact, smsBody);
+                    }
                 } else {
                     queueState.counters[counterIndex].currentTicket = null;
                     queueState.counters[counterIndex].currentPriority = '';
@@ -598,6 +628,12 @@ module.exports = function(io, useMongo) {
                             document: ticket.document,
                             category: ticket.category
                         };
+                        
+                        if (ticket.contact && ticket.contact !== 'N/A') {
+                            const formattedTicket = `${ticket.category}-${ticket.ticketNumber.toString().padStart(3, '0')}`;
+                            const smsBody = `Barangay Baliwasan: Ticket ${formattedTicket} is now serving at Counter ${freeCounter.id}. Please proceed.`;
+                            sendIprogSms(ticket.contact, smsBody);
+                        }
 
                         if (useMongo) {
                             const logEntry = new TicketLog({
