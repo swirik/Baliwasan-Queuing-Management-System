@@ -180,19 +180,31 @@ module.exports = function(io, useMongo) {
         let rules = bookingEngine.serviceRules[serviceName];
         if (!rules) return availableDates;
 
+        
+        let todayStr = getTodayDate();
+        let closedNow = isSystemClosed();
+
         for (let i = 0; i < daysToGenerate; i++) {
             let dateString = currentDate.toISOString().split('T')[0];
-            let dayOfWeek = currentDate.getDay();
+            
+            
+            let dayOfWeek = currentDate.getUTCDay(); 
+            
             let isBlockedDay = bookingEngine.disabledDaysOfWeek.includes(dayOfWeek);
             let isBlockedDate = bookingEngine.blockedDates.includes(dateString);
             let isServiceAllowed = rules.allowedDays.includes(dayOfWeek);
             let currentLoad = bookingEngine.dailyLoad[dateString] || 0;
             let isFull = currentLoad >= bookingEngine.defaultMaxCapacity;
+            
+            
+            let isPastCutoff = (dateString === todayStr && closedNow);
 
-            if (!isBlockedDay && !isBlockedDate && isServiceAllowed && !isFull) {
+            if (!isBlockedDay && !isBlockedDate && isServiceAllowed && !isFull && !isPastCutoff) {
                 availableDates.push(dateString);
             }
-            currentDate.setDate(currentDate.getDate() + 1);
+            
+            
+            currentDate.setUTCDate(currentDate.getUTCDate() + 1); 
         }
         return availableDates;
     }
@@ -299,8 +311,14 @@ module.exports = function(io, useMongo) {
 
             if (bookingEngine.autoApprove) {
                 const tNum = getNextTicketNumber(newRequest.requestedDate);
-                const nowHour = getPhDateObj().getUTCHours();
-                const autoSlot = nowHour < 12 ? 'MORNING' : 'AFTERNOON';
+                const todayStr = getTodayDate();
+                let autoSlot;
+                if (newRequest.requestedDate === todayStr) {
+                    const nowHour = getPhDateObj().getUTCHours();
+                    autoSlot = nowHour < 12 ? 'MORNING' : 'AFTERNOON';
+                } else {
+                    autoSlot = 'MORNING'; 
+                }
 
                 const finalAppointment = {
                     ...newRequest,
@@ -426,11 +444,16 @@ module.exports = function(io, useMongo) {
             if (data.date === getTodayDate() && isSystemClosed()) {
                 return;
             }
-
             const tNum = getNextTicketNumber(data.date);
             const cat = getServiceCategory(data.document);
-            const nowHour = getPhDateObj().getUTCHours();
-            const autoSlot = nowHour < 12 ? 'MORNING' : 'AFTERNOON';
+            const todayStr = getTodayDate();
+            let autoSlot;
+            if (data.date === todayStr) {
+                const nowHour = getPhDateObj().getUTCHours();
+                autoSlot = nowHour < 12 ? 'MORNING' : 'AFTERNOON';
+            } else {
+                autoSlot = 'MORNING'; 
+            }
 
             const newTicket = {
                 ticketNumber: tNum,
@@ -652,31 +675,6 @@ module.exports = function(io, useMongo) {
                     }
                 }
             }
-        }
-
-        const originalLength = queueState.waitingList.length;
-        queueState.waitingList = queueState.waitingList.filter(ticket => {
-            if (ticket.date !== today) return true;
-            if (!ticket.displayTime || ticket.displayTime === 'Please wait' || ticket.displayTime === '5:00 PM') return true;
-            
-            const match = ticket.displayTime.match(/(\d+):(\d+)\s+(AM|PM)/);
-            if (match) {
-                let h = parseInt(match[1]);
-                let m = parseInt(match[2]);
-                if (match[3] === 'PM' && h !== 12) h += 12;
-                if (match[3] === 'AM' && h === 12) h = 0;
-                
-                const ticketAbsolute = h * 60 + m;
-                
-                if (currentAbsolute > ticketAbsolute + 10) { 
-                    return false; 
-                }
-            }
-            return true;
-        });
-
-        if (queueState.waitingList.length !== originalLength) {
-            changed = true;
         }
 
         if (changed) {

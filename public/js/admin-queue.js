@@ -11,8 +11,9 @@ window.toggleCounter = function(id) {
 }
 
 function checkSystemTime() {
-    const now = new Date();
-    const currentHour = now.getHours();
+    const phNow = new Date(new Date().getTime() + (8 * 60 * 60 * 1000));
+    const currentHour = phNow.getUTCHours();
+    
     const btnGenWalkin = document.getElementById('btn-gen-walkin');
     
     if (currentHour >= 17 && !ignoreTimeLock) {
