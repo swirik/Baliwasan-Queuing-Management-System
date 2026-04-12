@@ -654,7 +654,7 @@ module.exports = function(io, useMongo) {
                         
                         if (ticket.contact && ticket.contact !== 'N/A') {
                             const formattedTicket = `${ticket.category}-${ticket.ticketNumber.toString().padStart(3, '0')}`;
-                            const smsBody = `Barangay Baliwasan: Ticket ${formattedTicket} is now serving at Counter ${freeCounter.id}. Please proceed.`;
+                            const smsBody = `Ticket ${formattedTicket} is now serving at Counter ${freeCounter.id}. Please proceed.`;
                             sendIprogSms(ticket.contact, smsBody);
                         }
 
