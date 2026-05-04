@@ -177,7 +177,8 @@ module.exports = function(io, useMongo) {
         if (!bookingEngine.globalOnlineBookingEnabled) return [];
         let availableDates = [];
         let currentDate = new Date(startDate);
-        let rules = bookingEngine.serviceRules[serviceName];
+        let primaryService = serviceName.split(', ')[0];
+        let rules = bookingEngine.serviceRules[primaryService];
         if (!rules) return availableDates;
 
         

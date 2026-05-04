@@ -99,11 +99,21 @@
             </div>
             <div class="w-16"></div>
         </div>
-        
+        <div id="doc-limit-warning" class="hidden mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-xl shadow-sm transition-all">
+            <p class="text-xs text-red-700 font-black uppercase tracking-wide"><i class="fas fa-exclamation-circle mr-1"></i> Selection Limit Reached</p>
+            <p class="text-xs text-gray-600 font-medium mt-1">You can only select up to 3 documents per transaction.</p>
+        </div>
         <div id="dynamic-services-container" class="space-y-8">
             <div class="flex justify-center py-12">
                 <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#071c4d]"></div>
             </div>
+        </div>
+        
+        <div class="mt-8 hidden" id="step-1-continue-container">
+            <button id="btn-continue-step-1" class="w-full bg-[#FFD500] hover:bg-[#FFDC2E] hover:-translate-y-1 text-[#071c4d] font-black py-4 px-6 rounded-xl shadow-lg transition-all uppercase tracking-wide flex justify-between items-center group">
+                <span>Proceed</span>
+                <i class="fas fa-arrow-right transform group-hover:translate-x-1 transition-transform"></i>
+            </button>
         </div>
     </div>
 

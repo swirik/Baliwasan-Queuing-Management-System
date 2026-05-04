@@ -12,7 +12,7 @@ const confirmDate = document.getElementById('confirm-date');
 const confirmPriority = document.getElementById('confirm-priority');
 const dynamicServicesContainer = document.getElementById('dynamic-services-container');
 
-let pendingUser = { name: '', contact: '', priority: '', document: '', date: '' };
+let pendingUser = { name: '', contact: '', priority: '', document: [], date: '' };
 let mySavedTickets = []; 
 let currentTrackId = null;
 let fpInstance = null;
@@ -62,6 +62,22 @@ function goToStep1() {
     hideAllScreens();
     document.getElementById('step-1').classList.remove('hidden');
     document.getElementById('step-3-form').reset();
+    pendingUser.document = [];
+
+    const continueContainer = document.getElementById('step-1-continue-container');
+    if(continueContainer) continueContainer.classList.add('hidden');
+    
+    const warning = document.getElementById('doc-limit-warning');
+    if(warning) warning.classList.add('hidden');
+
+    document.querySelectorAll('.doc-btn').forEach(btn => {
+        btn.classList.remove('ring-4', 'ring-[#071c4d]', 'shadow-xl', 'scale-[1.02]', 'bg-blue-50');
+        const checkIcon = btn.querySelector('.fa-check');
+        if (checkIcon) {
+            checkIcon.classList.remove('opacity-100');
+            checkIcon.classList.add('opacity-0');
+        }
+    });
     window.scrollTo(0, 0);
 }
 
@@ -274,12 +290,42 @@ document.getElementById('btn-hide-queue').addEventListener('click', () => {
 function setupDocButtons() {
     document.querySelectorAll('.doc-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
-            if (e.target.disabled) return;
-            pendingUser.document = e.target.getAttribute('data-doc');
-            myBookingEngine.selectService(pendingUser.document);
-            hideAllScreens();
-            document.getElementById('step-2').classList.remove('hidden');
-            window.scrollTo(0, 0);
+            const target = e.currentTarget;
+            if(target.disabled) return;
+
+            const docName = target.getAttribute('data-doc');
+            const warning = document.getElementById('doc-limit-warning');
+            const checkIcon = target.querySelector('.fa-check');
+
+            if (pendingUser.document.includes(docName)) {
+                pendingUser.document = pendingUser.document.filter(d => d !== docName);
+                target.classList.remove('ring-4', 'ring-[#071c4d]', 'shadow-xl', 'scale-[1.02]', 'bg-blue-50');
+                if (checkIcon) {
+                    checkIcon.classList.remove('opacity-100');
+                    checkIcon.classList.add('opacity-0');
+                }
+                if (warning) warning.classList.add('hidden');
+            }
+            else {
+                if (pendingUser.document.length >= 3) {
+                    if (warning) warning.classList.remove('hidden');
+                    return;
+                }
+                pendingUser.document.push(docName);
+                target.classList.add('ring-4', 'ring-[#071c4d]', 'shadow-xl', 'scale-[1.02]', 'bg-blue-50');
+                if (checkIcon) {
+                    checkIcon.classList.remove('opacity-0');
+                    checkIcon.classList.add('opacity-100');
+                }
+            }
+            
+            const continueContainer = document.getElementById('step-1-continue-container');
+            if (pendingUser.document.length > 0) {
+                continueContainer.classList.remove('hidden');
+            } 
+            else {
+                continueContainer.classList.add('hidden');
+            }
         });
     });
 }
@@ -287,6 +333,16 @@ function setupDocButtons() {
 document.getElementById('btn-back-to-1').addEventListener('click', () => {
     hideAllScreens();
     document.getElementById('step-1').classList.remove('hidden');
+});
+
+document.getElementById('btn-continue-step-1').addEventListener('click', () => {
+    if (pendingUser.document.length === 0 ) {
+        return;
+    }
+    myBookingEngine.selectService(pendingUser.document.join(', '));
+    hideAllScreens();
+    document.getElementById('step-2').classList.remove('hidden');
+    window.scrollTo(0,0);
 });
 
 document.getElementById('step-2-form').addEventListener('submit', (e) => {
@@ -313,7 +369,7 @@ document.getElementById('step-3-form').addEventListener('submit', (e) => {
     pendingUser.contact = document.getElementById('user-contact').value;
     pendingUser.priority = document.getElementById('user-priority').value;
     
-    confirmDocName.innerText = pendingUser.document;
+    confirmDocName.innerText = pendingUser.document.join(', ');
     confirmDate.innerText = pendingUser.date;
     confirmPriority.innerText = pendingUser.priority;
 
@@ -377,17 +433,21 @@ socket.on('queueUpdated', (state) => {
         const specialHTML = specialServices.map(s => {
             const disabledClass = state.disabledServices.includes(s.name) ? 'opacity-40 cursor-not-allowed bg-gray-100 border-gray-200 text-gray-400' : 'bg-gradient-to-r from-[#FFD500] to-yellow-400 hover:to-yellow-500 border-[#FFD500] text-[#071c4d] hover:shadow-lg hover:-translate-y-1';
             const newBadge = s.isNew ? '<span class="bg-red-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full absolute -top-3 -right-2 tracking-widest shadow-md border-2 border-white animate-pulse">NEW</span>' : '';
+            const isSelected = pendingUser.document.includes(s.name);
+            const selectedClasses = isSelected ? 'ring-4 ring-[#071c4d] shadow-xl scale-[1.02] bg-blue-50' : '';
+            
             return `
-                <button ${state.disabledServices.includes(s.name) ? 'disabled' : ''} class="doc-btn ${disabledClass} relative border-2 font-black py-5 px-6 rounded-2xl shadow-sm transition-all uppercase text-sm tracking-widest w-full flex items-center justify-between group" data-doc="${s.name}">
+                <button ${state.disabledServices.includes(s.name) ? 'disabled' : ''} class="doc-btn ${disabledClass} ${selectedClasses} relative border-2 font-black py-5 px-6 rounded-2xl shadow-sm transition-all uppercase text-sm tracking-widest w-full flex items-center justify-between group" data-doc="${s.name}">
                     <div class="flex items-center gap-3">
                         <i class="fas fa-star text-lg opacity-70"></i>
                         <span>${s.name}</span>
                     </div>
-                    <i class="fas fa-chevron-right opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                    <i class="fas fa-check opacity-${isSelected ? '100' : '0'} transition-opacity"></i>
                     ${newBadge}
                 </button>
             `;
         }).join('');
+        
         dynamicServicesContainer.innerHTML += `
             <div class="mb-8">
                 <h3 class="text-[10px] font-black text-[#071c4d] uppercase tracking-widest mb-3 border-b border-gray-200 pb-2"><i class="fas fa-bolt mr-1 text-[#FFD500]"></i> Priority & Special Events</h3>
@@ -401,14 +461,18 @@ socket.on('queueUpdated', (state) => {
         const standardHTML = standardServices.map(s => {
             const disabledClass = state.disabledServices.includes(s.name) ? 'opacity-40 cursor-not-allowed bg-gray-50 border-gray-200 text-gray-400' : 'bg-white hover:bg-[#071c4d] hover:text-white border-gray-200 hover:border-[#071c4d] text-gray-800 hover:shadow-lg hover:-translate-y-1';
             const newBadge = s.isNew ? '<span class="bg-red-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full absolute -top-3 -right-2 tracking-widest shadow-md border-2 border-white animate-pulse">NEW</span>' : '';
+            const isSelected = pendingUser.document.includes(s.name);
+            const selectedClasses = isSelected ? 'ring-4 ring-[#071c4d] shadow-xl scale-[1.02]' : '';
+
             return `
-                <button ${state.disabledServices.includes(s.name) ? 'disabled' : ''} class="doc-btn ${disabledClass} relative border-2 font-bold py-4 md:py-5 px-5 rounded-2xl shadow-sm transition-all uppercase text-xs md:text-sm w-full flex items-center justify-between group" data-doc="${s.name}">
+                <button ${state.disabledServices.includes(s.name) ? 'disabled' : ''} class="doc-btn ${disabledClass} ${selectedClasses} relative border-2 font-bold py-4 md:py-5 px-5 rounded-2xl shadow-sm transition-all uppercase text-xs md:text-sm w-full flex items-center justify-between group" data-doc="${s.name}">
                     <span>${s.name}</span>
-                    <i class="fas fa-chevron-right opacity-0 group-hover:opacity-100 transition-opacity text-[#FFD500]"></i>
+                    <i class="fas fa-check opacity-${isSelected ? '100' : '0'} transition-opacity text-[#FFD500]"></i>
                     ${newBadge}
                 </button>
             `;
         }).join('');
+        
         dynamicServicesContainer.innerHTML += `
             <div>
                 <h3 class="text-[10px] font-black text-[#071c4d] uppercase tracking-widest mb-3 border-b border-gray-200 pb-2"><i class="fas fa-file-alt mr-1 text-gray-400"></i> Standard Documents</h3>
@@ -416,6 +480,7 @@ socket.on('queueUpdated', (state) => {
             </div>
         `;
     }
+    
     setupDocButtons();
 
     document.getElementById('mobile-serving-ticket').innerText = state.lastCalled && state.lastCalled.ticket ? formatTicket(state.lastCalled.ticket, state.lastCalled.category) : "----";
