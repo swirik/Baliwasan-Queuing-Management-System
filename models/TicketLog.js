@@ -7,7 +7,9 @@ const TicketLogSchema = new mongoose.Schema({
     priority: String,
     date: String,
     status: String,
-    timestamp: { type: Date, default: Date.now }
+    timestamp: { 
+        type: Date, 
+        default: Date.now }
 });
 
 module.exports = mongoose.model('TicketLog', TicketLogSchema);
