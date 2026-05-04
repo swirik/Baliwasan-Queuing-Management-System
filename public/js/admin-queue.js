@@ -46,6 +46,18 @@ mediaTypeSelect.addEventListener('change', (e) => {
     }
 });
 
+document.getElementById('btn-freeze-system').addEventListener('click', () => {
+    socket.emit('toggleFreeze');
+});
+
+document.getElementById('btn-c1-noshow').addEventListener('click', () => {
+    socket.emit('markNoShow', { counterId: 1 });
+});
+
+document.getElementById('btn-c2-noshow').addEventListener('click', () => {
+    socket.emit('markNoShow', { counterId: 2 });
+});
+
 document.getElementById('btn-gen-walkin').addEventListener('click', () => {
     const priority = document.getElementById('admin-priority').value;
     const documentType = document.getElementById('admin-document').value;
@@ -67,6 +79,22 @@ document.getElementById('btn-call-1').addEventListener('click', () => {
 
 document.getElementById('btn-call-2').addEventListener('click', () => {
     socket.emit('callNext', { counterId: 2 });
+});
+
+document.getElementById('btn-c1-success').addEventListener('click', () => {
+    socket.emit('resolveTicket', { counterId: 1, status: 'success' });
+});
+
+document.getElementById('btn-c1-fail').addEventListener('click', () => {
+    socket.emit('resolveTicket', { counterId: 1, status: 'failed' });
+});
+
+document.getElementById('btn-c2-success').addEventListener('click', () => {
+    socket.emit('resolveTicket', { counterId: 2, status: 'success' });
+});
+
+document.getElementById('btn-c2-fail').addEventListener('click', () => {
+    socket.emit('resolveTicket', { counterId: 2, status: 'failed' });
 });
 
 document.getElementById('btn-update-ticker').addEventListener('click', () => {
@@ -348,51 +376,91 @@ function createTicketCard(item, isLive) {
 }
 
 socket.on('queueUpdated', (state) => {
+    
+    const freezeBtn = document.getElementById('btn-freeze-system');
+    if (state.isFrozen) {
+        freezeBtn.className = "w-full bg-blue-600 text-white font-black py-3 rounded-xl transition-all text-xs uppercase tracking-widest border-2 border-blue-800 flex items-center justify-center gap-2 animate-pulse";
+        freezeBtn.innerHTML = '<i class="fas fa-play"></i> UNFREEZE SYSTEM';
+        
+        document.getElementById('btn-call-1').disabled = true;
+        document.getElementById('btn-call-1').classList.add('opacity-50', 'cursor-not-allowed');
+        document.getElementById('btn-call-2').disabled = true;
+        document.getElementById('btn-call-2').classList.add('opacity-50', 'cursor-not-allowed');
+    } else {
+        freezeBtn.className = "w-full bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white font-black py-3 rounded-xl transition-all text-xs uppercase tracking-widest border-2 border-blue-200 flex items-center justify-center gap-2";
+        freezeBtn.innerHTML = '<i class="fas fa-snowflake"></i> FREEZE SYSTEM';
+    }
     const c1 = state.counters.find(c => c.id === 1);
     const c2 = state.counters.find(c => c.id === 2);
 
     const btnCall1 = document.getElementById('btn-call-1');
     const toggleC1 = document.getElementById('btn-toggle-c1');
+    const resC1 = document.getElementById('c1-resolution');
+
     if (c1.isActive) {
         toggleC1.className = "text-sm font-bold bg-white/80 px-4 py-1.5 rounded-full transition-colors hover:bg-white text-black shadow-sm flex items-center";
         toggleC1.innerHTML = '<i class="fas fa-power-off mr-2 text-green-600"></i> Active';
-        btnCall1.disabled = false;
-        btnCall1.classList.remove('opacity-50', 'cursor-not-allowed');
+        
         document.getElementById('c1-ticket').innerText = c1.currentTicket ? formatTicket(c1.currentTicket, c1.currentCategory) : "----";
         document.getElementById('c1-name').innerText = c1.currentName ? `Name: ${c1.currentName}` : "Name: ---";
-        document.getElementById('c1-doc').innerText = c1.currentDocument;
-        document.getElementById('c1-doc').className = "text-xs font-bold text-[#071c4d] bg-[#FFD500] px-5 py-2.5 rounded-xl mb-8 uppercase tracking-widest shadow-md";
+        document.getElementById('c1-doc').innerText = c1.currentDocument || "WAITING";
+        document.getElementById('c1-doc').className = "text-xs font-bold text-[#071c4d] bg-[#FFD500] px-5 py-2.5 rounded-xl mb-4 uppercase tracking-widest shadow-md";
+
+        if (c1.currentTicket) {
+            btnCall1.classList.add('hidden');
+            if(resC1) resC1.classList.remove('hidden');
+        } else {
+            btnCall1.classList.remove('hidden');
+            btnCall1.disabled = false;
+            btnCall1.classList.remove('opacity-50', 'cursor-not-allowed');
+            if(resC1) resC1.classList.add('hidden');
+        }
     } else {
         toggleC1.className = "text-sm font-bold bg-red-600 text-white px-4 py-1.5 rounded-full transition-colors hover:bg-red-700 shadow-inner flex items-center";
         toggleC1.innerHTML = '<i class="fas fa-power-off mr-2 text-white"></i> Offline';
+        btnCall1.classList.remove('hidden');
         btnCall1.disabled = true;
         btnCall1.classList.add('opacity-50', 'cursor-not-allowed');
+        if(resC1) resC1.classList.add('hidden');
         document.getElementById('c1-ticket').innerText = "----";
         document.getElementById('c1-name').innerText = "Name: ---";
         document.getElementById('c1-doc').innerText = "OFFLINE";
-        document.getElementById('c1-doc').className = "text-xs font-bold text-white bg-red-600 px-5 py-2.5 rounded-xl mb-8 uppercase tracking-widest shadow-inner";
+        document.getElementById('c1-doc').className = "text-xs font-bold text-white bg-red-600 px-5 py-2.5 rounded-xl mb-4 uppercase tracking-widest shadow-inner";
     }
 
     const btnCall2 = document.getElementById('btn-call-2');
     const toggleC2 = document.getElementById('btn-toggle-c2');
+    const resC2 = document.getElementById('c2-resolution');
+    
     if (c2.isActive) {
         toggleC2.className = "text-sm font-bold bg-white/80 px-4 py-1.5 rounded-full transition-colors hover:bg-white text-black shadow-sm flex items-center";
         toggleC2.innerHTML = '<i class="fas fa-power-off mr-2 text-green-600"></i> Active';
-        btnCall2.disabled = false;
-        btnCall2.classList.remove('opacity-50', 'cursor-not-allowed');
+        
         document.getElementById('c2-ticket').innerText = c2.currentTicket ? formatTicket(c2.currentTicket, c2.currentCategory) : "----";
         document.getElementById('c2-name').innerText = c2.currentName ? `Name: ${c2.currentName}` : "Name: ---";
-        document.getElementById('c2-doc').innerText = c2.currentDocument;
-        document.getElementById('c2-doc').className = "text-xs font-bold text-[#071c4d] bg-[#FFD500] px-5 py-2.5 rounded-xl mb-8 uppercase tracking-widest shadow-md";
+        document.getElementById('c2-doc').innerText = c2.currentDocument || "WAITING";
+        document.getElementById('c2-doc').className = "text-xs font-bold text-[#071c4d] bg-[#FFD500] px-5 py-2.5 rounded-xl mb-4 uppercase tracking-widest shadow-md";
+
+        if (c2.currentTicket) {
+            btnCall2.classList.add('hidden');
+            if(resC2) resC2.classList.remove('hidden');
+        } else {
+            btnCall2.classList.remove('hidden');
+            btnCall2.disabled = false;
+            btnCall2.classList.remove('opacity-50', 'cursor-not-allowed');
+            if(resC2) resC2.classList.add('hidden');
+        }
     } else {
         toggleC2.className = "text-sm font-bold bg-red-600 text-white px-4 py-1.5 rounded-full transition-colors hover:bg-red-700 shadow-inner flex items-center";
         toggleC2.innerHTML = '<i class="fas fa-power-off mr-2 text-white"></i> Offline';
+        btnCall2.classList.remove('hidden');
         btnCall2.disabled = true;
         btnCall2.classList.add('opacity-50', 'cursor-not-allowed');
+        if(resC2) resC2.classList.add('hidden');
         document.getElementById('c2-ticket').innerText = "----";
         document.getElementById('c2-name').innerText = "Name: ---";
         document.getElementById('c2-doc').innerText = "OFFLINE";
-        document.getElementById('c2-doc').className = "text-xs font-bold text-white bg-red-600 px-5 py-2.5 rounded-xl mb-8 uppercase tracking-widest shadow-inner";
+        document.getElementById('c2-doc').className = "text-xs font-bold text-white bg-red-600 px-5 py-2.5 rounded-xl mb-4 uppercase tracking-widest shadow-inner";
     }
     
     document.getElementById('admin-waiting-count').innerText = state.waitingList.length;

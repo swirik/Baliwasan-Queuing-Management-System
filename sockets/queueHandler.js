@@ -40,6 +40,7 @@ module.exports = function(io, useMongo) {
     };
 
     let queueState = { 
+        isFrozen: false,
         counters: [
             { id: 1, isActive: true, currentTicket: null, currentPriority: '', currentDocument: 'SYSTEM STANDBY', currentName: '', currentCategory: '' },
             { id: 2, isActive: true, currentTicket: null, currentPriority: '', currentDocument: 'SYSTEM STANDBY', currentName: '', currentCategory: '' }
@@ -214,17 +215,18 @@ module.exports = function(io, useMongo) {
         socket.emit('queueUpdated', queueState);
         socket.emit('bookingEngineUpdated', bookingEngine);
 
-        socket.on('getAnalytics', async () => {
-            if (!useMongo) {
-                socket.emit('analyticsData', { total: 0, pwdCount: 0, topServices: [] });
-                return;
-            }
+
+        async function broadcastLiveAnalytics() {
+            if (!useMongo) return;
             try {
                 const today = getTodayDate();
                 const logs = await TicketLog.find({ date: today });
                 
                 const total = logs.length;
                 const pwdCount = logs.filter(l => l.priority === 'PWD / Senior / Pregnant').length;
+                
+                const successCount = logs.filter(l => l.status === 'success').length;
+                const failedCount = logs.filter(l => l.status === 'failed' || l.status === 'no-show').length;
                 
                 const serviceCounts = {};
                 logs.forEach(l => {
@@ -236,15 +238,62 @@ module.exports = function(io, useMongo) {
                     .sort((a, b) => b.count - a.count)
                     .slice(0, 5);
 
-                socket.emit('analyticsData', { total, pwdCount, topServices });
+                io.emit('analyticsData', { total, pwdCount, successCount, failedCount, topServices });
             } catch (err) {
                 console.log(err);
             }
+        }
+
+        socket.on('getAnalytics', async () => {
+            if (!useMongo) {
+                socket.emit('analyticsData', { total: 0, pwdCount: 0, successCount: 0, failedCount: 0, topServices: [] });
+                return;
+            }
+            broadcastLiveAnalytics();
         });
 
         socket.on('requestAvailableDates', (data) => {
             const dates = getAvailableDates(data.serviceName, data.startDate, 60);
             socket.emit('availableDatesResponse', dates);
+        });
+
+        socket.on('toggleFreeze', () => {
+            queueState.isFrozen = !queueState.isFrozen;
+            if (queueState.isFrozen) {
+                queueState.tickerText = "SYSTEM PAUSED: EMERGENCY OR HALL DISRUPTION IN PROGRESS. PLEASE WAIT.";
+            } else {
+                queueState.tickerText = "WELCOME TO BARANGAY BALIWASAN. PLEASE WAIT FOR YOUR NUMBER TO BE CALLED.";
+            }
+            saveState();
+            io.emit('queueUpdated', queueState);
+        });
+
+        socket.on('markNoShow', (data) => {
+            const counterIndex = queueState.counters.findIndex(c => c.id === data.counterId);
+            if (counterIndex !== -1 && queueState.counters[counterIndex].currentTicket) {
+                const c = queueState.counters[counterIndex];
+
+                if (useMongo) {
+                    const logEntry = new TicketLog({
+                        ticketNumber: c.currentTicket,
+                        category: c.currentCategory,
+                        document: c.currentDocument,
+                        priority: c.currentPriority,
+                        date: getTodayDate(),
+                        status: 'no-show'
+                    });
+                    logEntry.save().catch(err => console.log(err));
+                }
+
+                queueState.counters[counterIndex].currentTicket = null;
+                queueState.counters[counterIndex].currentPriority = '';
+                queueState.counters[counterIndex].currentDocument = 'SYSTEM STANDBY';
+                queueState.counters[counterIndex].currentName = '';
+                queueState.counters[counterIndex].currentCategory = '';
+
+                saveState();
+                io.emit('queueUpdated', queueState);
+            }
         });
 
         socket.on('toggleCounter', (data) => {
@@ -520,22 +569,20 @@ module.exports = function(io, useMongo) {
         });
 
         socket.on('callNext', (data) => {
+            if (queueState.isFrozen) {
+                socket.emit('ticketError', "Cannot call next. The system is currently frozen.");
+                return;
+            }
             const counterIndex = queueState.counters.findIndex(c => c.id === data.counterId);
             if (counterIndex !== -1) {
+                if (queueState.counters[counterIndex].currentTicket !== null) {
+                    socket.emit('ticketError', `Counter ${data.counterId} is busy. Resolve the current ticket first.`);
+                    return;
+                }
+                
                 if (queueState.waitingList.length > 0) {
                     const next = queueState.waitingList.shift();
                     
-                    if (useMongo) {
-                        const logEntry = new TicketLog({
-                            ticketNumber: next.ticketNumber,
-                            category: next.category,
-                            document: next.document,
-                            priority: next.priority,
-                            date: getTodayDate()
-                        });
-                        logEntry.save().catch(err => console.log(err));
-                    }
-
                     queueState.counters[counterIndex].currentTicket = next.ticketNumber;
                     queueState.counters[counterIndex].currentPriority = next.priority;
                     queueState.counters[counterIndex].currentDocument = next.document;
@@ -548,6 +595,7 @@ module.exports = function(io, useMongo) {
                         document: next.document,
                         category: next.category
                     };
+                    
                     if (next.contact && next.contact !== 'N/A') {
                         const formattedTicket = `${next.category}-${next.ticketNumber.toString().padStart(3, '0')}`;
                         const smsBody = `Barangay Baliwasan: Ticket ${formattedTicket} is now serving at Counter ${data.counterId}. Please proceed.`;
@@ -560,6 +608,33 @@ module.exports = function(io, useMongo) {
                     queueState.counters[counterIndex].currentName = '';
                     queueState.counters[counterIndex].currentCategory = '';
                 }
+                saveState();
+                io.emit('queueUpdated', queueState);
+            }
+        });
+        socket.on('resolveTicket', (data) => {
+            const counterIndex = queueState.counters.findIndex(c => c.id === data.counterId);
+            if (counterIndex !== -1 && queueState.counters[counterIndex].currentTicket) {
+                const c = queueState.counters[counterIndex];
+
+                if (useMongo) {
+                    const logEntry = new TicketLog({
+                        ticketNumber: c.currentTicket,
+                        category: c.currentCategory,
+                        document: c.currentDocument,
+                        priority: c.currentPriority,
+                        date: getTodayDate(),
+                        status: data.status
+                    });
+                    logEntry.save().catch(err => console.log(err));
+                }
+
+                queueState.counters[counterIndex].currentTicket = null;
+                queueState.counters[counterIndex].currentPriority = '';
+                queueState.counters[counterIndex].currentDocument = 'SYSTEM STANDBY';
+                queueState.counters[counterIndex].currentName = '';
+                queueState.counters[counterIndex].currentCategory = '';
+
                 saveState();
                 io.emit('queueUpdated', queueState);
             }
@@ -616,7 +691,8 @@ module.exports = function(io, useMongo) {
     });
 
     setInterval(() => {
-        if (!useMongo) return;
+        if (!useMongo || queueState.isFrozen) return;
+        
         const phNow = getPhDateObj();
         const currentAbsolute = phNow.getUTCHours() * 60 + phNow.getUTCMinutes();
 
@@ -657,17 +733,6 @@ module.exports = function(io, useMongo) {
                             const formattedTicket = `${ticket.category}-${ticket.ticketNumber.toString().padStart(3, '0')}`;
                             const smsBody = `Ticket ${formattedTicket} is now serving at Counter ${freeCounter.id}. Please proceed.`;
                             sendIprogSms(ticket.contact, smsBody);
-                        }
-
-                        if (useMongo) {
-                            const logEntry = new TicketLog({
-                                ticketNumber: ticket.ticketNumber,
-                                category: ticket.category,
-                                document: ticket.document,
-                                priority: ticket.priority,
-                                date: today
-                            });
-                            logEntry.save().catch(err => console.log(err));
                         }
 
                         queueState.waitingList.splice(i, 1);

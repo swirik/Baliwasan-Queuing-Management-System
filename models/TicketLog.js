@@ -6,6 +6,7 @@ const TicketLogSchema = new mongoose.Schema({
     document: String,
     priority: String,
     date: String,
+    status: String,
     timestamp: { type: Date, default: Date.now }
 });
 

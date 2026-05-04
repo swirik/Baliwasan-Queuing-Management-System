@@ -25,15 +25,25 @@
             </button>
         </header>
 
-        <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-white p-8 rounded-3xl shadow-sm border-2 border-black flex flex-col justify-center items-center">
-                <h2 class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-2">Total Tickets Issued Today</h2>
-                <div id="stat-total" class="text-7xl font-black text-black">0</div>
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="bg-white p-6 rounded-3xl shadow-sm border-2 border-black flex flex-col justify-center items-center text-center">
+                <h2 class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Total Tickets</h2>
+                <div id="stat-total" class="text-6xl font-black text-black">0</div>
             </div>
             
-            <div class="bg-white p-8 rounded-3xl shadow-sm border-2 border-[#FFD500] flex flex-col justify-center items-center">
-                <h2 class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-2">PWD / Senior Citizens Handled</h2>
-                <div id="stat-pwd" class="text-7xl font-black text-[#FFD500]">0</div>
+            <div class="bg-white p-6 rounded-3xl shadow-sm border-2 border-[#FFD500] flex flex-col justify-center items-center text-center">
+                <h2 class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">PWD / Senior</h2>
+                <div id="stat-pwd" class="text-6xl font-black text-[#FFD500]">0</div>
+            </div>
+
+            <div class="bg-white p-6 rounded-3xl shadow-sm border-2 border-green-500 flex flex-col justify-center items-center text-center">
+                <h2 class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Successful</h2>
+                <div id="stat-success" class="text-6xl font-black text-green-500">0</div>
+            </div>
+
+            <div class="bg-white p-6 rounded-3xl shadow-sm border-2 border-red-500 flex flex-col justify-center items-center text-center">
+                <h2 class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Failed / Rejected</h2>
+                <div id="stat-failed" class="text-6xl font-black text-red-500">0</div>
             </div>
         </section>
 

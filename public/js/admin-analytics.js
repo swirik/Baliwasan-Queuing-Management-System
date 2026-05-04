@@ -9,6 +9,8 @@ socket.emit('getAnalytics');
 socket.on('analyticsData', (data) => {
     document.getElementById('stat-total').innerText = data.total;
     document.getElementById('stat-pwd').innerText = data.pwdCount;
+    document.getElementById('stat-success').innerText = data.successCount || 0;
+    document.getElementById('stat-failed').innerText = data.failedCount || 0;
     
     const servicesContainer = document.getElementById('stat-services');
     servicesContainer.innerHTML = '';

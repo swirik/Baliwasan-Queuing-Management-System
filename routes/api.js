@@ -45,11 +45,11 @@ router.post('/upload', upload.single('mediaFile'), (req, res) => {
 router.get('/export', async (req, res) => {
     try {
         const logs = await TicketLog.find({}).sort({ timestamp: -1 });
-        let csv = "Date,Time,Ticket,Category,Document,Priority\n";
-        
+        let csv = "Date,Time,Ticket,Category,Document,Priority,Status\n";
         logs.forEach(l => {
             const timeStr = l.timestamp.toISOString().split('T')[1].substring(0, 8);
-            csv += `${l.date},${timeStr},${l.category}-${l.ticketNumber},${l.category},${l.document},${l.priority}\n`;
+            const statusStr = l.status || 'unknown'; 
+            csv += `${l.date},${timeStr},${l.category}-${l.ticketNumber},${l.category},${l.document},${l.priority},${statusStr}\n`;
         });
         
         res.header('Content-Type', 'text/csv');

@@ -67,9 +67,17 @@
                         <span>CALL NEXT</span>
                         <i class="fas fa-bullhorn"></i>
                     </button>
-                    <button class="w-full mt-2 bg-red-50 text-red-500 font-black py-3 rounded-xl shadow-sm text-xs uppercase tracking-widest flex items-center justify-center gap-2 border border-red-100 cursor-not-allowed opacity-70" title="Coming Soon: Mark No Show">
-                        <i class="fas fa-user-slash"></i> NO SHOW
-                    </button>
+                        <button id="btn-c1-noshow" class="w-full mt-2 bg-red-50 hover:bg-red-600 text-red-500 hover:text-white font-black py-3 rounded-xl shadow-sm text-xs uppercase tracking-widest flex items-center justify-center gap-2 border border-red-100 transition-all">
+                            <i class="fas fa-user-slash"></i> NO SHOW
+                        </button>
+                    <div id="c1-resolution" class="hidden grid grid-cols-2 gap-3 mt-4 w-full">
+                        <button id="btn-c1-success" class="bg-green-600 hover:bg-green-700 text-white font-black py-4 rounded-xl shadow-md transition-all text-sm uppercase tracking-wider flex items-center justify-center gap-2 border-b-4 border-green-800 active:border-b-0 active:translate-y-1">
+                            <i class="fas fa-check-circle"></i> Success
+                        </button>
+                        <button id="btn-c1-fail" class="bg-red-600 hover:bg-red-700 text-white font-black py-4 rounded-xl shadow-md transition-all text-sm uppercase tracking-wider flex items-center justify-center gap-2 border-b-4 border-red-800 active:border-b-0 active:translate-y-1">
+                            <i class="fas fa-times-circle"></i> Failed
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -86,9 +94,18 @@
                         <span>CALL NEXT</span>
                         <i class="fas fa-bullhorn"></i>
                     </button>
-                    <button class="w-full mt-2 bg-red-50 text-red-500 font-black py-3 rounded-xl shadow-sm text-xs uppercase tracking-widest flex items-center justify-center gap-2 border border-red-100 cursor-not-allowed opacity-70" title="Coming Soon: Mark No Show">
-                        <i class="fas fa-user-slash"></i> NO SHOW
-                    </button>
+                    <button id="btn-c2-noshow" class="w-full mt-2 bg-red-50 text-red-500 font-black py-3 rounded-xl shadow-sm text-xs uppercase tracking-widest flex items-center justify-center gap-2 border border-red-100 cursor-not-allowed opacity-70" title="Coming Soon: Mark No Show">
+                        <button id="btn-c2-noshow" class="w-full mt-2 bg-red-50 hover:bg-red-600 text-red-500 hover:text-white font-black py-3 rounded-xl shadow-sm text-xs uppercase tracking-widest flex items-center justify-center gap-2 border border-red-100 transition-all">
+                            <i class="fas fa-user-slash"></i> NO SHOW
+                        </button>
+                    <div id="c2-resolution" class="hidden grid grid-cols-2 gap-3 mt-4 w-full">
+                        <button id="btn-c2-success" class="bg-green-600 hover:bg-green-700 text-white font-black py-4 rounded-xl shadow-md transition-all text-sm uppercase tracking-wider flex items-center justify-center gap-2 border-b-4 border-green-800 active:border-b-0 active:translate-y-1">
+                            <i class="fas fa-check-circle"></i> Success
+                        </button>
+                        <button id="btn-c2-fail" class="bg-red-600 hover:bg-red-700 text-white font-black py-4 rounded-xl shadow-md transition-all text-sm uppercase tracking-wider flex items-center justify-center gap-2 border-b-4 border-red-800 active:border-b-0 active:translate-y-1">
+                            <i class="fas fa-times-circle"></i> Failed
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -192,9 +209,9 @@
                 </div>
                 <div class="mt-4 border-t border-gray-100 pt-4">
                     <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Emergency Controls</h3>
-                    <button class="w-full bg-blue-50 text-blue-600 font-black py-3 rounded-xl transition-all text-xs uppercase tracking-widest border-2 border-blue-200 flex items-center justify-center gap-2 cursor-not-allowed opacity-70" title="Coming Soon: Freeze Queue">
-                        <i class="fas fa-snowflake"></i> FREEZE SYSTEM
-                    </button>
+                        <button id="btn-freeze-system" class="w-full bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white font-black py-3 rounded-xl transition-all text-xs uppercase tracking-widest border-2 border-blue-200 flex items-center justify-center gap-2">
+                            <i class="fas fa-snowflake"></i> FREEZE SYSTEM
+                        </button>
                     <p class="text-[9px] text-gray-400 mt-2 text-center font-medium">Temporarily pause all queue movements</p>
                 </div>
                 <div class="flex gap-2 items-end mt-2">
