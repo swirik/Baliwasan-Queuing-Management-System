@@ -23,7 +23,9 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/baliwasan_q
     console.log("MongoDB connection failed. Running in ephemeral memory mode.");
     require('./sockets/queueHandler')(io, false);
 });
-
+app.get('/admin', (req, res) => {
+    res.redirect('/views/admin-queue.html');
+});
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
